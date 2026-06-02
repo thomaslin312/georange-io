@@ -1,0 +1,71 @@
+name: georange-io
+
+services:
+  minio:
+    image: minio/minio:latest
+    command: server /data --address ":9000" --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: georange_io
+      MINIO_ROOT_PASSWORD: georange_io123
+      # Keep MinIO out of the measurement: no scanner churn during a sweep.
+      MINIO_SCANNER_SPEED: slowest
+    volumes:
+      - minio-data:/data
+    ports:
+      - "127.0.0.1:9100:9000"   # direct MinIO, used only for staging/upload
+      - "127.0.0.1:9101:9001"   # console
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    networks: [bench]
+
+  proxy:
+    build: ./proxy
+    environment:
+      UPSTREAM: http://minio:9000
+      PROXY_PORT: "9000"
+      CONTROL_PORT: "9010"
+      LOG_DIR: /logs
+    volumes:
+      - ../results/raw:/logs
+    ports:
+      - "127.0.0.1:9200:9000"   # data path the client reads through
+      - "127.0.0.1:9210:9010"   # control API
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks: [bench]
+
+  bench:
+    build:
+      context: ..
+      dockerfile: infra/bench.Dockerfile
+    working_dir: /work
+    environment:
+      # Anonymous /vsis3 against a public-read bucket: exercises the real
+      # /vsis3 code path with no SigV4 fragility across the proxy hop.
+      AWS_S3_ENDPOINT: proxy:9000
+      AWS_HTTPS: "NO"
+      AWS_VIRTUAL_HOSTING: "FALSE"
+      AWS_NO_SIGN_REQUEST: "YES"
+      AWS_DEFAULT_REGION: us-east-1
+      GEORANGE_IO_BUCKET: georange_io
+      GEORANGE_IO_PROXY_CONTROL: http://proxy:9010
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ..:/work
+    depends_on:
+      proxy:
+        condition: service_started
+    networks: [bench]
+    # Long-lived so the harness can exec into it repeatedly.
+    command: ["sleep", "infinity"]
+
+volumes:
+  minio-data:
+
+networks:
+  bench:
+    driver: bridge

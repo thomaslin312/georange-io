@@ -1,0 +1,8 @@
+results/raw/**/*.jsonl.tmp
+__pycache__/
+*.pyc
+.venv/
+data/staging/
+.DS_Store
+infra/minio-data/
+results/cog_index.json
