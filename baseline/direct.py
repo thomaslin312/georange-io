@@ -19,7 +19,9 @@ _ENV = dict(
     CPL_VSIL_CURL_ALLOWED_EXTENSIONS=".tif",
     GDAL_HTTP_MAX_RETRY="5",
     GDAL_HTTP_RETRY_DELAY="1",
-    GDAL_CACHEMAX="512",
+    # rasterio passes this straight to GDALSetCacheMax64, which
+    # takes bytes and requires an int.
+    GDAL_CACHEMAX=1024 * 1024 ** 2,
     VSI_CACHE="TRUE",
     VSI_CACHE_SIZE="268435456",
 )

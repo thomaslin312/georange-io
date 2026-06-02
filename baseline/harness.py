@@ -220,12 +220,13 @@ def analyse_log(path: Path, theoretical: dict) -> dict:
         statuses[st] = statuses.get(st, 0) + 1
 
     mb = theoretical["min_total_bytes"]
-    mr = theoretical["min_requests"]
+    mr = theoretical.get("min_requests_coalesced") or theoretical["min_requests"]
     return {
         "bytes_fetched": n_bytes, "requests": n_req,
         "byte_amplification": (n_bytes / mb) if mb else None,
         "request_amplification": (n_req / mr) if mr else None,
         "min_total_bytes": mb, "min_requests": mr,
+        "min_requests_naive": theoretical["min_requests"],
         "min_block_bytes": theoretical["min_block_bytes"],
         "header_bytes": theoretical["header_bytes"],
         "n_blocks": theoretical["n_blocks"],

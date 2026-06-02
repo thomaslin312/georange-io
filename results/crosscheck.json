@@ -1,0 +1,24 @@
+{
+  "spec": "results/specs/w3.json",
+  "reads": 400,
+  "gdal_cpl_debug": {
+    "ranges": 20,
+    "bytes": 52862918
+  },
+  "proxy": {
+    "range_requests": 27,
+    "range_bytes": 54697926,
+    "all_requests": 27,
+    "all_bytes": 54697926
+  },
+  "agreement": {
+    "request_delta": 7,
+    "byte_delta": 1835008,
+    "byte_ratio": 1.0347125748903987
+  },
+  "note": "GDAL emits one CPL_DEBUG line per tile-data range it pulls, but none for the chunk reads it does to get a file's size and headers. The proxy counts every HTTP request. The expected difference is therefore a small number of header fetches, each exactly CPL_VSIL_CURL_CHUNK_SIZE bytes; if byte_delta divides evenly by the chunk size into request_delta reads, the two views agree completely.",
+  "header_chunk_reconciliation": {
+    "chunk_size": 262144,
+    "delta_is_whole_chunks": true
+  }
+}

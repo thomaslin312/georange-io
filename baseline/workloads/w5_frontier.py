@@ -63,12 +63,23 @@ class Surface:
 
     def _read_wc(self, gx0, gy0, w, h) -> np.ndarray:
         out = np.zeros((h, w), np.uint8)
+        covered = 0
         for key, x, y, ww, hh in self.wc.split_window(gx0, gy0, w, h):
             self.reads.append(Read(key, 0, x, y, ww, hh))
             a = self.rd.read(key, 0, x, y, ww, hh)
             ox = self.wc.origin[key][0] + x - gx0
             oy = self.wc.origin[key][1] + y - gy0
             out[oy:oy + hh, ox:ox + ww] = a
+            covered += ww * hh
+        if covered < w * h:
+            # Silently zero-filling here would map to WorldCover class 0, whose
+            # cost is enormous, and the search would route around a hole in the
+            # corpus while looking like it was routing around terrain.
+            raise RuntimeError(
+                f"land cover covers only {covered:,} of {w*h:,} requested "
+                f"cells at global ({gx0},{gy0}) {w}x{h}: the WorldCover "
+                "mosaic does not span the DEM domain, so some tiles are "
+                "missing from the corpus")
         return out
 
     def ensure(self, dx: int, dy: int) -> None:

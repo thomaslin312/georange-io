@@ -53,6 +53,9 @@ services:
       AWS_DEFAULT_REGION: us-east-1
       GEORANGE_IO_BUCKET: georange_io
       GEORANGE_IO_PROXY_CONTROL: http://proxy:9010
+      # Indexing, workload generation and the W5 oracle read MinIO directly,
+      # bypassing the proxy, so none of that traffic lands in a measurement.
+      MINIO_DIRECT: http://minio:9000
       PYTHONUNBUFFERED: "1"
     volumes:
       - ..:/work

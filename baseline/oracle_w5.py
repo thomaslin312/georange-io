@@ -57,21 +57,44 @@ def main() -> int:
     print(f"materialising {dw} x {dh} = {dw*dh/1e6:.1f} M cells "
           f"({dw*mx/1000:.0f} x {dh*my/1000:.0f} km)", flush=True)
 
+    # Enumerate the DEM blocks intersecting the domain from each tile's own
+    # block grid. Stepping by the block size in domain coordinates would skip
+    # blocks, because every tile's block grid starts at its own origin and the
+    # last block column and row of a 3600 px tile are narrower than 1024.
+    targets = []
+    for key, (gox, goy) in dem.origin.items():
+        L = idx[key]["levels"][0]
+        bw, bh = L["blockw"], L["blockh"]
+        for by in range(L["nby"]):
+            for bx in range(L["nbx"]):
+                gx = gox + bx * bw
+                gy = goy + by * bh
+                x0, y0 = gx - ox, gy - oy
+                x1 = min(dw, x0 + bw)
+                y1 = min(dh, y0 + bh)
+                if x1 > max(0, x0) and y1 > max(0, y0):
+                    targets.append((max(0, x0), max(0, y0)))
+    targets.sort(key=lambda t: (t[1], t[0]))
+    print(f"  {len(targets)} DEM blocks intersect the domain", flush=True)
+
     t0 = time.time()
     with Reader() as rd:
         surf = Surface(idx, dem, wc, rd, ox, oy, dw, dh)
-        bstep = idx[dem.keys[0]]["levels"][0]["blockw"]
-        n = 0
-        for y in range(0, dh, bstep):
-            for x in range(0, dw, bstep):
-                surf.ensure(x, y)
-                n += 1
-            print(f"  row {y//bstep+1}/{(dh+bstep-1)//bstep}  "
-                  f"blocks resident {len(surf.loaded)}", flush=True)
+        for i, (x, y) in enumerate(targets, 1):
+            surf.ensure(x, y)
+            if i % 10 == 0 or i == len(targets):
+                print(f"  {i}/{len(targets)} blocks resident "
+                      f"{len(surf.loaded)}", flush=True)
     t_mat = time.time() - t0
     rss_mat = peak_rss_mb()
 
     cost = surf.cost.reshape(dh, dw)
+    unresolved = int(np.isnan(cost).sum())
+    if unresolved:
+        raise RuntimeError(
+            f"{unresolved:,} of {dw*dh:,} domain cells were never covered by a "
+            "loaded block; the block enumeration is incomplete and the oracle "
+            "would route around holes rather than terrain")
     finite = np.isfinite(cost)
     print(f"materialised in {t_mat:.1f}s, peak RSS {rss_mat:.0f} MB, "
           f"{finite.mean()*100:.1f}% of cells finite, "

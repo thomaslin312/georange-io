@@ -17,6 +17,25 @@ Two denominators are reported, because they answer different questions:
                      denominator, and it is the one used for the headline
                      amplification numbers.
 
+Requests get two denominators for the same reason:
+
+  min_requests             one request per distinct block, plus one header read
+                           per file. Safe, but naive: any reader that merges
+                           adjacent blocks beats it, so amplification against
+                           it can legitimately fall below 1.
+
+  min_requests_coalesced   the number of maximal runs of required tiles that
+                           are *neighbours in the file*, plus one header read
+                           per file. Two required tiles are treated as
+                           coalescable when no other tile's data lies between
+                           them; the COG writer leaves a few bytes of ghost
+                           padding at each tile boundary (8 bytes in this
+                           corpus), which a merged request pays and which is
+                           negligible. This is what a reader achieves fetching
+                           exactly the required blocks with maximal merging,
+                           and it is the denominator used for the headline
+                           request amplification.
+
 The header term matters enormously for W2, where thousands of point samples
 touch few blocks but many files.
 
@@ -79,21 +98,51 @@ def compute(reads, index: dict | None = None) -> dict:
     n_blocks = 0
     n_empty = 0
     per_level = {}
+    needed: dict[str, set[tuple[int, int]]] = {}
     for (key, lvl), bset in touched.items():
-        cnts = idx[key]["levels"][lvl]["bytecounts"]
+        L = idx[key]["levels"][lvl]
+        cnts = L["bytecounts"]
         b = 0
         e = 0
         for bi in bset:
             if bi < len(cnts):
                 c = cnts[bi]
                 b += c
-                e += (c == 0)
+                if c == 0:
+                    e += 1
+                else:
+                    needed.setdefault(key, set()).add((lvl, bi))
         block_bytes += b
         n_blocks += len(bset)
         n_empty += e
         per_level.setdefault(str(lvl), {"blocks": 0, "bytes": 0})
         per_level[str(lvl)]["blocks"] += len(bset)
         per_level[str(lvl)]["bytes"] += b
+
+    # Maximal runs of required tiles that are neighbours in the file. Walking
+    # the file's complete tile list, a run continues while consecutive tiles
+    # are both required; anything else breaks it.
+    n_runs = 0
+    pad_bytes = 0
+    for key, want in needed.items():
+        allt = []
+        for L in idx[key]["levels"]:
+            lvl = L["level"]
+            for bi, (o, c) in enumerate(zip(L["offsets"], L["bytecounts"])):
+                if c > 0:
+                    allt.append((int(o), int(o) + int(c), lvl, bi))
+        allt.sort()
+        prev_req = False
+        prev_end = 0
+        for o, e0, lvl, bi in allt:
+            is_req = (lvl, bi) in want
+            if is_req:
+                if prev_req:
+                    pad_bytes += max(0, o - prev_end)
+                else:
+                    n_runs += 1
+            prev_req = is_req
+            prev_end = e0
 
     header_bytes = sum(idx[k]["header_bytes"] for k in files)
 
@@ -105,9 +154,16 @@ def compute(reads, index: dict | None = None) -> dict:
         "min_block_bytes": block_bytes,
         "header_bytes": header_bytes,
         "min_total_bytes": block_bytes + header_bytes,
-        # A reader that fetched every distinct block in one request each, plus
-        # one header read per file. This is the request-count denominator.
+        # One request per distinct block, plus a header read per file. Naive:
+        # any reader that merges adjacent blocks beats it.
         "min_requests": n_blocks + len(files),
+        # Maximal contiguous runs plus a header read per file: what a reader
+        # achieves fetching exactly the required blocks, wasting nothing.
+        "min_requests_coalesced": n_runs + len(files),
+        "n_contiguous_runs": n_runs,
+        # Ghost padding a maximally-merged reader would also pay. Reported for
+        # honesty; it is negligible and is not added to min_total_bytes.
+        "coalescing_pad_bytes": pad_bytes,
         "per_level": per_level,
         "missing": sorted(missing),
     }

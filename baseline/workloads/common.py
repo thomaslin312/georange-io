@@ -36,7 +36,8 @@ def finalize(spec, verbose: bool = True):
         print(f"  min block bytes     {t['min_block_bytes']/1e6:,.2f} MB")
         print(f"  header bytes        {t['header_bytes']/1e3:,.1f} kB")
         print(f"  MIN TOTAL           {t['min_total_bytes']/1e6:,.2f} MB "
-              f"in {t['min_requests']:,} requests")
+              f"in {t.get('min_requests_coalesced', t['min_requests']):,} "
+              f"coalesced requests ({t['min_requests']:,} naive)")
         if t["missing"]:
             print(f"  !! missing from index: {t['missing'][:5]}")
         print(f"  -> {out}")

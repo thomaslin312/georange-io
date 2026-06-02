@@ -5,10 +5,15 @@ Everything here works from each object's own geotransform, so no assumptions
 about registration or tiling are baked in beyond what the files declare.
 
 One property of this corpus is worth stating because W3 and W5 rely on it:
-Copernicus DEM GLO-30 is 1 arcsec and ESA WorldCover is exactly 1/3 arcsec,
-both EPSG:4326. The 3:1 ratio is exact, so a DEM cell maps onto a whole 3x3
-WorldCover group with no resampling. The cost surface therefore needs no warp,
-and no warp-induced read pattern contaminates the measurement.
+Copernicus DEM GLO-30 and ESA WorldCover are both EPSG:4326 on aligned,
+axis-parallel grids, so neither needs reprojecting to be used with the other.
+
+Their pixel sizes are 1/3600 and 1/12000 of a degree, a ratio of 10:3 rather
+than the round 3:1 the nominal "30 m and 10 m" labels suggest. A DEM cell
+therefore does not map onto a whole number of WorldCover cells. Land cover is
+sampled at DEM cell centres by nearest neighbour, which is exact for a
+categorical layer and still involves no warping, so no warp-induced read
+pattern contaminates the measurement.
 """
 from __future__ import annotations
 

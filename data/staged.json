@@ -219,6 +219,83 @@
     "tile": "N39W120",
     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N39_00_W120_00_DEM/Copernicus_DSM_COG_10_N39_00_W120_00_DEM.tif"
   },
+  "s2/11SLA/B02.tif": {
+    "bytes": 162382525,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SLA/B02.tif",
+    "role": "s2_blue",
+    "sha256": "13fd349af5b911219a87b339446072ce9762521eb6fee2bf2a7b2c5e644d3f81",
+    "skipped": false,
+    "staged_s": 265.26,
+    "tile": "11SLA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/LA/2024/9/S2A_11SLA_20240924_0_L2A/B02.tif"
+  },
+  "s2/11SLA/B03.tif": {
+    "bytes": 163497200,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SLA/B03.tif",
+    "role": "s2_green",
+    "sha256": "58b534b3437304aeb85713f31acb4db12edfb68674ef89d23cd7a22c137ba6de",
+    "skipped": false,
+    "staged_s": 261.3,
+    "tile": "11SLA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/LA/2024/9/S2A_11SLA_20240924_0_L2A/B03.tif"
+  },
+  "s2/11SLA/B04.tif": {
+    "bytes": 165369706,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SLA/B04.tif",
+    "role": "s2_red",
+    "sha256": "4bb0219f30905d0aba279406e2038b5ddfe5f995472dd736f5cb0c0e02549964",
+    "skipped": false,
+    "staged_s": 353.27,
+    "tile": "11SLA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/LA/2024/9/S2A_11SLA_20240924_0_L2A/B04.tif"
+  },
+  "s2/11SLA/B08.tif": {
+    "bytes": 162284045,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SLA/B08.tif",
+    "role": "s2_nir",
+    "sha256": "2a9d1165961f4243f6c460e1cca05b185f1c8898d1868d67e40048a5c2500ff2",
+    "skipped": false,
+    "staged_s": 240.36,
+    "tile": "11SLA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/LA/2024/9/S2A_11SLA_20240924_0_L2A/B08.tif"
+  },
+  "s2/11SLA/B11.tif": {
+    "bytes": 43085524,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SLA/B11.tif",
+    "role": "s2_swir16",
+    "sha256": "1d8d278f5545cdf1a149713656f332d0c945f8966415e01dfc54683a7f5c9294",
+    "skipped": false,
+    "staged_s": 69.7,
+    "tile": "11SLA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/LA/2024/9/S2A_11SLA_20240924_0_L2A/B11.tif"
+  },
+  "s2/11SLA/SCL.tif": {
+    "bytes": 2667801,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SLA/SCL.tif",
+    "role": "s2_scl",
+    "sha256": "6d7cd51b308623398ecafff3a85cc69054870f5dbad9b3954f8948455cfad834",
+    "skipped": false,
+    "staged_s": 4.96,
+    "tile": "11SLA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/LA/2024/9/S2A_11SLA_20240924_0_L2A/SCL.tif"
+  },
+  "s2/11SLB/B03.tif": {
+    "bytes": 104354845,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SLB/B03.tif",
+    "role": "s2_green",
+    "sha256": "8130174832734a5e9f003278cd1776f9d1d674acdc39fca2be827a7f6d2444a0",
+    "skipped": false,
+    "staged_s": 160.79,
+    "tile": "11SLB",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/LB/2024/9/S2A_11SLB_20240924_0_L2A/B03.tif"
+  },
   "worldcover/ESA_WorldCover_10m_2021_v200_N36W117_Map.tif": {
     "bytes": 114433385,
     "dataset": "esa_worldcover_v200",
@@ -240,5 +317,16 @@
     "staged_s": 323.55,
     "tile": "N36W120",
     "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N36W120_Map.tif"
+  },
+  "worldcover/ESA_WorldCover_10m_2021_v200_N39W120_Map.tif": {
+    "bytes": 113979712,
+    "dataset": "esa_worldcover_v200",
+    "key": "worldcover/ESA_WorldCover_10m_2021_v200_N39W120_Map.tif",
+    "role": "landcover",
+    "sha256": "eba26b759d0d9ea0cff25624fc1ec872d76f52b2795f70315c0d88c6070ed2e0",
+    "skipped": false,
+    "staged_s": 414.1,
+    "tile": "N39W120",
+    "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39W120_Map.tif"
   }
 }

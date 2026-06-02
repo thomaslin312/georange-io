@@ -194,6 +194,107 @@ def table_attribution(rows, rtt) -> str:
     return md_table(hdr, out)
 
 
+DATASET_TITLE = {
+    "cop_dem_glo30": "Copernicus DEM GLO-30",
+    "esa_worldcover_v200": "ESA WorldCover 10 m v200 (2021)",
+    "sentinel2_l2a": "Sentinel-2 L2A",
+}
+COMPRESSION = {1: "none", 5: "LZW", 7: "JPEG", 8: "DEFLATE", 32946: "DEFLATE",
+               50000: "ZSTD"}
+
+
+def table_corpus() -> str:
+    ip = RES / "cog_index.json"
+    sp = ROOT / "data" / "staged.json"
+    if not (ip.exists() and sp.exists()):
+        return "_corpus not indexed yet_"
+    index = json.loads(ip.read_text())
+    staged = json.loads(sp.read_text())
+    groups: dict[str, list[str]] = {}
+    for k, r in index.items():
+        groups.setdefault(r.get("dataset") or "?", []).append(k)
+    hdr = ["Dataset", "Objects", "Staged", "CRS", "Pixel size", "Block",
+           "Compression", "Overviews", "Blocks (all levels)"]
+    out = []
+    tot_b = tot_n = 0
+    for ds, keys in sorted(groups.items()):
+        e = index[sorted(keys)[0]]
+        L0 = e["levels"][0]
+        b = sum(staged[k]["bytes"] for k in keys if k in staged)
+        nblk = sum(sum(l["nbx"] * l["nby"] for l in index[k]["levels"])
+                   for k in keys)
+        px = abs(e["transform"][0])
+        px_s = (f"{px*3600:.4g} arcsec (~{px*111320:.0f} m)"
+                if e["epsg"] == 4326 else f"{px:g} m")
+        out.append([DATASET_TITLE.get(ds, ds), f"{len(keys)}",
+                    f"{b/1e9:.2f} GB", f"EPSG:{e['epsg']}", px_s,
+                    f"{L0['blockw']}x{L0['blockh']}",
+                    COMPRESSION.get(L0["compression"], str(L0["compression"])),
+                    f"{len(e['levels'])-1}", f"{nblk:,}"])
+        tot_b += b
+        tot_n += len(keys)
+    out.append(["**Total**", f"**{tot_n}**", f"**{tot_b/1e9:.2f} GB**",
+                "", "", "", "", "", ""])
+    return md_table(hdr, out)
+
+
+def table_environment(rows) -> str:
+    if not rows:
+        return "_no runs_"
+    r0 = rows[0]
+    hv = set()
+    for f in sorted((RES / "runs").glob("*.json")):
+        d = json.loads(f.read_text())
+        for p in d["passes"]:
+            hv |= set((p.get("metrics") or {}).get("http_versions", {}))
+    lines = [
+        ["GDAL", r0.get("gdal") or "?"],
+        ["libcurl", r0.get("curl") or "?"],
+        ["rasterio", json.loads(next((RES / "runs").glob("*.json")).read_text())
+         ["versions"].get("rasterio", "?")],
+        ["PROJ", json.loads(next((RES / "runs").glob("*.json")).read_text())
+         ["versions"].get("proj", "?")],
+        ["HTTP version negotiated", ", ".join(sorted(hv)) or "?"],
+        ["Object store", "MinIO, single node, local disk"],
+        ["Injected jitter", "0 ms (byte counts stay reproducible)"],
+        ["Injected connection setup cost", "0 ms (generous to GDAL)"],
+    ]
+    return md_table(["Component", "Value"], lines)
+
+
+def table_oracle() -> str:
+    p = RES / "w5_oracle.json"
+    if not p.exists():
+        return "_oracle not computed yet_"
+    d = json.loads(p.read_text())
+    m, dj, ac = d["materialise"], d["dijkstra"], d["astar_comparison"]
+    dw, dh = d["domain_px"]
+    mx, my = d["metres_per_px"]
+    rows = [
+        ["Domain", f"{dw:,} x {dh:,} px "
+                   f"({dw*mx/1000:.0f} x {dh*my/1000:.0f} km), "
+                   f"{d['cells']/1e6:.1f} M cells"],
+        ["Materialise the whole surface",
+         f"{m['wall_s']:,.1f} s, peak RSS {m['peak_rss_mb']:,.0f} MB, "
+         f"{m['dem_blocks']:,} DEM blocks over {m['reads']:,} reads"],
+        ["Dijkstra over the full surface",
+         f"{dj['wall_s']:,.1f} s, peak RSS {dj['peak_rss_mb']:,.0f} MB "
+         f"({dj['engine']})"],
+        ["Ground-truth path",
+         f"cost {dj['path_cost']:,.0f} over {dj['path_cells']:,} cells"],
+        ["W5 A* demand generator",
+         f"cost {ac['astar_cost']:,.0f}, {ac['astar_expanded']:,} cells "
+         f"expanded in {ac['astar_wall_s']:,.1f} s, "
+         f"{ac['astar_blocks_demanded']:,} DEM blocks demanded"],
+        ["A* suboptimality vs oracle",
+         f"{ac['suboptimality']*100:+.4f}%"
+         if ac.get("suboptimality") is not None else "--"],
+    ]
+    return md_table(["Quantity", "Value"], rows) + (
+        "\n\nPath geometry for both is persisted in `results/w5_oracle.json` "
+        "(`path_lonlat`) and in the W5 spec.")
+
+
 def plot_amp_vs_rtt(rows, metric="byte_amp", fname="amplification_vs_rtt.png"):
     ws = sorted({r["workload"] for r in rows})
     if not ws:
@@ -315,6 +416,9 @@ def main() -> int:
     hr = args.headline_rtt if args.headline_rtt in rtts else rtts[len(rtts) // 2]
 
     parts = {
+        "corpus": table_corpus(),
+        "environment": table_environment(rows),
+        "oracle": table_oracle(),
         "theoretical": table_theoretical(rows),
         "main_cold": table_main(rows, "cold"),
         "main_warm": table_main(rows, "warm"),
