@@ -40,6 +40,8 @@ def load_runs() -> list[dict]:
                 "req_amp": m.get("request_amplification"),
                 "min_total_bytes": m.get("min_total_bytes"),
                 "min_requests": m.get("min_requests"),
+                "min_requests_naive": m.get("min_requests_naive"),
+                "n_files": m.get("n_files"),
                 "min_block_bytes": m.get("min_block_bytes"),
                 "header_bytes": m.get("header_bytes"),
                 "n_blocks": m.get("n_blocks"),
@@ -85,18 +87,20 @@ def table_theoretical(rows) -> str:
     for r in rows:
         if r["workload"] not in seen and r["min_total_bytes"]:
             seen[r["workload"]] = r
-    hdr = ["Workload", "Reads", "Files", "Distinct blocks",
-           "Block bytes", "Header bytes", "Minimum total", "Minimum requests"]
+    hdr = ["Workload", "Reads", "Files", "Distinct blocks", "Block bytes",
+           "Header bytes", "Minimum total", "Minimum requests (coalesced)",
+           "Minimum requests (one per block)"]
     out = []
     for w in sorted(seen):
         r = seen[w]
         out.append([WORKLOAD_TITLE.get(w, w), f"{r['reads_total']:,}",
-                    f"{r['min_requests'] - r['n_blocks']:,}",
+                    f"{(r.get('n_files') or 0):,}",
                     f"{r['n_blocks']:,}",
                     f"{r['min_block_bytes']/1e6:,.1f} MB",
                     f"{r['header_bytes']/1e3:,.0f} kB",
                     f"{r['min_total_bytes']/1e6:,.1f} MB",
-                    f"{r['min_requests']:,}"])
+                    f"{r['min_requests']:,}",
+                    f"{(r.get('min_requests_naive') or 0):,}"])
     return md_table(hdr, out)
 
 

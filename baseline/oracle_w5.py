@@ -67,9 +67,9 @@ def main() -> int:
         bw, bh = L["blockw"], L["blockh"]
         for by in range(L["nby"]):
             for bx in range(L["nbx"]):
-                gx = gox + bx * bw
-                gy = goy + by * bh
-                x0, y0 = gx - ox, gy - oy
+                bgx = gox + bx * bw
+                bgy = goy + by * bh
+                x0, y0 = bgx - ox, bgy - oy
                 x1 = min(dw, x0 + bw)
                 y1 = min(dh, y0 + bh)
                 if x1 > max(0, x0) and y1 > max(0, y0):
@@ -110,6 +110,12 @@ def main() -> int:
     cum, _ = mcp.find_costs([(sy, sx)], [(gy, gx)])
     total = float(cum[gy, gx])
     path_rc = mcp.traceback((gy, gx))
+    if path_rc[0] != (sy, sx) or path_rc[-1] != (gy, gx):
+        raise RuntimeError(
+            f"traceback runs {path_rc[0]} -> {path_rc[-1]}, expected "
+            f"{(sy, sx)} -> {(gy, gx)}")
+    # An admissible A* must match Dijkstra exactly. Anything else means one of
+    # the two is wrong, not that the generator is approximate.
     t_path = time.time() - t1
     rss_all = peak_rss_mb()
 

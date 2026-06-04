@@ -227,6 +227,8 @@ def analyse_log(path: Path, theoretical: dict) -> dict:
         "request_amplification": (n_req / mr) if mr else None,
         "min_total_bytes": mb, "min_requests": mr,
         "min_requests_naive": theoretical["min_requests"],
+        "n_files": theoretical["n_files"],
+        "n_contiguous_runs": theoretical.get("n_contiguous_runs"),
         "min_block_bytes": theoretical["min_block_bytes"],
         "header_bytes": theoretical["header_bytes"],
         "n_blocks": theoretical["n_blocks"],

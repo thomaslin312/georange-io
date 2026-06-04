@@ -166,7 +166,7 @@ def pick_endpoints(idx: Index, dem: Mosaic, rng, target_km: float):
 
 
 def generate(target_km: float = 200.0, buffer_km: float = 25.0,
-             eps: float = 1.0, max_expansions: int = 6_000_000,
+             eps: float = 1.0, max_expansions: int = 40_000_000,
              seed: int = SEEDS["W5"], idx: Index | None = None) -> WorkloadSpec:
     from direct import Reader
 
@@ -319,6 +319,6 @@ if __name__ == "__main__":
     ap.add_argument("--target-km", type=float, default=200.0)
     ap.add_argument("--buffer-km", type=float, default=25.0)
     ap.add_argument("--eps", type=float, default=1.0)
-    ap.add_argument("--max-expansions", type=int, default=6_000_000)
+    ap.add_argument("--max-expansions", type=int, default=40_000_000)
     a = ap.parse_args()
     finalize(generate(a.target_km, a.buffer_km, a.eps, a.max_expansions))
