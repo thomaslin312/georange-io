@@ -417,6 +417,61 @@
     "tile": "11SLC",
     "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/LC/2024/9/S2A_11SLC_20240924_0_L2A/SCL.tif"
   },
+  "s2/11SMA/B02.tif": {
+    "bytes": 215649058,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SMA/B02.tif",
+    "role": "s2_blue",
+    "sha256": "e0382a22a33f83bf291bf0ba7792197f21e2efd1441f6edf0822c4a2f41bce0d",
+    "skipped": false,
+    "staged_s": 588.59,
+    "tile": "11SMA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/MA/2024/9/S2A_11SMA_20240924_0_L2A/B02.tif"
+  },
+  "s2/11SMA/B03.tif": {
+    "bytes": 214896998,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SMA/B03.tif",
+    "role": "s2_green",
+    "sha256": "0bac138f1337030664d04de0a71c26228f02f19e98d4e22300a131348b1a24da",
+    "skipped": false,
+    "staged_s": 668.69,
+    "tile": "11SMA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/MA/2024/9/S2A_11SMA_20240924_0_L2A/B03.tif"
+  },
+  "s2/11SMA/B04.tif": {
+    "bytes": 216988204,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SMA/B04.tif",
+    "role": "s2_red",
+    "sha256": "0a068228b43082f1fe24ecd48772516e9bb06ce4f8d250a7a7e5be5104c6bb10",
+    "skipped": false,
+    "staged_s": 388.09,
+    "tile": "11SMA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/MA/2024/9/S2A_11SMA_20240924_0_L2A/B04.tif"
+  },
+  "s2/11SMA/B11.tif": {
+    "bytes": 59233178,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SMA/B11.tif",
+    "role": "s2_swir16",
+    "sha256": "dbedcd28e396e8f08412a642087a168af6aac30c2716f17b7a6bd6020fb652bc",
+    "skipped": false,
+    "staged_s": 180.65,
+    "tile": "11SMA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/MA/2024/9/S2A_11SMA_20240924_0_L2A/B11.tif"
+  },
+  "s2/11SMA/SCL.tif": {
+    "bytes": 1173761,
+    "dataset": "sentinel2_l2a",
+    "key": "s2/11SMA/SCL.tif",
+    "role": "s2_scl",
+    "sha256": "da30881133ab00fa841173154e8641f4bb229788fd45018afc8f6c4663854053",
+    "skipped": false,
+    "staged_s": 3.03,
+    "tile": "11SMA",
+    "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/11/S/MA/2024/9/S2A_11SMA_20240924_0_L2A/SCL.tif"
+  },
   "worldcover/ESA_WorldCover_10m_2021_v200_N36W117_Map.tif": {
     "bytes": 114433385,
     "dataset": "esa_worldcover_v200",

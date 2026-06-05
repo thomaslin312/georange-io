@@ -11,14 +11,18 @@ PY      := python3
 
 HEADLINE_RTT ?= 50
 RTTS         ?= 5 50 150
+CHUNK_CONFIGS ?= TUNED_chunk16k TUNED_chunk256k TUNED_chunk1m
+RTT_CONFIGS   ?= DEFAULT TUNED_chunk256k
 CONFIGS      ?= DEFAULT TUNED_chunk16k TUNED_chunk256k TUNED_chunk1m
 WORKLOADS    ?= w1 w2 w3 w4 w5
-MAX_WALL_S   ?= 900
+MAX_WALL_S   ?= 1800
 
-.PHONY: baseline up down clean-results stage index specs sweep oracle \
-        analyze manifest report status logs verify
+.PHONY: baseline up down clean-results stage index specs sweep \
+        sweep-chunks sweep-rtt sweep-full check-rtt-invariance oracle \
+        analyze manifest report status logs verify crosscheck
 
-baseline: up stage index specs sweep oracle analyze manifest report
+baseline: up stage index specs sweep oracle crosscheck analyze \
+          check-rtt-invariance manifest report
 	@echo
 	@echo "Phase 0 complete. See REPORT.md, results/summary.csv, results/plots/."
 
@@ -55,12 +59,39 @@ specs:
 	$(BENCH) python3 baseline/generate_all.py
 
 ## --- measurement ----------------------------------------------------------
-sweep:
+#
+# Run in two phases. What GDAL fetches is decided by its own configuration and
+# by the file layout, not by how long the network takes to answer, so the
+# chunk-size sweep is run at one RTT and only the two configurations that
+# matter for the latency story are carried across the full RTT range. This
+# costs 40 measurements instead of 60 and spends far less of the budget on the
+# slow 150 ms cells. The RTT-independence of the byte and request counts is
+# checked, not assumed: `make check-rtt-invariance` verifies it against the
+# results that come out.
+sweep: sweep-chunks sweep-rtt
+
+sweep-chunks:
+	$(PY) baseline/sweep.py --workloads $(WORKLOADS) \
+	    --configs $(CHUNK_CONFIGS) --rtts $(HEADLINE_RTT) \
+	    --max-wall-s $(MAX_WALL_S) --skip-existing
+
+sweep-rtt:
+	$(PY) baseline/sweep.py --workloads $(WORKLOADS) \
+	    --configs $(RTT_CONFIGS) --rtts $(RTTS) \
+	    --max-wall-s $(MAX_WALL_S) --skip-existing
+
+sweep-full:
 	$(PY) baseline/sweep.py --workloads $(WORKLOADS) --configs $(CONFIGS) \
-	    --rtts $(RTTS) --max-wall-s $(MAX_WALL_S)
+	    --rtts $(RTTS) --max-wall-s $(MAX_WALL_S) --skip-existing
+
+check-rtt-invariance:
+	$(PY) baseline/check_invariance.py
 
 oracle:
 	$(BENCH) python3 baseline/oracle_w5.py
+
+crosscheck:
+	$(PY) baseline/crosscheck.py
 
 ## --- analysis -------------------------------------------------------------
 analyze:

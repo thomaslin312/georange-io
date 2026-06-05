@@ -35,6 +35,27 @@ def bench(args: list[str], timeout: float) -> subprocess.CompletedProcess:
                           capture_output=True, text=True, timeout=timeout)
 
 
+def kill_stragglers() -> None:
+    """A killed `docker compose exec` leaves the process running inside the
+    container. Two harnesses on one proxy corrupt each other's capture, so
+    clear any before starting."""
+    subprocess.run(COMPOSE + ["exec", "-T", "bench",
+                              "pkill", "-f", "baseline/harness.py"],
+                   capture_output=True, text=True, timeout=60)
+    # A harness killed mid-run leaves its capture session open on the proxy,
+    # which the next run's guard would refuse to start against. Close it.
+    subprocess.run(
+        COMPOSE + ["exec", "-T", "bench", "python3", "-c",
+                   "import urllib.request as u\n"
+                   "try:\n"
+                   "    u.urlopen(u.Request('http://proxy:9010/session/stop',"
+                   "data=b'{}',headers={'Content-Type':'application/json'}),"
+                   "timeout=30)\n"
+                   "except Exception:\n"
+                   "    pass\n"],
+        capture_output=True, text=True, timeout=60)
+
+
 def gzip_logs(tag: str) -> list[str]:
     out = []
     for phase in ("cold", "warm"):
@@ -61,6 +82,7 @@ def main() -> int:
     args = ap.parse_args()
 
     RUNS.mkdir(parents=True, exist_ok=True)
+    kill_stragglers()
     todo = [(w, c, r) for w in args.workloads for c in args.configs
             for r in args.rtts]
     print(f"sweep: {len(todo)} measurements "
@@ -95,9 +117,10 @@ def main() -> int:
         if cp.stdout.strip():
             print(cp.stdout.rstrip(), flush=True)
         if cp.returncode != 0:
-            failures.append((tag, cp.stderr[-800:]))
-            print(f"  FAILED rc={cp.returncode}\n{cp.stderr[-800:]}",
+            failures.append((tag, cp.stderr[-3000:]))
+            print(f"  FAILED rc={cp.returncode}\n{cp.stderr[-3000:]}",
                   file=sys.stderr, flush=True)
+            kill_stragglers()
         logs = gzip_logs(tag)
         print(f"  {time.time()-t0:.1f}s  logs: {', '.join(logs) or 'none'}",
               flush=True)

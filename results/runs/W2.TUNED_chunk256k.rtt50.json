@@ -1,0 +1,179 @@
+{
+  "workload": "W2",
+  "config": "TUNED_chunk256k",
+  "gdal_config": {
+    "AWS_S3_ENDPOINT": "proxy:9000",
+    "AWS_HTTPS": "NO",
+    "AWS_VIRTUAL_HOSTING": "FALSE",
+    "AWS_NO_SIGN_REQUEST": "YES",
+    "AWS_DEFAULT_REGION": "us-east-1",
+    "GDAL_HTTP_MERGE_CONSECUTIVE_RANGES": "YES",
+    "GDAL_HTTP_MULTIRANGE": "YES",
+    "GDAL_HTTP_MULTIPLEX": "YES",
+    "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
+    "GDAL_CACHEMAX": 2147483648,
+    "VSI_CACHE": "TRUE",
+    "VSI_CACHE_SIZE": "536870912",
+    "CPL_VSIL_CURL_ALLOWED_EXTENSIONS": ".tif",
+    "CPL_VSIL_CURL_CHUNK_SIZE": "262144"
+  },
+  "latency_ms": 50.0,
+  "jitter_ms": 0.0,
+  "connect_latency_ms": 0.0,
+  "bandwidth_mbps": 0.0,
+  "spec": {
+    "seed": 20240925,
+    "n_reads": 9893,
+    "params": {
+      "n_points": 5000,
+      "n_clusters": 40,
+      "sigma_km": 15.0,
+      "background_frac": 0.1,
+      "region": {
+        "west": -120.0,
+        "south": 36.0,
+        "east": -115.0,
+        "north": 40.0
+      },
+      "dropped_reads": 107
+    }
+  },
+  "theoretical": {
+    "n_reads": 9893,
+    "n_files": 24,
+    "n_blocks": 1832,
+    "n_empty_blocks": 0,
+    "min_block_bytes": 638939582,
+    "header_bytes": 135440,
+    "min_total_bytes": 639075022,
+    "min_requests": 1856,
+    "min_requests_coalesced": 490,
+    "n_contiguous_runs": 466,
+    "coalescing_pad_bytes": 10928,
+    "per_level": {
+      "0": {
+        "blocks": 1832,
+        "bytes": 638939582
+      }
+    },
+    "missing": []
+  },
+  "versions": {
+    "gdal": "3.13.3",
+    "rasterio": "1.5.1",
+    "rasterio_gdal": "3.13.3",
+    "proj": "9.8.1",
+    "build_info": {
+      "OGR_ENABLED": "YES",
+      "CURL_ENABLED": "YES",
+      "CURL_VERSION": "8.18.0",
+      "GEOS_ENABLED": "YES",
+      "GEOS_VERSION": "3.14.1-CAPI-1.20.5",
+      "PROJ_BUILD_VERSION": "9.8.1",
+      "PROJ_RUNTIME_VERSION": "9.8.1",
+      "COMPILER": "GCC 15.2.0"
+    },
+    "curl": "8.18.0"
+  },
+  "passes": [
+    {
+      "pass": "cold",
+      "wall_s": 140.1513,
+      "reads_executed": 9893,
+      "reads_skipped": 0,
+      "reads_total": 9893,
+      "truncated": false,
+      "peak_rss_mb": 2268.5,
+      "proxy": {
+        "record": "session_end",
+        "label": "W2.TUNED_chunk256k.rtt50.cold",
+        "n_requests": 2093,
+        "n_bytes": 1286499188,
+        "wall_s": 140.16368556022644,
+        "ts": 1788746870.1508486,
+        "path": "/logs/W2.TUNED_chunk256k.rtt50.cold.jsonl"
+      },
+      "log": "/work/results/raw/W2.TUNED_chunk256k.rtt50.cold.jsonl",
+      "checksum": 8178425.751071334,
+      "metrics": {
+        "bytes_fetched": 1286499188,
+        "requests": 2093,
+        "byte_amplification": 2.0130644192193135,
+        "request_amplification": 4.271428571428571,
+        "min_total_bytes": 639075022,
+        "min_requests": 490,
+        "min_requests_naive": 1856,
+        "n_files": 24,
+        "n_contiguous_runs": 466,
+        "min_block_bytes": 638939582,
+        "header_bytes": 135440,
+        "n_blocks": 1832,
+        "requests_by_kind": {
+          "GET_RANGE": 2093
+        },
+        "bytes_by_kind": {
+          "GET_RANGE": 1286499188
+        },
+        "distinct_keys_touched": 24,
+        "mean_range_bytes": 614667.5527950311,
+        "connections": 1,
+        "http_versions": {
+          "1.1": 2093
+        },
+        "statuses": {
+          "206": 2093
+        }
+      }
+    },
+    {
+      "pass": "warm",
+      "wall_s": 91.1109,
+      "reads_executed": 9893,
+      "reads_skipped": 0,
+      "reads_total": 9893,
+      "truncated": false,
+      "peak_rss_mb": 2277.2,
+      "proxy": {
+        "record": "session_end",
+        "label": "W2.TUNED_chunk256k.rtt50.warm",
+        "n_requests": 1417,
+        "n_bytes": 666656268,
+        "wall_s": 91.12069296836853,
+        "ts": 1788746961.3056097,
+        "path": "/logs/W2.TUNED_chunk256k.rtt50.warm.jsonl"
+      },
+      "log": "/work/results/raw/W2.TUNED_chunk256k.rtt50.warm.jsonl",
+      "checksum": 8178425.751071334,
+      "metrics": {
+        "bytes_fetched": 666656268,
+        "requests": 1417,
+        "byte_amplification": 1.043158072292802,
+        "request_amplification": 2.8918367346938774,
+        "min_total_bytes": 639075022,
+        "min_requests": 490,
+        "min_requests_naive": 1856,
+        "n_files": 24,
+        "n_contiguous_runs": 466,
+        "min_block_bytes": 638939582,
+        "header_bytes": 135440,
+        "n_blocks": 1832,
+        "requests_by_kind": {
+          "GET_RANGE": 1417
+        },
+        "bytes_by_kind": {
+          "GET_RANGE": 666656268
+        },
+        "distinct_keys_touched": 24,
+        "mean_range_bytes": 470470.196189132,
+        "connections": 1,
+        "http_versions": {
+          "1.1": 1417
+        },
+        "statuses": {
+          "206": 1417
+        }
+      }
+    }
+  ],
+  "ts": 1788746961.3468373
+}

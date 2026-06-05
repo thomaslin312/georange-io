@@ -257,6 +257,16 @@ def main() -> int:
     spec = WorkloadSpec.load(args.spec)
     cfg = CONFIGS[args.config]
 
+    # Two harnesses driving one proxy would interleave their traffic into each
+    # other's capture and silently corrupt both. Refuse to start if a capture
+    # session is already open.
+    h = ctl("/health", method="GET")
+    if h.get("session"):
+        raise RuntimeError(
+            f"the proxy already has an open capture session ({h['session']}); "
+            "another measurement is running, or a previous one was killed "
+            "mid-run. Stop it before starting this one.")
+
     ctl("/shape", {"latency_ms": args.latency_ms, "jitter_ms": args.jitter_ms,
                    "connect_latency_ms": args.connect_latency_ms,
                    "bandwidth_mbps": args.bandwidth_mbps})
