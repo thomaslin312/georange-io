@@ -5,4 +5,3 @@ __pycache__/
 data/staging/
 .DS_Store
 infra/minio-data/
-results/cog_index.json
