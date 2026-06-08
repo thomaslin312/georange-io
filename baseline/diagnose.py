@@ -6,10 +6,16 @@ proxy log the byte range is mapped back onto the object's real tile layout,
 and the bytes are split into:
 
   header        below the first tile offset: TIFF metadata a reader must read
-  needed        inside a block the workload genuinely requires, first fetch
-  redundant     inside a required block that had already been fetched
+  needed        inside a block the workload requires, up to that block's size
+  redundant     bytes of a required block beyond its size, i.e. genuinely
+                fetched more than once
   unneeded      inside a block the workload never asked for
   padding       between blocks: chunk alignment and range-merge slack
+
+A block larger than the chunk size arrives across several requests, so
+"already seen this block" is not the same as "fetched it twice". Attribution
+therefore accumulates bytes per block: the bytes that bring a block up to its
+compressed size are needed, and only what arrives after that is redundant.
 
 "needed" is bounded below by the theoretical minimum. Everything else is the
 headroom, and which bucket it lands in decides what an engine would have to do
@@ -72,7 +78,8 @@ def diagnose(log: Path, spec, index) -> dict:
            "padding": 0, "list_and_other": 0}
     n_req = 0
     n_bytes = 0
-    block_fetches: dict[tuple[str, int, int], int] = {}
+    got: dict[tuple[str, int, int], int] = {}      # bytes fetched per block
+    size_of: dict[tuple[str, int, int], int] = {}
 
     opener = gzip.open if log.suffix == ".gz" else open
     with opener(log, "rt") as fh:
@@ -117,15 +124,17 @@ def diagnose(log: Path, spec, index) -> dict:
                 ov = min(hi + 1, e) - max(lo, s)
                 if ov > 0:
                     tag = (key, lvl, bi)
+                    blk = e - s
+                    size_of[tag] = blk
+                    prev = got.get(tag, 0)
                     if bi in req.get((key, lvl), ()):
-                        if tag in seen:
-                            cat["redundant"] += ov
-                        else:
-                            cat["needed"] += ov
+                        first = max(0, min(ov, blk - prev))
+                        cat["needed"] += first
+                        cat["redundant"] += ov - first
                     else:
                         cat["unneeded"] += ov
+                    got[tag] = prev + ov
                     seen.add(tag)
-                    block_fetches[tag] = block_fetches.get(tag, 0) + 1
                     covered += ov
                 j -= 1
                 if j >= 0 and ivals[j][1] <= lo:
@@ -133,15 +142,19 @@ def diagnose(log: Path, spec, index) -> dict:
             span = hi - lo + 1
             cat["padding"] += max(0, span - covered)
 
-    refetched = {k: v for k, v in block_fetches.items() if v > 1}
+    # A block counts as refetched when more bytes arrived for it than it
+    # contains, which is refetching rather than chunked delivery.
+    refetched = {k: v for k, v in got.items() if v > size_of.get(k, 0)}
+    worst = max((v / size_of[k] for k, v in got.items() if size_of.get(k)),
+                default=0.0)
     tot = sum(cat.values()) or 1
     return {
         "requests": n_req, "bytes": n_bytes,
         "attribution_bytes": cat,
         "attribution_pct": {k: round(100.0 * v / tot, 2) for k, v in cat.items()},
-        "distinct_blocks_fetched": len(block_fetches),
+        "distinct_blocks_fetched": len(got),
         "blocks_fetched_more_than_once": len(refetched),
-        "max_fetches_of_one_block": max(block_fetches.values(), default=0),
+        "worst_block_fetch_ratio": round(worst, 2),
     }
 
 
