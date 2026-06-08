@@ -46,7 +46,7 @@ def main() -> int:
              f"`results/cog_index.json`.\n")
     r = src["region"]
     L.append(f"**Region.** Longitude {r['west']} to {r['east']}, latitude "
-             f"{r['south']} to {r['north']}: about 445 x 445 km across the "
+             f"{r['south']} to {r['north']}: 438 x 445 km across the "
              "Sierra Nevada crest, Owens Valley, Death Valley and the western "
              "Basin and Range. Relief runs from below sea level to over "
              "4,400 m, so slope-derived cost surfaces have real structure.\n")
