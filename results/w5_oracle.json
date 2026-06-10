@@ -39,23 +39,23 @@
     "slope_cap_deg": 45.0
   },
   "materialise": {
-    "wall_s": 2.81,
-    "peak_rss_mb": 350.4,
+    "wall_s": 2.95,
+    "peak_rss_mb": 355.5,
     "dem_blocks": 60,
     "reads": 120,
     "finite_fraction": 1.0
   },
   "dijkstra": {
     "engine": "skimage.graph.MCP_Geometric",
-    "wall_s": 12.26,
-    "peak_rss_mb": 3312.6,
+    "wall_s": 22.61,
+    "peak_rss_mb": 3319.3,
     "path_cost": 288631.96976551967,
     "path_cells": 8037
   },
   "astar_comparison": {
     "astar_cost": 288632.34375,
     "astar_expanded": 23444917,
-    "astar_wall_s": 101.9,
+    "astar_wall_s": 106.09,
     "astar_blocks_demanded": 43,
     "suboptimality": 1.295713986992908e-06
   },

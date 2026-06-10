@@ -1,4 +1,694 @@
 {
+  "W1.DEFAULT.rtt150.cold": {
+    "requests": 681,
+    "bytes": 852430758,
+    "attribution_bytes": {
+      "header": 311072,
+      "needed": 810023701,
+      "redundant": 37999192,
+      "unneeded": 3914437,
+      "padding": 3336,
+      "list_and_other": 179020
+    },
+    "attribution_pct": {
+      "header": 0.04,
+      "needed": 95.03,
+      "redundant": 4.46,
+      "unneeded": 0.46,
+      "padding": 0.0,
+      "list_and_other": 0.02
+    },
+    "distinct_blocks_fetched": 1323,
+    "blocks_fetched_more_than_once": 120,
+    "worst_block_fetch_ratio": 2.01
+  },
+  "W1.DEFAULT.rtt150.warm": {
+    "requests": 534,
+    "bytes": 841171459,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 810023701,
+      "redundant": 28222055,
+      "unneeded": 2922431,
+      "padding": 3272,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 96.3,
+      "redundant": 3.36,
+      "unneeded": 0.35,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1251,
+    "blocks_fetched_more_than_once": 115,
+    "worst_block_fetch_ratio": 2.01
+  },
+  "W1.DEFAULT.rtt5.cold": {
+    "requests": 681,
+    "bytes": 852430758,
+    "attribution_bytes": {
+      "header": 311072,
+      "needed": 810023701,
+      "redundant": 37999192,
+      "unneeded": 3914437,
+      "padding": 3336,
+      "list_and_other": 179020
+    },
+    "attribution_pct": {
+      "header": 0.04,
+      "needed": 95.03,
+      "redundant": 4.46,
+      "unneeded": 0.46,
+      "padding": 0.0,
+      "list_and_other": 0.02
+    },
+    "distinct_blocks_fetched": 1323,
+    "blocks_fetched_more_than_once": 120,
+    "worst_block_fetch_ratio": 2.01
+  },
+  "W1.DEFAULT.rtt5.warm": {
+    "requests": 534,
+    "bytes": 841171459,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 810023701,
+      "redundant": 28222055,
+      "unneeded": 2922431,
+      "padding": 3272,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 96.3,
+      "redundant": 3.36,
+      "unneeded": 0.35,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1251,
+    "blocks_fetched_more_than_once": 115,
+    "worst_block_fetch_ratio": 2.01
+  },
+  "W1.DEFAULT.rtt50.cold": {
+    "requests": 681,
+    "bytes": 852430758,
+    "attribution_bytes": {
+      "header": 311072,
+      "needed": 810023701,
+      "redundant": 37999192,
+      "unneeded": 3914437,
+      "padding": 3336,
+      "list_and_other": 179020
+    },
+    "attribution_pct": {
+      "header": 0.04,
+      "needed": 95.03,
+      "redundant": 4.46,
+      "unneeded": 0.46,
+      "padding": 0.0,
+      "list_and_other": 0.02
+    },
+    "distinct_blocks_fetched": 1323,
+    "blocks_fetched_more_than_once": 120,
+    "worst_block_fetch_ratio": 2.01
+  },
+  "W1.DEFAULT.rtt50.warm": {
+    "requests": 534,
+    "bytes": 841171459,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 810023701,
+      "redundant": 28222055,
+      "unneeded": 2922431,
+      "padding": 3272,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 96.3,
+      "redundant": 3.36,
+      "unneeded": 0.35,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1251,
+    "blocks_fetched_more_than_once": 115,
+    "worst_block_fetch_ratio": 2.01
+  },
+  "W1.TUNED_chunk16k.rtt150.cold": {
+    "requests": 665,
+    "bytes": 815815096,
+    "attribution_bytes": {
+      "header": 292168,
+      "needed": 810023701,
+      "redundant": 609698,
+      "unneeded": 4886365,
+      "padding": 3164,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.04,
+      "needed": 99.29,
+      "redundant": 0.07,
+      "unneeded": 0.6,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1326,
+    "blocks_fetched_more_than_once": 101,
+    "worst_block_fetch_ratio": 2.0
+  },
+  "W1.TUNED_chunk16k.rtt150.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W1.TUNED_chunk16k.rtt5.cold": {
+    "requests": 665,
+    "bytes": 815815096,
+    "attribution_bytes": {
+      "header": 292168,
+      "needed": 810023701,
+      "redundant": 609698,
+      "unneeded": 4886365,
+      "padding": 3164,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.04,
+      "needed": 99.29,
+      "redundant": 0.07,
+      "unneeded": 0.6,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1326,
+    "blocks_fetched_more_than_once": 101,
+    "worst_block_fetch_ratio": 2.0
+  },
+  "W1.TUNED_chunk16k.rtt5.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W1.TUNED_chunk16k.rtt50.cold": {
+    "requests": 665,
+    "bytes": 815815096,
+    "attribution_bytes": {
+      "header": 292168,
+      "needed": 810023701,
+      "redundant": 609698,
+      "unneeded": 4886365,
+      "padding": 3164,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.04,
+      "needed": 99.29,
+      "redundant": 0.07,
+      "unneeded": 0.6,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1326,
+    "blocks_fetched_more_than_once": 101,
+    "worst_block_fetch_ratio": 2.0
+  },
+  "W1.TUNED_chunk16k.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W1.TUNED_chunk1m.rtt50.cold": {
+    "requests": 597,
+    "bytes": 1133839493,
+    "attribution_bytes": {
+      "header": 292168,
+      "needed": 810023701,
+      "redundant": 38404919,
+      "unneeded": 285111081,
+      "padding": 7624,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.03,
+      "needed": 71.44,
+      "redundant": 3.39,
+      "unneeded": 25.15,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2268,
+    "blocks_fetched_more_than_once": 185,
+    "worst_block_fetch_ratio": 3.0
+  },
+  "W1.TUNED_chunk1m.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W1.TUNED_chunk256k.rtt50.cold": {
+    "requests": 597,
+    "bytes": 882774562,
+    "attribution_bytes": {
+      "header": 292168,
+      "needed": 810023701,
+      "redundant": 9425733,
+      "unneeded": 63028924,
+      "padding": 4036,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.03,
+      "needed": 91.76,
+      "redundant": 1.07,
+      "unneeded": 7.14,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1570,
+    "blocks_fetched_more_than_once": 156,
+    "worst_block_fetch_ratio": 2.0
+  },
+  "W1.TUNED_chunk256k.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W2.DEFAULT.rtt150.cold": {
+    "requests": 6625,
+    "bytes": 4552782683,
+    "attribution_bytes": {
+      "header": 154340,
+      "needed": 638939582,
+      "redundant": 3896821913,
+      "unneeded": 16651080,
+      "padding": 105952,
+      "list_and_other": 109816
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 14.03,
+      "redundant": 85.59,
+      "unneeded": 0.37,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2625,
+    "blocks_fetched_more_than_once": 1731,
+    "worst_block_fetch_ratio": 23.05
+  },
+  "W2.DEFAULT.rtt150.warm": {
+    "requests": 6513,
+    "bytes": 4475094627,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 638939582,
+      "redundant": 3820053077,
+      "unneeded": 15996704,
+      "padding": 105264,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 14.28,
+      "redundant": 85.36,
+      "unneeded": 0.36,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2601,
+    "blocks_fetched_more_than_once": 1731,
+    "worst_block_fetch_ratio": 22.81
+  },
+  "W2.DEFAULT.rtt5.cold": {
+    "requests": 6625,
+    "bytes": 4552782683,
+    "attribution_bytes": {
+      "header": 154340,
+      "needed": 638939582,
+      "redundant": 3896821913,
+      "unneeded": 16651080,
+      "padding": 105952,
+      "list_and_other": 109816
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 14.03,
+      "redundant": 85.59,
+      "unneeded": 0.37,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2625,
+    "blocks_fetched_more_than_once": 1731,
+    "worst_block_fetch_ratio": 23.05
+  },
+  "W2.DEFAULT.rtt5.warm": {
+    "requests": 6513,
+    "bytes": 4475094627,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 638939582,
+      "redundant": 3820053077,
+      "unneeded": 15996704,
+      "padding": 105264,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 14.28,
+      "redundant": 85.36,
+      "unneeded": 0.36,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2601,
+    "blocks_fetched_more_than_once": 1731,
+    "worst_block_fetch_ratio": 22.81
+  },
+  "W2.DEFAULT.rtt50.cold": {
+    "requests": 6625,
+    "bytes": 4552782683,
+    "attribution_bytes": {
+      "header": 154340,
+      "needed": 638939582,
+      "redundant": 3896821913,
+      "unneeded": 16651080,
+      "padding": 105952,
+      "list_and_other": 109816
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 14.03,
+      "redundant": 85.59,
+      "unneeded": 0.37,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2625,
+    "blocks_fetched_more_than_once": 1731,
+    "worst_block_fetch_ratio": 23.05
+  },
+  "W2.DEFAULT.rtt50.warm": {
+    "requests": 6513,
+    "bytes": 4475094627,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 638939582,
+      "redundant": 3820053077,
+      "unneeded": 15996704,
+      "padding": 105264,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 14.28,
+      "redundant": 85.36,
+      "unneeded": 0.36,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2601,
+    "blocks_fetched_more_than_once": 1731,
+    "worst_block_fetch_ratio": 22.81
+  },
+  "W2.TUNED_chunk16k.rtt150.cold": {
+    "requests": 2220,
+    "bytes": 769928681,
+    "attribution_bytes": {
+      "header": 135440,
+      "needed": 638939582,
+      "redundant": 121127610,
+      "unneeded": 9690833,
+      "padding": 35216,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.02,
+      "needed": 82.99,
+      "redundant": 15.73,
+      "unneeded": 1.26,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2625,
+    "blocks_fetched_more_than_once": 1638,
+    "worst_block_fetch_ratio": 5.0
+  },
+  "W2.TUNED_chunk16k.rtt150.warm": {
+    "requests": 1504,
+    "bytes": 331128961,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 282990551,
+      "redundant": 40222283,
+      "unneeded": 7891767,
+      "padding": 24360,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 85.46,
+      "redundant": 12.15,
+      "unneeded": 2.38,
+      "padding": 0.01,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2410,
+    "blocks_fetched_more_than_once": 1080,
+    "worst_block_fetch_ratio": 4.0
+  },
+  "W2.TUNED_chunk16k.rtt5.cold": {
+    "requests": 2220,
+    "bytes": 769928681,
+    "attribution_bytes": {
+      "header": 135440,
+      "needed": 638939582,
+      "redundant": 121127610,
+      "unneeded": 9690833,
+      "padding": 35216,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.02,
+      "needed": 82.99,
+      "redundant": 15.73,
+      "unneeded": 1.26,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2625,
+    "blocks_fetched_more_than_once": 1638,
+    "worst_block_fetch_ratio": 5.0
+  },
+  "W2.TUNED_chunk16k.rtt5.warm": {
+    "requests": 1504,
+    "bytes": 331128961,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 282990551,
+      "redundant": 40222283,
+      "unneeded": 7891767,
+      "padding": 24360,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 85.46,
+      "redundant": 12.15,
+      "unneeded": 2.38,
+      "padding": 0.01,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2410,
+    "blocks_fetched_more_than_once": 1080,
+    "worst_block_fetch_ratio": 4.0
+  },
+  "W2.TUNED_chunk16k.rtt50.cold": {
+    "requests": 2220,
+    "bytes": 769928681,
+    "attribution_bytes": {
+      "header": 135440,
+      "needed": 638939582,
+      "redundant": 121127610,
+      "unneeded": 9690833,
+      "padding": 35216,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.02,
+      "needed": 82.99,
+      "redundant": 15.73,
+      "unneeded": 1.26,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2625,
+    "blocks_fetched_more_than_once": 1638,
+    "worst_block_fetch_ratio": 5.0
+  },
+  "W2.TUNED_chunk16k.rtt50.warm": {
+    "requests": 1504,
+    "bytes": 331128961,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 282990551,
+      "redundant": 40222283,
+      "unneeded": 7891767,
+      "padding": 24360,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 85.46,
+      "redundant": 12.15,
+      "unneeded": 2.38,
+      "padding": 0.01,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2410,
+    "blocks_fetched_more_than_once": 1080,
+    "worst_block_fetch_ratio": 4.0
+  },
+  "W2.TUNED_chunk1m.rtt50.cold": {
+    "requests": 2039,
+    "bytes": 2894128611,
+    "attribution_bytes": {
+      "header": 135440,
+      "needed": 638939582,
+      "redundant": 1410689021,
+      "unneeded": 844093748,
+      "padding": 270820,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 22.08,
+      "redundant": 48.74,
+      "unneeded": 29.17,
+      "padding": 0.01,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 3783,
+    "blocks_fetched_more_than_once": 3545,
+    "worst_block_fetch_ratio": 25.0
+  },
+  "W2.TUNED_chunk1m.rtt50.warm": {
+    "requests": 1380,
+    "bytes": 1770800170,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 344760935,
+      "redundant": 799113697,
+      "unneeded": 626728190,
+      "padding": 197348,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 19.47,
+      "redundant": 45.13,
+      "unneeded": 35.39,
+      "padding": 0.01,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 3581,
+    "blocks_fetched_more_than_once": 3323,
+    "worst_block_fetch_ratio": 16.0
+  },
   "W2.TUNED_chunk256k.rtt50.cold": {
     "requests": 2093,
     "bytes": 1286499188,
@@ -45,6 +735,328 @@
     "blocks_fetched_more_than_once": 2255,
     "worst_block_fetch_ratio": 8.0
   },
+  "W3.DEFAULT.rtt150.cold": {
+    "requests": 849,
+    "bytes": 424579658,
+    "attribution_bytes": {
+      "header": 136700,
+      "needed": 335347704,
+      "redundant": 80708668,
+      "unneeded": 8269168,
+      "padding": 12832,
+      "list_and_other": 104586
+    },
+    "attribution_pct": {
+      "header": 0.03,
+      "needed": 78.98,
+      "redundant": 19.01,
+      "unneeded": 1.95,
+      "padding": 0.0,
+      "list_and_other": 0.02
+    },
+    "distinct_blocks_fetched": 1273,
+    "blocks_fetched_more_than_once": 423,
+    "worst_block_fetch_ratio": 4.68
+  },
+  "W3.DEFAULT.rtt150.warm": {
+    "requests": 779,
+    "bytes": 408283525,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 335347704,
+      "redundant": 65123259,
+      "unneeded": 7800022,
+      "padding": 12540,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 82.14,
+      "redundant": 15.95,
+      "unneeded": 1.91,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1250,
+    "blocks_fetched_more_than_once": 416,
+    "worst_block_fetch_ratio": 4.68
+  },
+  "W3.DEFAULT.rtt5.cold": {
+    "requests": 849,
+    "bytes": 424579658,
+    "attribution_bytes": {
+      "header": 136700,
+      "needed": 335347704,
+      "redundant": 80708668,
+      "unneeded": 8269168,
+      "padding": 12832,
+      "list_and_other": 104586
+    },
+    "attribution_pct": {
+      "header": 0.03,
+      "needed": 78.98,
+      "redundant": 19.01,
+      "unneeded": 1.95,
+      "padding": 0.0,
+      "list_and_other": 0.02
+    },
+    "distinct_blocks_fetched": 1273,
+    "blocks_fetched_more_than_once": 423,
+    "worst_block_fetch_ratio": 4.68
+  },
+  "W3.DEFAULT.rtt5.warm": {
+    "requests": 779,
+    "bytes": 408283525,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 335347704,
+      "redundant": 65123259,
+      "unneeded": 7800022,
+      "padding": 12540,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 82.14,
+      "redundant": 15.95,
+      "unneeded": 1.91,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1250,
+    "blocks_fetched_more_than_once": 416,
+    "worst_block_fetch_ratio": 4.68
+  },
+  "W3.DEFAULT.rtt50.cold": {
+    "requests": 849,
+    "bytes": 424579658,
+    "attribution_bytes": {
+      "header": 136700,
+      "needed": 335347704,
+      "redundant": 80708668,
+      "unneeded": 8269168,
+      "padding": 12832,
+      "list_and_other": 104586
+    },
+    "attribution_pct": {
+      "header": 0.03,
+      "needed": 78.98,
+      "redundant": 19.01,
+      "unneeded": 1.95,
+      "padding": 0.0,
+      "list_and_other": 0.02
+    },
+    "distinct_blocks_fetched": 1273,
+    "blocks_fetched_more_than_once": 423,
+    "worst_block_fetch_ratio": 4.68
+  },
+  "W3.DEFAULT.rtt50.warm": {
+    "requests": 779,
+    "bytes": 408283525,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 335347704,
+      "redundant": 65123259,
+      "unneeded": 7800022,
+      "padding": 12540,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 82.14,
+      "redundant": 15.95,
+      "unneeded": 1.91,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1250,
+    "blocks_fetched_more_than_once": 416,
+    "worst_block_fetch_ratio": 4.68
+  },
+  "W3.TUNED_chunk16k.rtt150.cold": {
+    "requests": 749,
+    "bytes": 350820621,
+    "attribution_bytes": {
+      "header": 134180,
+      "needed": 335347704,
+      "redundant": 7009754,
+      "unneeded": 8317603,
+      "padding": 11380,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.04,
+      "needed": 95.59,
+      "redundant": 2.0,
+      "unneeded": 2.37,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1273,
+    "blocks_fetched_more_than_once": 348,
+    "worst_block_fetch_ratio": 3.0
+  },
+  "W3.TUNED_chunk16k.rtt150.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W3.TUNED_chunk16k.rtt5.cold": {
+    "requests": 749,
+    "bytes": 350820621,
+    "attribution_bytes": {
+      "header": 134180,
+      "needed": 335347704,
+      "redundant": 7009754,
+      "unneeded": 8317603,
+      "padding": 11380,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.04,
+      "needed": 95.59,
+      "redundant": 2.0,
+      "unneeded": 2.37,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1273,
+    "blocks_fetched_more_than_once": 348,
+    "worst_block_fetch_ratio": 3.0
+  },
+  "W3.TUNED_chunk16k.rtt5.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W3.TUNED_chunk16k.rtt50.cold": {
+    "requests": 749,
+    "bytes": 350820621,
+    "attribution_bytes": {
+      "header": 134180,
+      "needed": 335347704,
+      "redundant": 7009754,
+      "unneeded": 8317603,
+      "padding": 11380,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.04,
+      "needed": 95.59,
+      "redundant": 2.0,
+      "unneeded": 2.37,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1273,
+    "blocks_fetched_more_than_once": 348,
+    "worst_block_fetch_ratio": 3.0
+  },
+  "W3.TUNED_chunk16k.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W3.TUNED_chunk1m.rtt50.cold": {
+    "requests": 613,
+    "bytes": 809164488,
+    "attribution_bytes": {
+      "header": 134180,
+      "needed": 335347704,
+      "redundant": 151883625,
+      "unneeded": 321743319,
+      "padding": 55660,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.02,
+      "needed": 41.44,
+      "redundant": 18.77,
+      "unneeded": 39.76,
+      "padding": 0.01,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2922,
+    "blocks_fetched_more_than_once": 2031,
+    "worst_block_fetch_ratio": 6.0
+  },
+  "W3.TUNED_chunk1m.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
   "W3.TUNED_chunk256k.rtt50.cold": {
     "requests": 647,
     "bytes": 457426915,
@@ -69,6 +1081,696 @@
     "worst_block_fetch_ratio": 4.0
   },
   "W3.TUNED_chunk256k.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W4.DEFAULT.rtt150.cold": {
+    "requests": 549,
+    "bytes": 344787386,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 328925896,
+      "redundant": 229376,
+      "unneeded": 15570496,
+      "padding": 0,
+      "list_and_other": 18874
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 95.4,
+      "redundant": 0.07,
+      "unneeded": 4.52,
+      "padding": 0.0,
+      "list_and_other": 0.01
+    },
+    "distinct_blocks_fetched": 1429,
+    "blocks_fetched_more_than_once": 28,
+    "worst_block_fetch_ratio": 1.01
+  },
+  "W4.DEFAULT.rtt150.warm": {
+    "requests": 441,
+    "bytes": 237944832,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 226586768,
+      "redundant": 0,
+      "unneeded": 11315320,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.02,
+      "needed": 95.23,
+      "redundant": 0.0,
+      "unneeded": 4.76,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1230,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 1.0
+  },
+  "W4.DEFAULT.rtt5.cold": {
+    "requests": 549,
+    "bytes": 344787386,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 328925896,
+      "redundant": 229376,
+      "unneeded": 15570496,
+      "padding": 0,
+      "list_and_other": 18874
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 95.4,
+      "redundant": 0.07,
+      "unneeded": 4.52,
+      "padding": 0.0,
+      "list_and_other": 0.01
+    },
+    "distinct_blocks_fetched": 1429,
+    "blocks_fetched_more_than_once": 28,
+    "worst_block_fetch_ratio": 1.01
+  },
+  "W4.DEFAULT.rtt5.warm": {
+    "requests": 441,
+    "bytes": 237944832,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 226586768,
+      "redundant": 0,
+      "unneeded": 11315320,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.02,
+      "needed": 95.23,
+      "redundant": 0.0,
+      "unneeded": 4.76,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1230,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 1.0
+  },
+  "W4.DEFAULT.rtt50.cold": {
+    "requests": 549,
+    "bytes": 344787386,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 328925896,
+      "redundant": 229376,
+      "unneeded": 15570496,
+      "padding": 0,
+      "list_and_other": 18874
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 95.4,
+      "redundant": 0.07,
+      "unneeded": 4.52,
+      "padding": 0.0,
+      "list_and_other": 0.01
+    },
+    "distinct_blocks_fetched": 1429,
+    "blocks_fetched_more_than_once": 28,
+    "worst_block_fetch_ratio": 1.01
+  },
+  "W4.DEFAULT.rtt50.warm": {
+    "requests": 441,
+    "bytes": 237944832,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 226586768,
+      "redundant": 0,
+      "unneeded": 11315320,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.02,
+      "needed": 95.23,
+      "redundant": 0.0,
+      "unneeded": 4.76,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1230,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 1.0
+  },
+  "W4.TUNED_chunk16k.rtt150.cold": {
+    "requests": 549,
+    "bytes": 344768512,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 328925896,
+      "redundant": 229376,
+      "unneeded": 15570496,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 95.4,
+      "redundant": 0.07,
+      "unneeded": 4.52,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1429,
+    "blocks_fetched_more_than_once": 28,
+    "worst_block_fetch_ratio": 1.01
+  },
+  "W4.TUNED_chunk16k.rtt150.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W4.TUNED_chunk16k.rtt5.cold": {
+    "requests": 549,
+    "bytes": 344768512,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 328925896,
+      "redundant": 229376,
+      "unneeded": 15570496,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 95.4,
+      "redundant": 0.07,
+      "unneeded": 4.52,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1429,
+    "blocks_fetched_more_than_once": 28,
+    "worst_block_fetch_ratio": 1.01
+  },
+  "W4.TUNED_chunk16k.rtt5.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W4.TUNED_chunk16k.rtt50.cold": {
+    "requests": 549,
+    "bytes": 344768512,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 328925896,
+      "redundant": 229376,
+      "unneeded": 15570496,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 95.4,
+      "redundant": 0.07,
+      "unneeded": 4.52,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1429,
+    "blocks_fetched_more_than_once": 28,
+    "worst_block_fetch_ratio": 1.01
+  },
+  "W4.TUNED_chunk16k.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W4.TUNED_chunk1m.rtt50.cold": {
+    "requests": 356,
+    "bytes": 643825664,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 328925896,
+      "redundant": 26911310,
+      "unneeded": 287945714,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 51.09,
+      "redundant": 4.18,
+      "unneeded": 44.72,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 2059,
+    "blocks_fetched_more_than_once": 97,
+    "worst_block_fetch_ratio": 2.0
+  },
+  "W4.TUNED_chunk1m.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W4.TUNED_chunk256k.rtt50.cold": {
+    "requests": 499,
+    "bytes": 423624704,
+    "attribution_bytes": {
+      "header": 42744,
+      "needed": 328925896,
+      "redundant": 4456448,
+      "unneeded": 90199616,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 77.65,
+      "redundant": 1.05,
+      "unneeded": 21.29,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 1645,
+    "blocks_fetched_more_than_once": 33,
+    "worst_block_fetch_ratio": 1.2
+  },
+  "W4.TUNED_chunk256k.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W5.DEFAULT.rtt150.cold": {
+    "requests": 216,
+    "bytes": 109822950,
+    "attribution_bytes": {
+      "header": 91500,
+      "needed": 108679058,
+      "redundant": 687470,
+      "unneeded": 324766,
+      "padding": 4864,
+      "list_and_other": 35292
+    },
+    "attribution_pct": {
+      "header": 0.08,
+      "needed": 98.96,
+      "redundant": 0.63,
+      "unneeded": 0.3,
+      "padding": 0.0,
+      "list_and_other": 0.03
+    },
+    "distinct_blocks_fetched": 534,
+    "blocks_fetched_more_than_once": 24,
+    "worst_block_fetch_ratio": 2.0
+  },
+  "W5.DEFAULT.rtt150.warm": {
+    "requests": 188,
+    "bytes": 108564274,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 107144080,
+      "redundant": 196536,
+      "unneeded": 1219082,
+      "padding": 4576,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 98.69,
+      "redundant": 0.18,
+      "unneeded": 1.12,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 501,
+    "blocks_fetched_more_than_once": 16,
+    "worst_block_fetch_ratio": 1.03
+  },
+  "W5.DEFAULT.rtt5.cold": {
+    "requests": 216,
+    "bytes": 109822950,
+    "attribution_bytes": {
+      "header": 91500,
+      "needed": 108679058,
+      "redundant": 687470,
+      "unneeded": 324766,
+      "padding": 4864,
+      "list_and_other": 35292
+    },
+    "attribution_pct": {
+      "header": 0.08,
+      "needed": 98.96,
+      "redundant": 0.63,
+      "unneeded": 0.3,
+      "padding": 0.0,
+      "list_and_other": 0.03
+    },
+    "distinct_blocks_fetched": 534,
+    "blocks_fetched_more_than_once": 24,
+    "worst_block_fetch_ratio": 2.0
+  },
+  "W5.DEFAULT.rtt5.warm": {
+    "requests": 188,
+    "bytes": 108564274,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 107144080,
+      "redundant": 196536,
+      "unneeded": 1219082,
+      "padding": 4576,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 98.69,
+      "redundant": 0.18,
+      "unneeded": 1.12,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 501,
+    "blocks_fetched_more_than_once": 16,
+    "worst_block_fetch_ratio": 1.03
+  },
+  "W5.DEFAULT.rtt50.cold": {
+    "requests": 216,
+    "bytes": 109822950,
+    "attribution_bytes": {
+      "header": 91500,
+      "needed": 108679058,
+      "redundant": 687470,
+      "unneeded": 324766,
+      "padding": 4864,
+      "list_and_other": 35292
+    },
+    "attribution_pct": {
+      "header": 0.08,
+      "needed": 98.96,
+      "redundant": 0.63,
+      "unneeded": 0.3,
+      "padding": 0.0,
+      "list_and_other": 0.03
+    },
+    "distinct_blocks_fetched": 534,
+    "blocks_fetched_more_than_once": 24,
+    "worst_block_fetch_ratio": 2.0
+  },
+  "W5.DEFAULT.rtt50.warm": {
+    "requests": 188,
+    "bytes": 108564274,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 107144080,
+      "redundant": 196536,
+      "unneeded": 1219082,
+      "padding": 4576,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 98.69,
+      "redundant": 0.18,
+      "unneeded": 1.12,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 501,
+    "blocks_fetched_more_than_once": 16,
+    "worst_block_fetch_ratio": 1.03
+  },
+  "W5.TUNED_chunk16k.rtt150.cold": {
+    "requests": 211,
+    "bytes": 109345808,
+    "attribution_bytes": {
+      "header": 90240,
+      "needed": 108679058,
+      "redundant": 196536,
+      "unneeded": 375178,
+      "padding": 4796,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.08,
+      "needed": 99.39,
+      "redundant": 0.18,
+      "unneeded": 0.34,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 535,
+    "blocks_fetched_more_than_once": 16,
+    "worst_block_fetch_ratio": 1.03
+  },
+  "W5.TUNED_chunk16k.rtt150.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W5.TUNED_chunk16k.rtt5.cold": {
+    "requests": 211,
+    "bytes": 109345808,
+    "attribution_bytes": {
+      "header": 90240,
+      "needed": 108679058,
+      "redundant": 196536,
+      "unneeded": 375178,
+      "padding": 4796,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.08,
+      "needed": 99.39,
+      "redundant": 0.18,
+      "unneeded": 0.34,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 535,
+    "blocks_fetched_more_than_once": 16,
+    "worst_block_fetch_ratio": 1.03
+  },
+  "W5.TUNED_chunk16k.rtt5.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W5.TUNED_chunk16k.rtt50.cold": {
+    "requests": 211,
+    "bytes": 109345808,
+    "attribution_bytes": {
+      "header": 90240,
+      "needed": 108679058,
+      "redundant": 196536,
+      "unneeded": 375178,
+      "padding": 4796,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.08,
+      "needed": 99.39,
+      "redundant": 0.18,
+      "unneeded": 0.34,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 535,
+    "blocks_fetched_more_than_once": 16,
+    "worst_block_fetch_ratio": 1.03
+  },
+  "W5.TUNED_chunk16k.rtt50.warm": {
+    "requests": 0,
+    "bytes": 0,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 0,
+      "redundant": 0,
+      "unneeded": 0,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 0.0,
+      "redundant": 0.0,
+      "unneeded": 0.0,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 0,
+    "blocks_fetched_more_than_once": 0,
+    "worst_block_fetch_ratio": 0.0
+  },
+  "W5.TUNED_chunk1m.rtt50.cold": {
+    "requests": 202,
+    "bytes": 147848208,
+    "attribution_bytes": {
+      "header": 90240,
+      "needed": 108679058,
+      "redundant": 17057417,
+      "unneeded": 22016241,
+      "padding": 5252,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.06,
+      "needed": 73.51,
+      "redundant": 11.54,
+      "unneeded": 14.89,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 586,
+    "blocks_fetched_more_than_once": 22,
+    "worst_block_fetch_ratio": 2.75
+  },
+  "W5.TUNED_chunk1m.rtt50.warm": {
     "requests": 0,
     "bytes": 0,
     "attribution_bytes": {

@@ -79,7 +79,14 @@ def main() -> int:
                          "byte-for-byte reproducible")
     ap.add_argument("--max-wall-s", type=float, default=900.0)
     ap.add_argument("--skip-existing", action="store_true")
+    ap.add_argument("--bandwidth-mbps", type=float, default=0.0,
+                    help="cap response throughput; 0 is uncapped")
+    ap.add_argument("--out-dir", default="results/runs",
+                    help="where run JSON goes, relative to the repo root")
     args = ap.parse_args()
+
+    global RUNS
+    RUNS = ROOT / args.out_dir
 
     RUNS.mkdir(parents=True, exist_ok=True)
     kill_stragglers()
@@ -98,6 +105,8 @@ def main() -> int:
                   flush=True)
             continue
         tag = f"{w.upper()}.{c}.rtt{int(rtt)}"
+        if args.bandwidth_mbps:
+            tag += f".bw{int(args.bandwidth_mbps)}"
         out = RUNS / f"{tag}.json"
         if args.skip_existing and out.exists():
             print(f"[{i}/{len(todo)}] {tag}  skip (exists)", flush=True)
@@ -110,7 +119,8 @@ def main() -> int:
                     "--config", c,
                     "--latency-ms", str(rtt),
                     "--jitter-ms", str(rtt * args.jitter_frac),
-                    "--out", f"results/runs/{tag}.json",
+                    "--bandwidth-mbps", str(args.bandwidth_mbps),
+                    "--out", f"{args.out_dir}/{tag}.json",
                     "--tag", tag,
                     "--max-wall-s", str(args.max_wall_s)],
                    timeout=args.max_wall_s * 3 + 300)

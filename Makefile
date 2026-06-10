@@ -12,16 +12,16 @@ PY      := python3
 HEADLINE_RTT ?= 50
 RTTS         ?= 5 50 150
 CHUNK_CONFIGS ?= TUNED_chunk16k TUNED_chunk256k TUNED_chunk1m
-RTT_CONFIGS   ?= DEFAULT TUNED_chunk256k
+RTT_CONFIGS   ?= DEFAULT TUNED_chunk16k
 CONFIGS      ?= DEFAULT TUNED_chunk16k TUNED_chunk256k TUNED_chunk1m
 WORKLOADS    ?= w1 w2 w3 w4 w5
 MAX_WALL_S   ?= 1800
 
 .PHONY: baseline up down clean-results stage index specs sweep \
-        sweep-chunks sweep-rtt sweep-full check-rtt-invariance oracle \
+        sweep-chunks sweep-rtt sweep-full check-rtt-invariance oracle granularity \
         analyze manifest report status logs verify crosscheck
 
-baseline: up stage index specs sweep oracle crosscheck analyze \
+baseline: up stage index specs sweep oracle granularity crosscheck analyze \
           check-rtt-invariance manifest report
 	@echo
 	@echo "Phase 0 complete. See REPORT.md, results/summary.csv, results/plots/."
@@ -89,6 +89,9 @@ check-rtt-invariance:
 
 oracle:
 	$(BENCH) python3 baseline/oracle_w5.py
+
+granularity:
+	$(BENCH) python3 baseline/granularity.py
 
 crosscheck:
 	$(PY) baseline/crosscheck.py

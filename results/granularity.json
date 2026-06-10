@@ -1,0 +1,37 @@
+{
+  "W1": {
+    "unique_requested_px": 101941876,
+    "px_in_blocks_touched": 807403520,
+    "granularity_ratio": 7.92,
+    "min_total_mb": 810.32,
+    "mb_if_reads_were_pixel_exact": 102.31
+  },
+  "W2": {
+    "unique_requested_px": 9892,
+    "px_in_blocks_touched": 1920991232,
+    "granularity_ratio": 194196.44,
+    "min_total_mb": 639.08,
+    "mb_if_reads_were_pixel_exact": 0.003
+  },
+  "W3": {
+    "unique_requested_px": 300393025,
+    "px_in_blocks_touched": 913309696,
+    "granularity_ratio": 3.04,
+    "min_total_mb": 335.48,
+    "mb_if_reads_were_pixel_exact": 110.342
+  },
+  "W4": {
+    "unique_requested_px": 86171446,
+    "px_in_blocks_touched": 264241152,
+    "granularity_ratio": 3.07,
+    "min_total_mb": 328.97,
+    "mb_if_reads_were_pixel_exact": 107.28
+  },
+  "W5": {
+    "unique_requested_px": 434473604,
+    "px_in_blocks_touched": 530579456,
+    "granularity_ratio": 1.22,
+    "min_total_mb": 108.77,
+    "mb_if_reads_were_pixel_exact": 89.068
+  }
+}

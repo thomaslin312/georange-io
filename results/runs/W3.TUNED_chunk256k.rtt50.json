@@ -81,19 +81,19 @@
   "passes": [
     {
       "pass": "cold",
-      "wall_s": 37.6859,
+      "wall_s": 39.9171,
       "reads_executed": 7824,
       "reads_skipped": 0,
       "reads_total": 7824,
       "truncated": false,
-      "peak_rss_mb": 1474.1,
+      "peak_rss_mb": 1470.0,
       "proxy": {
         "record": "session_end",
         "label": "W3.TUNED_chunk256k.rtt50.cold",
         "n_requests": 647,
         "n_bytes": 457426915,
-        "wall_s": 37.695383071899414,
-        "ts": 1788746999.698431,
+        "wall_s": 39.92550015449524,
+        "ts": 1788753637.1629517,
         "path": "/logs/W3.TUNED_chunk256k.rtt50.cold.jsonl"
       },
       "log": "/work/results/raw/W3.TUNED_chunk256k.rtt50.cold.jsonl",
@@ -130,19 +130,19 @@
     },
     {
       "pass": "warm",
-      "wall_s": 0.3655,
+      "wall_s": 0.9899,
       "reads_executed": 7824,
       "reads_skipped": 0,
       "reads_total": 7824,
       "truncated": false,
-      "peak_rss_mb": 1474.5,
+      "peak_rss_mb": 1470.3,
       "proxy": {
         "record": "session_end",
         "label": "W3.TUNED_chunk256k.rtt50.warm",
         "n_requests": 0,
         "n_bytes": 0,
-        "wall_s": 0.36670565605163574,
-        "ts": 1788747000.0779848,
+        "wall_s": 1.0078198909759521,
+        "ts": 1788753638.1986287,
         "path": "/logs/W3.TUNED_chunk256k.rtt50.warm.jsonl"
       },
       "log": "/work/results/raw/W3.TUNED_chunk256k.rtt50.warm.jsonl",
@@ -170,5 +170,5 @@
       }
     }
   ],
-  "ts": 1788747000.080842
+  "ts": 1788753638.2126758
 }

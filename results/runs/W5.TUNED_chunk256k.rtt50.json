@@ -77,7 +77,7 @@
       },
       "astar": {
         "expanded": 23444917,
-        "wall_s": 101.9,
+        "wall_s": 106.09,
         "found": true,
         "path_cost": 288632.34375,
         "path_cells": 8037,
@@ -126,19 +126,19 @@
   "passes": [
     {
       "pass": "cold",
-      "wall_s": 6.9752,
+      "wall_s": 7.3294,
       "reads_executed": 86,
       "reads_skipped": 0,
       "reads_total": 86,
       "truncated": false,
-      "peak_rss_mb": 802.8,
+      "peak_rss_mb": 804.0,
       "proxy": {
         "record": "session_end",
         "label": "W5.TUNED_chunk256k.rtt50.cold",
         "n_requests": 202,
         "n_bytes": 119536656,
-        "wall_s": 6.977179527282715,
-        "ts": 1788747007.4716728,
+        "wall_s": 7.337491512298584,
+        "ts": 1788753646.1669474,
         "path": "/logs/W5.TUNED_chunk256k.rtt50.cold.jsonl"
       },
       "log": "/work/results/raw/W5.TUNED_chunk256k.rtt50.cold.jsonl",
@@ -175,19 +175,19 @@
     },
     {
       "pass": "warm",
-      "wall_s": 0.0791,
+      "wall_s": 0.2278,
       "reads_executed": 86,
       "reads_skipped": 0,
       "reads_total": 86,
       "truncated": false,
-      "peak_rss_mb": 814.1,
+      "peak_rss_mb": 815.1,
       "proxy": {
         "record": "session_end",
         "label": "W5.TUNED_chunk256k.rtt50.warm",
         "n_requests": 0,
         "n_bytes": 0,
-        "wall_s": 0.08008909225463867,
-        "ts": 1788747007.5561714,
+        "wall_s": 0.22869348526000977,
+        "ts": 1788753646.4009955,
         "path": "/logs/W5.TUNED_chunk256k.rtt50.warm.jsonl"
       },
       "log": "/work/results/raw/W5.TUNED_chunk256k.rtt50.warm.jsonl",
@@ -215,5 +215,5 @@
       }
     }
   ],
-  "ts": 1788747007.5573885
+  "ts": 1788753646.4029586
 }

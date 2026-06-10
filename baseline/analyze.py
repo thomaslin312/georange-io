@@ -299,6 +299,103 @@ def table_oracle() -> str:
         "(`path_lonlat`) and in the W5 spec.")
 
 
+def table_bandwidth() -> str:
+    """Same measurements with the response throughput capped, to separate the
+    cost of extra round trips from the cost of extra bytes."""
+    bw_dir = RES / "runs_bwcap"
+    if not bw_dir.exists() or not any(bw_dir.glob("*.json")):
+        return "_no bandwidth-capped runs present_"
+    base = {}
+    for f in sorted((RES / "runs").glob("*.json")):
+        d = json.loads(f.read_text())
+        cold = next((p for p in d["passes"] if p["pass"] == "cold"), None)
+        if cold:
+            base[(d["workload"], d["config"], d["latency_ms"])] = cold
+    rows = []
+    for f in sorted(bw_dir.glob("*.json")):
+        d = json.loads(f.read_text())
+        cold = next((p for p in d["passes"] if p["pass"] == "cold"), None)
+        if not cold:
+            continue
+        m = cold["metrics"]
+        b = base.get((d["workload"], d["config"], d["latency_ms"]))
+        un = f"{b['wall_s']:,.1f}s" if b else "--"
+        ratio = (f"{cold['wall_s'] / b['wall_s']:.2f}x" if b and b["wall_s"] else "--")
+        rows.append([WORKLOAD_TITLE.get(d["workload"], d["workload"]),
+                     CFG_LABEL.get(d["config"], d["config"]),
+                     f"{m['bytes_fetched']/1e6:,.0f} MB",
+                     f"{m['byte_amplification']:.2f}",
+                     f"{m['requests']:,}",
+                     un, f"{cold['wall_s']:,.1f}s", ratio])
+    return md_table(["Workload", "Config", "Bytes fetched", "Bytes x",
+                     "Requests", "Wall, uncapped", "Wall, 100 Mbps",
+                     "Slowdown"], rows)
+
+
+def plot_bandwidth():
+    bw_dir = RES / "runs_bwcap"
+    if not bw_dir.exists() or not any(bw_dir.glob("*.json")):
+        return
+    base = {}
+    for f in sorted((RES / "runs").glob("*.json")):
+        d = json.loads(f.read_text())
+        c = next((p for p in d["passes"] if p["pass"] == "cold"), None)
+        if c:
+            base[(d["workload"], d["config"], d["latency_ms"])] = c["wall_s"]
+    data: dict[str, dict[str, tuple[float, float]]] = {}
+    for f in sorted(bw_dir.glob("*.json")):
+        d = json.loads(f.read_text())
+        c = next((p for p in d["passes"] if p["pass"] == "cold"), None)
+        if not c:
+            continue
+        u = base.get((d["workload"], d["config"], d["latency_ms"]))
+        if u:
+            data.setdefault(d["workload"], {})[d["config"]] = (u, c["wall_s"])
+    if not data:
+        return
+    ws = sorted(data)
+    cfgs = [c for c in CFG_ORDER if any(c in data[w] for w in ws)]
+    fig, axes = plt.subplots(1, len(ws), figsize=(4.0 * len(ws), 3.8),
+                             squeeze=False)
+    for ax, w in zip(axes[0], ws):
+        x = np.arange(len(cfgs))
+        un = [data[w].get(c, (0, 0))[0] for c in cfgs]
+        cp = [data[w].get(c, (0, 0))[1] for c in cfgs]
+        ax.bar(x - 0.19, un, 0.38, label="unlimited bandwidth")
+        ax.bar(x + 0.19, cp, 0.38, label="100 Mbps")
+        ax.set_xticks(x)
+        ax.set_xticklabels([CFG_LABEL.get(c, c).replace("TUNED ", "")
+                            for c in cfgs], fontsize=9)
+        ax.set_title(WORKLOAD_TITLE.get(w, w), fontsize=10)
+        ax.set_ylabel("cold wall time (s)")
+        ax.grid(axis="y", alpha=0.25)
+    axes[0][-1].legend(fontsize=8)
+    fig.suptitle("Chunk size at 50 ms RTT: the trade only appears when "
+                 "bandwidth is finite", fontsize=11)
+    fig.tight_layout()
+    fig.savefig(PLOTS / "bandwidth_tradeoff.png", dpi=150)
+    plt.close(fig)
+
+
+def table_granularity() -> str:
+    p = RES / "granularity.json"
+    if not p.exists():
+        return "_run baseline/granularity.py_"
+    d = json.loads(p.read_text())
+    rows = []
+    for w in sorted(d):
+        r = d[w]
+        rows.append([WORKLOAD_TITLE.get(w, w),
+                     f"{r['unique_requested_px']:,}",
+                     f"{r['px_in_blocks_touched']:,}",
+                     f"{r['granularity_ratio']:,.1f}x",
+                     f"{r['min_total_mb']:,.1f} MB",
+                     f"{r['mb_if_reads_were_pixel_exact']:,.2f} MB"])
+    return md_table(["Workload", "Unique pixels requested",
+                     "Pixels in the blocks touched", "Granularity cost",
+                     "Theoretical minimum", "If reads were pixel-exact"], rows)
+
+
 def plot_amp_vs_rtt(rows, metric="byte_amp", fname="amplification_vs_rtt.png"):
     ws = sorted({r["workload"] for r in rows})
     if not ws:
@@ -428,6 +525,8 @@ def main() -> int:
         "main_warm": table_main(rows, "warm"),
         "headroom": table_headroom(rows, hr),
         "attribution": table_attribution(rows, hr),
+        "bandwidth": table_bandwidth(),
+        "granularity": table_granularity(),
     }
     (RES / "tables.json").write_text(json.dumps(parts, indent=2))
     (RES / "tables.md").write_text(
@@ -437,6 +536,7 @@ def main() -> int:
     plot_amp_vs_rtt(rows, "req_amp", "request_amplification_vs_rtt.png")
     plot_headroom(rows, hr)
     plot_attribution(rows, hr)
+    plot_bandwidth()
     print(f"tables -> {RES/'tables.md'}   plots -> {PLOTS}  "
           f"(headline RTT {hr:g} ms)")
     return 0

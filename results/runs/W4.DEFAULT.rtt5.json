@@ -1,0 +1,193 @@
+{
+  "workload": "W4",
+  "config": "DEFAULT",
+  "gdal_config": {
+    "AWS_S3_ENDPOINT": "proxy:9000",
+    "AWS_HTTPS": "NO",
+    "AWS_VIRTUAL_HOSTING": "FALSE",
+    "AWS_NO_SIGN_REQUEST": "YES",
+    "AWS_DEFAULT_REGION": "us-east-1"
+  },
+  "latency_ms": 5.0,
+  "jitter_ms": 0.0,
+  "connect_latency_ms": 0.0,
+  "bandwidth_mbps": 0.0,
+  "spec": {
+    "seed": 20240927,
+    "n_reads": 1402,
+    "params": {
+      "n_scenes": 6,
+      "scenes": [
+        "s2/11SLA/B04.tif",
+        "s2/11SLB/B04.tif",
+        "s2/11SLC/B04.tif",
+        "s2/11SMB/B04.tif",
+        "s2/11SPB/B04.tif",
+        "s2/11SPC/B04.tif"
+      ],
+      "cell_px": 256,
+      "keep_frac": 0.4,
+      "bands": [
+        "B04",
+        "B08"
+      ]
+    }
+  },
+  "theoretical": {
+    "n_reads": 1402,
+    "n_files": 12,
+    "n_blocks": 564,
+    "n_empty_blocks": 0,
+    "min_block_bytes": 328925896,
+    "header_bytes": 42744,
+    "min_total_bytes": 328968640,
+    "min_requests": 576,
+    "min_requests_coalesced": 356,
+    "n_contiguous_runs": 344,
+    "coalescing_pad_bytes": 0,
+    "per_level": {
+      "4": {
+        "blocks": 48,
+        "bytes": 5325808
+      },
+      "3": {
+        "blocks": 64,
+        "bytes": 17789123
+      },
+      "2": {
+        "blocks": 124,
+        "bytes": 39530973
+      },
+      "1": {
+        "blocks": 180,
+        "bytes": 66746199
+      },
+      "0": {
+        "blocks": 148,
+        "bytes": 199533793
+      }
+    },
+    "missing": []
+  },
+  "versions": {
+    "gdal": "3.13.3",
+    "rasterio": "1.5.1",
+    "rasterio_gdal": "3.13.3",
+    "proj": "9.8.1",
+    "build_info": {
+      "OGR_ENABLED": "YES",
+      "CURL_ENABLED": "YES",
+      "CURL_VERSION": "8.18.0",
+      "GEOS_ENABLED": "YES",
+      "GEOS_VERSION": "3.14.1-CAPI-1.20.5",
+      "PROJ_BUILD_VERSION": "9.8.1",
+      "PROJ_RUNTIME_VERSION": "9.8.1",
+      "COMPILER": "GCC 15.2.0"
+    },
+    "curl": "8.18.0"
+  },
+  "passes": [
+    {
+      "pass": "cold",
+      "wall_s": 9.7016,
+      "reads_executed": 1402,
+      "reads_skipped": 0,
+      "reads_total": 1402,
+      "truncated": false,
+      "peak_rss_mb": 688.2,
+      "proxy": {
+        "record": "session_end",
+        "label": "W4.DEFAULT.rtt5.cold",
+        "n_requests": 549,
+        "n_bytes": 344787386,
+        "wall_s": 9.712958335876465,
+        "ts": 1788758454.207504,
+        "path": "/logs/W4.DEFAULT.rtt5.cold.jsonl"
+      },
+      "log": "/work/results/raw/W4.DEFAULT.rtt5.cold.jsonl",
+      "checksum": 2402046.0,
+      "metrics": {
+        "bytes_fetched": 344787386,
+        "requests": 549,
+        "byte_amplification": 1.0480858783378257,
+        "request_amplification": 1.5421348314606742,
+        "min_total_bytes": 328968640,
+        "min_requests": 356,
+        "min_requests_naive": 576,
+        "n_files": 12,
+        "n_contiguous_runs": 344,
+        "min_block_bytes": 328925896,
+        "header_bytes": 42744,
+        "n_blocks": 564,
+        "requests_by_kind": {
+          "LIST": 12,
+          "GET_RANGE": 537
+        },
+        "bytes_by_kind": {
+          "LIST": 18874,
+          "GET_RANGE": 344768512
+        },
+        "distinct_keys_touched": 12,
+        "mean_range_bytes": 642027.024208566,
+        "connections": 1,
+        "http_versions": {
+          "1.1": 549
+        },
+        "statuses": {
+          "200": 12,
+          "206": 537
+        }
+      }
+    },
+    {
+      "pass": "warm",
+      "wall_s": 5.3147,
+      "reads_executed": 1402,
+      "reads_skipped": 0,
+      "reads_total": 1402,
+      "truncated": false,
+      "peak_rss_mb": 697.6,
+      "proxy": {
+        "record": "session_end",
+        "label": "W4.DEFAULT.rtt5.warm",
+        "n_requests": 441,
+        "n_bytes": 237944832,
+        "wall_s": 5.3159401416778564,
+        "ts": 1788758459.52962,
+        "path": "/logs/W4.DEFAULT.rtt5.warm.jsonl"
+      },
+      "log": "/work/results/raw/W4.DEFAULT.rtt5.warm.jsonl",
+      "checksum": 2402046.0,
+      "metrics": {
+        "bytes_fetched": 237944832,
+        "requests": 441,
+        "byte_amplification": 0.7233055162948054,
+        "request_amplification": 1.2387640449438202,
+        "min_total_bytes": 328968640,
+        "min_requests": 356,
+        "min_requests_naive": 576,
+        "n_files": 12,
+        "n_contiguous_runs": 344,
+        "min_block_bytes": 328925896,
+        "header_bytes": 42744,
+        "n_blocks": 564,
+        "requests_by_kind": {
+          "GET_RANGE": 441
+        },
+        "bytes_by_kind": {
+          "GET_RANGE": 237944832
+        },
+        "distinct_keys_touched": 12,
+        "mean_range_bytes": 539557.4421768708,
+        "connections": 1,
+        "http_versions": {
+          "1.1": 441
+        },
+        "statuses": {
+          "206": 441
+        }
+      }
+    }
+  ],
+  "ts": 1788758459.5508933
+}
