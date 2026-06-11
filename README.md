@@ -29,6 +29,7 @@ Useful subsets:
 make up                 # infrastructure only
 make stage index specs  # corpus and workloads, no measurement
 make sweep RTTS="50"    # one latency instead of the full sweep
+make sweep-bwcap        # the bandwidth-capped comparison on its own
 make analyze report     # regenerate tables and plots from existing runs
 ```
 
@@ -59,7 +60,15 @@ amplification = bytes_actually_fetched / bytes_theoretically_required
 ```
 
 `baseline/diagnose.py` then maps every fetched byte range back onto the real
-tile layout, so waste is attributed to a cause rather than just counted.
+tile layout, so waste is attributed to a cause rather than just counted, and
+`baseline/granularity.py` measures how much of the minimum is forced by the
+format's block size rather than by the query.
+
+Two assumptions the design rests on are checked rather than asserted.
+`baseline/check_invariance.py` confirms that what GDAL fetches does not depend
+on injected latency, which is what licenses running the chunk-size comparison at
+a single RTT. `baseline/crosscheck.py` reconciles the proxy's accounting against
+GDAL's own `CPL_DEBUG` record of the ranges it pulled.
 
 ## Reproducibility
 

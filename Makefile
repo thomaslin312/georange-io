@@ -18,7 +18,8 @@ WORKLOADS    ?= w1 w2 w3 w4 w5
 MAX_WALL_S   ?= 1800
 
 .PHONY: baseline up down clean-results stage index specs sweep \
-        sweep-chunks sweep-rtt sweep-full check-rtt-invariance oracle granularity \
+        sweep-chunks sweep-rtt sweep-bwcap sweep-full check-rtt-invariance \
+        oracle granularity \
         analyze manifest report status logs verify crosscheck
 
 baseline: up stage index specs sweep oracle granularity crosscheck analyze \
@@ -68,7 +69,7 @@ specs:
 # slow 150 ms cells. The RTT-independence of the byte and request counts is
 # checked, not assumed: `make check-rtt-invariance` verifies it against the
 # results that come out.
-sweep: sweep-chunks sweep-rtt
+sweep: sweep-chunks sweep-rtt sweep-bwcap
 
 sweep-chunks:
 	$(PY) baseline/sweep.py --workloads $(WORKLOADS) \
@@ -78,6 +79,19 @@ sweep-chunks:
 sweep-rtt:
 	$(PY) baseline/sweep.py --workloads $(WORKLOADS) \
 	    --configs $(RTT_CONFIGS) --rtts $(RTTS) \
+	    --max-wall-s $(MAX_WALL_S) --skip-existing
+
+# The testbed has effectively unlimited bandwidth, so over-fetched bytes are
+# nearly free and the chunk-size trade looks like a wash on wall time. This
+# repeats part of the matrix with the response throughput capped, which is what
+# separates the cost of extra round trips from the cost of extra bytes.
+BWCAP_MBPS    ?= 100
+BWCAP_WORKLOADS ?= w2 w3
+
+sweep-bwcap:
+	$(PY) baseline/sweep.py --workloads $(BWCAP_WORKLOADS) \
+	    --configs $(CHUNK_CONFIGS) --rtts $(HEADLINE_RTT) \
+	    --bandwidth-mbps $(BWCAP_MBPS) --out-dir results/runs_bwcap \
 	    --max-wall-s $(MAX_WALL_S) --skip-existing
 
 sweep-full:
@@ -113,6 +127,8 @@ verify:
 	print('rasterio', rasterio.__version__, 'PROJ', rasterio.__proj_version__)"
 
 clean-results:
-	rm -rf results/runs results/raw/*.jsonl results/raw/*.jsonl.gz \
+	rm -rf results/runs results/runs_bwcap results/raw/*.jsonl \
+	       results/raw/*.jsonl.gz \
 	       results/plots results/summary.csv results/tables.md \
-	       results/tables.json results/diagnosis.json
+	       results/tables.json results/diagnosis.json results/granularity.json \
+	       results/rtt_invariance.json results/w5_oracle.json
