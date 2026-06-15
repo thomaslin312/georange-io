@@ -1,0 +1,78 @@
+{
+  "sentinel2_l2a_B04": {
+    "n_tiles": 12,
+    "mean_compressed_tile_bytes": 1101093,
+    "rows": 1024,
+    "mean_full_inflate_ms": 6.656,
+    "expected_prefix_fraction_single_pixel": 0.5131,
+    "expected_saving_single_pixel": 0.4869,
+    "prefix_fraction_at_row_fraction": {
+      "0.10": 0.1046,
+      "0.25": 0.2597,
+      "0.50": 0.5176,
+      "0.75": 0.7708,
+      "0.90": 0.9076,
+      "1.00": 1.0
+    },
+    "max_overshoot_of_rowfrac": 0.2763,
+    "p95_overshoot_of_rowfrac": 0.1119,
+    "truncated_inflate_matches_gdal": true
+  },
+  "sentinel2_l2a_B08": {
+    "n_tiles": 12,
+    "mean_compressed_tile_bytes": 1047312,
+    "rows": 1024,
+    "mean_full_inflate_ms": 5.823,
+    "expected_prefix_fraction_single_pixel": 0.4962,
+    "expected_saving_single_pixel": 0.5038,
+    "prefix_fraction_at_row_fraction": {
+      "0.10": 0.0986,
+      "0.25": 0.2467,
+      "0.50": 0.4944,
+      "0.75": 0.7427,
+      "0.90": 0.896,
+      "1.00": 1.0
+    },
+    "max_overshoot_of_rowfrac": 0.0136,
+    "p95_overshoot_of_rowfrac": 0.0092,
+    "truncated_inflate_matches_gdal": true
+  },
+  "cop_dem_glo30": {
+    "n_tiles": 20,
+    "mean_compressed_tile_bytes": 2015175,
+    "rows": 1024,
+    "mean_full_inflate_ms": 9.325,
+    "expected_prefix_fraction_single_pixel": 0.5485,
+    "expected_saving_single_pixel": 0.4515,
+    "prefix_fraction_at_row_fraction": {
+      "0.10": 0.1183,
+      "0.25": 0.2973,
+      "0.50": 0.5928,
+      "0.75": 0.7987,
+      "0.90": 0.9192,
+      "1.00": 1.0
+    },
+    "max_overshoot_of_rowfrac": 0.483,
+    "p95_overshoot_of_rowfrac": 0.3642,
+    "truncated_inflate_matches_gdal": null
+  },
+  "esa_worldcover_v200": {
+    "n_tiles": 4,
+    "mean_compressed_tile_bytes": 63863,
+    "rows": 1024,
+    "mean_full_inflate_ms": 1.142,
+    "expected_prefix_fraction_single_pixel": 0.5025,
+    "expected_saving_single_pixel": 0.4975,
+    "prefix_fraction_at_row_fraction": {
+      "0.10": 0.096,
+      "0.25": 0.2509,
+      "0.50": 0.5007,
+      "0.75": 0.7607,
+      "0.90": 0.9007,
+      "1.00": 1.0
+    },
+    "max_overshoot_of_rowfrac": 0.0756,
+    "p95_overshoot_of_rowfrac": 0.0684,
+    "truncated_inflate_matches_gdal": null
+  }
+}

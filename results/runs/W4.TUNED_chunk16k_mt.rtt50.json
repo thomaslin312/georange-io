@@ -1,0 +1,192 @@
+{
+  "workload": "W4",
+  "config": "TUNED_chunk16k_mt",
+  "gdal_config": {
+    "AWS_S3_ENDPOINT": "proxy:9000",
+    "AWS_HTTPS": "NO",
+    "AWS_VIRTUAL_HOSTING": "FALSE",
+    "AWS_NO_SIGN_REQUEST": "YES",
+    "AWS_DEFAULT_REGION": "us-east-1",
+    "GDAL_HTTP_MERGE_CONSECUTIVE_RANGES": "YES",
+    "GDAL_HTTP_MULTIRANGE": "YES",
+    "GDAL_HTTP_MULTIPLEX": "YES",
+    "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
+    "GDAL_CACHEMAX": 2147483648,
+    "VSI_CACHE": "TRUE",
+    "VSI_CACHE_SIZE": "536870912",
+    "CPL_VSIL_CURL_ALLOWED_EXTENSIONS": ".tif",
+    "CPL_VSIL_CURL_CHUNK_SIZE": "16384",
+    "GDAL_NUM_THREADS": "ALL_CPUS"
+  },
+  "latency_ms": 50.0,
+  "jitter_ms": 0.0,
+  "connect_latency_ms": 0.0,
+  "bandwidth_mbps": 0.0,
+  "spec": {
+    "seed": 20240927,
+    "n_reads": 1402,
+    "params": {
+      "n_scenes": 6,
+      "scenes": [
+        "s2/11SLA/B04.tif",
+        "s2/11SLB/B04.tif",
+        "s2/11SLC/B04.tif",
+        "s2/11SMB/B04.tif",
+        "s2/11SPB/B04.tif",
+        "s2/11SPC/B04.tif"
+      ],
+      "cell_px": 256,
+      "keep_frac": 0.4,
+      "bands": [
+        "B04",
+        "B08"
+      ]
+    }
+  },
+  "theoretical": {
+    "n_reads": 1402,
+    "n_files": 12,
+    "n_blocks": 564,
+    "n_empty_blocks": 0,
+    "min_block_bytes": 328925896,
+    "header_bytes": 42744,
+    "min_total_bytes": 328968640,
+    "min_requests": 576,
+    "min_requests_coalesced": 356,
+    "n_contiguous_runs": 344,
+    "coalescing_pad_bytes": 0,
+    "per_level": {
+      "4": {
+        "blocks": 48,
+        "bytes": 5325808
+      },
+      "3": {
+        "blocks": 64,
+        "bytes": 17789123
+      },
+      "2": {
+        "blocks": 124,
+        "bytes": 39530973
+      },
+      "1": {
+        "blocks": 180,
+        "bytes": 66746199
+      },
+      "0": {
+        "blocks": 148,
+        "bytes": 199533793
+      }
+    },
+    "missing": []
+  },
+  "versions": {
+    "gdal": "3.13.3",
+    "rasterio": "1.5.1",
+    "rasterio_gdal": "3.13.3",
+    "proj": "9.8.1",
+    "build_info": {
+      "OGR_ENABLED": "YES",
+      "CURL_ENABLED": "YES",
+      "CURL_VERSION": "8.18.0",
+      "GEOS_ENABLED": "YES",
+      "GEOS_VERSION": "3.14.1-CAPI-1.20.5",
+      "PROJ_BUILD_VERSION": "9.8.1",
+      "PROJ_RUNTIME_VERSION": "9.8.1",
+      "COMPILER": "GCC 15.2.0"
+    },
+    "curl": "8.18.0"
+  },
+  "passes": [
+    {
+      "pass": "cold",
+      "wall_s": 35.8343,
+      "reads_executed": 1402,
+      "reads_skipped": 0,
+      "reads_total": 1402,
+      "truncated": false,
+      "peak_rss_mb": 692.0,
+      "proxy": {
+        "record": "session_end",
+        "label": "W4.TUNED_chunk16k_mt.rtt50.cold",
+        "n_requests": 549,
+        "n_bytes": 344768512,
+        "wall_s": 35.84106755256653,
+        "ts": 1788766579.4938548,
+        "path": "/logs/W4.TUNED_chunk16k_mt.rtt50.cold.jsonl"
+      },
+      "log": "/work/results/raw/W4.TUNED_chunk16k_mt.rtt50.cold.jsonl",
+      "checksum": 2402046.0,
+      "metrics": {
+        "bytes_fetched": 344768512,
+        "requests": 549,
+        "byte_amplification": 1.0480285050879015,
+        "request_amplification": 1.5421348314606742,
+        "min_total_bytes": 328968640,
+        "min_requests": 356,
+        "min_requests_naive": 576,
+        "n_files": 12,
+        "n_contiguous_runs": 344,
+        "min_block_bytes": 328925896,
+        "header_bytes": 42744,
+        "n_blocks": 564,
+        "requests_by_kind": {
+          "GET_RANGE": 549
+        },
+        "bytes_by_kind": {
+          "GET_RANGE": 344768512
+        },
+        "distinct_keys_touched": 12,
+        "mean_range_bytes": 627993.6466302368,
+        "connections": 1,
+        "http_versions": {
+          "1.1": 549
+        },
+        "statuses": {
+          "206": 549
+        }
+      }
+    },
+    {
+      "pass": "warm",
+      "wall_s": 0.1398,
+      "reads_executed": 1402,
+      "reads_skipped": 0,
+      "reads_total": 1402,
+      "truncated": false,
+      "peak_rss_mb": 692.2,
+      "proxy": {
+        "record": "session_end",
+        "label": "W4.TUNED_chunk16k_mt.rtt50.warm",
+        "n_requests": 0,
+        "n_bytes": 0,
+        "wall_s": 0.14162111282348633,
+        "ts": 1788766579.643287,
+        "path": "/logs/W4.TUNED_chunk16k_mt.rtt50.warm.jsonl"
+      },
+      "log": "/work/results/raw/W4.TUNED_chunk16k_mt.rtt50.warm.jsonl",
+      "checksum": 2402046.0,
+      "metrics": {
+        "bytes_fetched": 0,
+        "requests": 0,
+        "byte_amplification": 0.0,
+        "request_amplification": 0.0,
+        "min_total_bytes": 328968640,
+        "min_requests": 356,
+        "min_requests_naive": 576,
+        "n_files": 12,
+        "n_contiguous_runs": 344,
+        "min_block_bytes": 328925896,
+        "header_bytes": 42744,
+        "n_blocks": 564,
+        "requests_by_kind": {},
+        "bytes_by_kind": {},
+        "distinct_keys_touched": 0,
+        "mean_range_bytes": 0,
+        "connections": 0,
+        "http_versions": {},
+        "statuses": {}
+      }
+    }
+  ],
+  "ts": 1788766579.6475093
+}

@@ -20,9 +20,11 @@ WORKLOAD_TITLE = {
     "W1": "W1 WINDOWS", "W2": "W2 SCATTERED", "W3": "W3 LINEAR",
     "W4": "W4 HIERARCHICAL", "W5": "W5 FRONTIER",
 }
-CFG_ORDER = ["DEFAULT", "TUNED_chunk16k", "TUNED_chunk256k", "TUNED_chunk1m"]
+CFG_ORDER = ["DEFAULT", "TUNED_chunk16k", "TUNED_chunk256k", "TUNED_chunk1m",
+             "TUNED_chunk16k_mt"]
 CFG_LABEL = {"DEFAULT": "DEFAULT", "TUNED_chunk16k": "TUNED 16 kB",
-             "TUNED_chunk256k": "TUNED 256 kB", "TUNED_chunk1m": "TUNED 1 MB"}
+             "TUNED_chunk256k": "TUNED 256 kB", "TUNED_chunk1m": "TUNED 1 MB",
+             "TUNED_chunk16k_mt": "TUNED 16 kB + MT decode"}
 
 
 def load_runs() -> list[dict]:
@@ -396,6 +398,53 @@ def table_granularity() -> str:
                      "Theoretical minimum", "If reads were pixel-exact"], rows)
 
 
+def table_multithread(rows) -> str:
+    """Single-threaded against multi-threaded block decode, same I/O settings."""
+    base, mt = {}, {}
+    for r in rows:
+        if r["phase"] != "cold":
+            continue
+        if r["config"] == "TUNED_chunk16k":
+            base[(r["workload"], r["rtt_ms"])] = r
+        elif r["config"] == "TUNED_chunk16k_mt":
+            mt[(r["workload"], r["rtt_ms"])] = r
+    if not mt:
+        return "_no multi-threaded runs present_"
+    out = []
+    for k in sorted(base):
+        b, m = base[k], mt.get(k)
+        if not m:
+            continue
+        out.append([WORKLOAD_TITLE.get(k[0], k[0]), f"{k[1]:g} ms",
+                    f"{b['requests']:,}", f"{m['requests']:,}",
+                    f"{b['wall_s']:,.1f}s", f"{m['wall_s']:,.1f}s",
+                    f"{b['wall_s']/m['wall_s']:.2f}x" if m["wall_s"] else "--"])
+    return md_table(["Workload", "RTT", "Requests, 1 thread",
+                     "Requests, MT", "Wall, 1 thread", "Wall, MT",
+                     "Speedup"], out)
+
+
+def table_prefix() -> str:
+    p = RES / "prefix_decode.json"
+    if not p.exists():
+        return "_run baseline/prefix_decode.py_"
+    d = json.loads(p.read_text())
+    out = []
+    for k in sorted(d):
+        r = d[k]
+        out.append([k, f"{r['n_tiles']}",
+                    f"{r['mean_compressed_tile_bytes']/1024:,.0f} kB",
+                    f"{r['expected_prefix_fraction_single_pixel']*100:.1f}%",
+                    f"{r['expected_saving_single_pixel']*100:.1f}%",
+                    f"{r['p95_overshoot_of_rowfrac']*100:.1f}%",
+                    f"{r['max_overshoot_of_rowfrac']*100:.1f}%",
+                    {True: "yes", False: "NO", None: "n/a"}[
+                        r.get("truncated_inflate_matches_gdal")]])
+    return md_table(["Source", "Tiles", "Mean tile", "Prefix needed",
+                     "Saving", "p95 margin", "Worst margin",
+                     "Matches GDAL"], out)
+
+
 def plot_amp_vs_rtt(rows, metric="byte_amp", fname="amplification_vs_rtt.png"):
     ws = sorted({r["workload"] for r in rows})
     if not ws:
@@ -527,6 +576,8 @@ def main() -> int:
         "attribution": table_attribution(rows, hr),
         "bandwidth": table_bandwidth(),
         "granularity": table_granularity(),
+        "multithread": table_multithread(rows),
+        "prefix": table_prefix(),
     }
     (RES / "tables.json").write_text(json.dumps(parts, indent=2))
     (RES / "tables.md").write_text(

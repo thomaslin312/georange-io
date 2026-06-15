@@ -12,7 +12,7 @@ PY      := python3
 HEADLINE_RTT ?= 50
 RTTS         ?= 5 50 150
 CHUNK_CONFIGS ?= TUNED_chunk16k TUNED_chunk256k TUNED_chunk1m
-RTT_CONFIGS   ?= DEFAULT TUNED_chunk16k
+RTT_CONFIGS   ?= DEFAULT TUNED_chunk16k TUNED_chunk16k_mt
 CONFIGS      ?= DEFAULT TUNED_chunk16k TUNED_chunk256k TUNED_chunk1m
 WORKLOADS    ?= w1 w2 w3 w4 w5
 MAX_WALL_S   ?= 1800
@@ -22,7 +22,7 @@ MAX_WALL_S   ?= 1800
         oracle granularity \
         analyze manifest report status logs verify crosscheck
 
-baseline: up stage index specs sweep oracle granularity crosscheck analyze \
+baseline: up stage index specs sweep oracle granularity prefix crosscheck analyze \
           check-rtt-invariance manifest report
 	@echo
 	@echo "Phase 0 complete. See REPORT.md, results/summary.csv, results/plots/."
@@ -103,6 +103,9 @@ check-rtt-invariance:
 
 oracle:
 	$(BENCH) python3 baseline/oracle_w5.py
+
+prefix:
+	$(BENCH) python3 baseline/prefix_decode.py
 
 granularity:
 	$(BENCH) python3 baseline/granularity.py

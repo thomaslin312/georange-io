@@ -79,6 +79,13 @@ CONFIGS: dict[str, dict] = {
     "TUNED_chunk16k": {**CONNECT, **TUNED_BASE, "CPL_VSIL_CURL_CHUNK_SIZE": "16384"},
     "TUNED_chunk256k": {**CONNECT, **TUNED_BASE, "CPL_VSIL_CURL_CHUNK_SIZE": "262144"},
     "TUNED_chunk1m": {**CONNECT, **TUNED_BASE, "CPL_VSIL_CURL_CHUNK_SIZE": "1048576"},
+    # The first TUNED set was tuned for I/O and left decode single-threaded,
+    # which understates GDAL's wall time by up to 5x on this hardware. This
+    # config is the best I/O settings plus multi-threaded block decode. It is
+    # kept separate rather than folded into TUNED so the delta is visible.
+    "TUNED_chunk16k_mt": {**CONNECT, **TUNED_BASE,
+                          "CPL_VSIL_CURL_CHUNK_SIZE": "16384",
+                          "GDAL_NUM_THREADS": "ALL_CPUS"},
 }
 
 

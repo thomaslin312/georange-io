@@ -1,0 +1,181 @@
+{
+  "workload": "W1",
+  "config": "TUNED_chunk16k_mt",
+  "gdal_config": {
+    "AWS_S3_ENDPOINT": "proxy:9000",
+    "AWS_HTTPS": "NO",
+    "AWS_VIRTUAL_HOSTING": "FALSE",
+    "AWS_NO_SIGN_REQUEST": "YES",
+    "AWS_DEFAULT_REGION": "us-east-1",
+    "GDAL_HTTP_MERGE_CONSECUTIVE_RANGES": "YES",
+    "GDAL_HTTP_MULTIRANGE": "YES",
+    "GDAL_HTTP_MULTIPLEX": "YES",
+    "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
+    "GDAL_CACHEMAX": 2147483648,
+    "VSI_CACHE": "TRUE",
+    "VSI_CACHE_SIZE": "536870912",
+    "CPL_VSIL_CURL_ALLOWED_EXTENSIONS": ".tif",
+    "CPL_VSIL_CURL_CHUNK_SIZE": "16384",
+    "GDAL_NUM_THREADS": "ALL_CPUS"
+  },
+  "latency_ms": 50.0,
+  "jitter_ms": 0.0,
+  "connect_latency_ms": 0.0,
+  "bandwidth_mbps": 0.0,
+  "spec": {
+    "seed": 20240924,
+    "n_reads": 395,
+    "params": {
+      "n_windows": 200,
+      "size": 512,
+      "region": {
+        "west": -120.0,
+        "south": 36.0,
+        "east": -115.0,
+        "north": 40.0
+      },
+      "s2_bands": [
+        "B02",
+        "B03",
+        "B04",
+        "B08"
+      ],
+      "placed": {
+        "dem": 78,
+        "wc": 57,
+        "s2": 65
+      },
+      "unplaceable": 0
+    }
+  },
+  "theoretical": {
+    "n_reads": 395,
+    "n_files": 68,
+    "n_blocks": 770,
+    "n_empty_blocks": 0,
+    "min_block_bytes": 810023701,
+    "header_bytes": 292168,
+    "min_total_bytes": 810315869,
+    "min_requests": 838,
+    "min_requests_coalesced": 506,
+    "n_contiguous_runs": 438,
+    "coalescing_pad_bytes": 992,
+    "per_level": {
+      "0": {
+        "blocks": 770,
+        "bytes": 810023701
+      }
+    },
+    "missing": []
+  },
+  "versions": {
+    "gdal": "3.13.3",
+    "rasterio": "1.5.1",
+    "rasterio_gdal": "3.13.3",
+    "proj": "9.8.1",
+    "build_info": {
+      "OGR_ENABLED": "YES",
+      "CURL_ENABLED": "YES",
+      "CURL_VERSION": "8.18.0",
+      "GEOS_ENABLED": "YES",
+      "GEOS_VERSION": "3.14.1-CAPI-1.20.5",
+      "PROJ_BUILD_VERSION": "9.8.1",
+      "PROJ_RUNTIME_VERSION": "9.8.1",
+      "COMPILER": "GCC 15.2.0"
+    },
+    "curl": "8.18.0"
+  },
+  "passes": [
+    {
+      "pass": "cold",
+      "wall_s": 38.9194,
+      "reads_executed": 395,
+      "reads_skipped": 0,
+      "reads_total": 395,
+      "truncated": false,
+      "peak_rss_mb": 2105.0,
+      "proxy": {
+        "record": "session_end",
+        "label": "W1.TUNED_chunk16k_mt.rtt50.cold",
+        "n_requests": 665,
+        "n_bytes": 814010232,
+        "wall_s": 38.92442488670349,
+        "ts": 1788765373.52895,
+        "path": "/logs/W1.TUNED_chunk16k_mt.rtt50.cold.jsonl"
+      },
+      "log": "/work/results/raw/W1.TUNED_chunk16k_mt.rtt50.cold.jsonl",
+      "checksum": 507201.10358428955,
+      "metrics": {
+        "bytes_fetched": 814010232,
+        "requests": 665,
+        "byte_amplification": 1.0045591640758056,
+        "request_amplification": 1.3142292490118577,
+        "min_total_bytes": 810315869,
+        "min_requests": 506,
+        "min_requests_naive": 838,
+        "n_files": 68,
+        "n_contiguous_runs": 438,
+        "min_block_bytes": 810023701,
+        "header_bytes": 292168,
+        "n_blocks": 770,
+        "requests_by_kind": {
+          "GET_RANGE": 665
+        },
+        "bytes_by_kind": {
+          "GET_RANGE": 814010232
+        },
+        "distinct_keys_touched": 68,
+        "mean_range_bytes": 1224075.5368421052,
+        "connections": 127,
+        "http_versions": {
+          "1.1": 665
+        },
+        "statuses": {
+          "206": 665
+        }
+      }
+    },
+    {
+      "pass": "warm",
+      "wall_s": 0.2422,
+      "reads_executed": 395,
+      "reads_skipped": 0,
+      "reads_total": 395,
+      "truncated": false,
+      "peak_rss_mb": 2105.2,
+      "proxy": {
+        "record": "session_end",
+        "label": "W1.TUNED_chunk16k_mt.rtt50.warm",
+        "n_requests": 0,
+        "n_bytes": 0,
+        "wall_s": 0.24419832229614258,
+        "ts": 1788765373.7911077,
+        "path": "/logs/W1.TUNED_chunk16k_mt.rtt50.warm.jsonl"
+      },
+      "log": "/work/results/raw/W1.TUNED_chunk16k_mt.rtt50.warm.jsonl",
+      "checksum": 507201.10358428955,
+      "metrics": {
+        "bytes_fetched": 0,
+        "requests": 0,
+        "byte_amplification": 0.0,
+        "request_amplification": 0.0,
+        "min_total_bytes": 810315869,
+        "min_requests": 506,
+        "min_requests_naive": 838,
+        "n_files": 68,
+        "n_contiguous_runs": 438,
+        "min_block_bytes": 810023701,
+        "header_bytes": 292168,
+        "n_blocks": 770,
+        "requests_by_kind": {},
+        "bytes_by_kind": {},
+        "distinct_keys_touched": 0,
+        "mean_range_bytes": 0,
+        "connections": 0,
+        "http_versions": {},
+        "statuses": {}
+      }
+    }
+  ],
+  "ts": 1788765373.8148124
+}

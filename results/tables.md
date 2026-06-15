@@ -51,22 +51,27 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | W1 WINDOWS | TUNED 16 kB | 1.01 | 1.3 | 11.0s | 1.01 | 1.3 | 51.1s | 1.01 | 1.3 | 95.4s |
 | W1 WINDOWS | TUNED 256 kB | -- | -- | -- | 1.09 | 1.2 | 34.8s | -- | -- | -- |
 | W1 WINDOWS | TUNED 1 MB | -- | -- | -- | 1.40 | 1.2 | 36.0s | -- | -- | -- |
+| W1 WINDOWS | TUNED 16 kB + MT decode | 1.00 | 1.3 | 19.8s | 1.00 | 1.3 | 38.9s | 1.00 | 1.3 | 93.1s |
 | W2 SCATTERED | DEFAULT | 7.12 | 13.5 | 86.5s | 7.12 | 13.5 | 459.8s | 7.12 | 13.5 | 1,127.5s |
 | W2 SCATTERED | TUNED 16 kB | 1.20 | 4.5 | 27.9s | 1.20 | 4.5 | 146.3s | 1.20 | 4.5 | 370.9s |
 | W2 SCATTERED | TUNED 256 kB | -- | -- | -- | 2.01 | 4.3 | 139.2s | -- | -- | -- |
 | W2 SCATTERED | TUNED 1 MB | -- | -- | -- | 4.53 | 4.2 | 145.4s | -- | -- | -- |
+| W2 SCATTERED | TUNED 16 kB + MT decode | 1.20 | 4.5 | 26.6s | 1.20 | 4.5 | 141.2s | 1.20 | 4.5 | 368.5s |
 | W3 LINEAR | DEFAULT | 1.27 | 3.1 | 9.9s | 1.27 | 3.1 | 47.9s | 1.27 | 3.1 | 122.6s |
 | W3 LINEAR | TUNED 16 kB | 1.05 | 2.7 | 8.2s | 1.05 | 2.7 | 43.9s | 1.05 | 2.7 | 108.1s |
 | W3 LINEAR | TUNED 256 kB | -- | -- | -- | 1.36 | 2.4 | 39.9s | -- | -- | -- |
 | W3 LINEAR | TUNED 1 MB | -- | -- | -- | 2.41 | 2.2 | 36.8s | -- | -- | -- |
+| W3 LINEAR | TUNED 16 kB + MT decode | 1.01 | 2.8 | 8.5s | 1.01 | 2.8 | 43.1s | 1.01 | 2.8 | 108.1s |
 | W4 HIERARCHICAL | DEFAULT | 1.05 | 1.5 | 9.7s | 1.05 | 1.5 | 37.1s | 1.05 | 1.5 | 94.3s |
 | W4 HIERARCHICAL | TUNED 16 kB | 1.05 | 1.5 | 6.8s | 1.05 | 1.5 | 38.4s | 1.05 | 1.5 | 93.3s |
 | W4 HIERARCHICAL | TUNED 256 kB | -- | -- | -- | 1.29 | 1.4 | 34.1s | -- | -- | -- |
 | W4 HIERARCHICAL | TUNED 1 MB | -- | -- | -- | 1.96 | 1.0 | 26.0s | -- | -- | -- |
+| W4 HIERARCHICAL | TUNED 16 kB + MT decode | 1.05 | 1.5 | 17.1s | 1.05 | 1.5 | 35.8s | 1.05 | 1.5 | 92.5s |
 | W5 FRONTIER | DEFAULT | 1.01 | 4.3 | 1.8s | 1.01 | 4.3 | 7.4s | 1.01 | 4.3 | 18.7s |
 | W5 FRONTIER | TUNED 16 kB | 1.01 | 4.2 | 2.1s | 1.01 | 4.2 | 7.7s | 1.01 | 4.2 | 18.7s |
 | W5 FRONTIER | TUNED 256 kB | -- | -- | -- | 1.10 | 4.0 | 7.3s | -- | -- | -- |
 | W5 FRONTIER | TUNED 1 MB | -- | -- | -- | 1.36 | 4.0 | 7.6s | -- | -- | -- |
+| W5 FRONTIER | TUNED 16 kB + MT decode | 1.01 | 4.2 | 1.5s | 1.01 | 4.2 | 7.3s | 1.01 | 4.2 | 18.1s |
 
 ### main_warm
 
@@ -76,42 +81,47 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | W1 WINDOWS | TUNED 16 kB | 0.00 | 0.0 | 0.3s | 0.00 | 0.0 | 0.3s | 0.00 | 0.0 | 0.3s |
 | W1 WINDOWS | TUNED 256 kB | -- | -- | -- | 0.00 | 0.0 | 0.2s | -- | -- | -- |
 | W1 WINDOWS | TUNED 1 MB | -- | -- | -- | 0.00 | 0.0 | 0.2s | -- | -- | -- |
+| W1 WINDOWS | TUNED 16 kB + MT decode | 0.00 | 0.0 | 0.2s | 0.00 | 0.0 | 0.2s | 0.00 | 0.0 | 0.2s |
 | W2 SCATTERED | DEFAULT | 7.00 | 13.3 | 81.6s | 7.00 | 13.3 | 434.7s | 7.00 | 13.3 | 1,096.9s |
 | W2 SCATTERED | TUNED 16 kB | 0.52 | 3.1 | 16.6s | 0.52 | 3.1 | 95.6s | 0.52 | 3.1 | 248.0s |
 | W2 SCATTERED | TUNED 256 kB | -- | -- | -- | 1.04 | 2.9 | 92.4s | -- | -- | -- |
 | W2 SCATTERED | TUNED 1 MB | -- | -- | -- | 2.77 | 2.8 | 92.4s | -- | -- | -- |
+| W2 SCATTERED | TUNED 16 kB + MT decode | 0.52 | 3.1 | 16.5s | 0.52 | 3.1 | 93.0s | 0.52 | 3.1 | 246.9s |
 | W3 LINEAR | DEFAULT | 1.22 | 2.9 | 9.2s | 1.22 | 2.9 | 43.1s | 1.22 | 2.9 | 111.2s |
 | W3 LINEAR | TUNED 16 kB | 0.00 | 0.0 | 0.2s | 0.00 | 0.0 | 0.5s | 0.00 | 0.0 | 0.6s |
 | W3 LINEAR | TUNED 256 kB | -- | -- | -- | 0.00 | 0.0 | 1.0s | -- | -- | -- |
 | W3 LINEAR | TUNED 1 MB | -- | -- | -- | 0.00 | 0.0 | 0.6s | -- | -- | -- |
+| W3 LINEAR | TUNED 16 kB + MT decode | 0.00 | 0.0 | 0.4s | 0.00 | 0.0 | 0.6s | 0.00 | 0.0 | 0.7s |
 | W4 HIERARCHICAL | DEFAULT | 0.72 | 1.2 | 5.3s | 0.72 | 1.2 | 29.7s | 0.72 | 1.2 | 75.0s |
 | W4 HIERARCHICAL | TUNED 16 kB | 0.00 | 0.0 | 0.1s | 0.00 | 0.0 | 0.3s | 0.00 | 0.0 | 0.4s |
 | W4 HIERARCHICAL | TUNED 256 kB | -- | -- | -- | 0.00 | 0.0 | 0.2s | -- | -- | -- |
 | W4 HIERARCHICAL | TUNED 1 MB | -- | -- | -- | 0.00 | 0.0 | 0.3s | -- | -- | -- |
+| W4 HIERARCHICAL | TUNED 16 kB + MT decode | 0.00 | 0.0 | 0.2s | 0.00 | 0.0 | 0.1s | 0.00 | 0.0 | 0.1s |
 | W5 FRONTIER | DEFAULT | 1.00 | 3.8 | 1.2s | 1.00 | 3.8 | 6.0s | 1.00 | 3.8 | 15.7s |
 | W5 FRONTIER | TUNED 16 kB | 0.00 | 0.0 | 0.2s | 0.00 | 0.0 | 0.2s | 0.00 | 0.0 | 0.4s |
 | W5 FRONTIER | TUNED 256 kB | -- | -- | -- | 0.00 | 0.0 | 0.2s | -- | -- | -- |
 | W5 FRONTIER | TUNED 1 MB | -- | -- | -- | 0.00 | 0.0 | 0.3s | -- | -- | -- |
+| W5 FRONTIER | TUNED 16 kB + MT decode | 0.00 | 0.0 | 0.0s | 0.00 | 0.0 | 0.0s | 0.00 | 0.0 | 0.1s |
 
 ### headroom
 
 | Workload | Best TUNED | Bytes x | Requests x | Byte headroom | Request headroom | DEFAULT bytes x | Warm bytes x |
 |---|---|---|---|---|---|---|---|
-| W1 WINDOWS | TUNED 16 kB | 1.01 | 1.3 | 0.7% | 23.9% | 1.05 | 0.00 |
+| W1 WINDOWS | TUNED 16 kB + MT decode | 1.00 | 1.3 | 0.5% | 23.9% | 1.05 | 0.00 |
 | W2 SCATTERED | TUNED 16 kB | 1.20 | 4.5 | 17.0% | 77.9% | 7.12 | 0.52 |
-| W3 LINEAR | TUNED 16 kB | 1.05 | 2.7 | 4.4% | 63.6% | 1.27 | 0.00 |
+| W3 LINEAR | TUNED 16 kB + MT decode | 1.01 | 2.8 | 1.1% | 63.8% | 1.27 | 0.00 |
 | W4 HIERARCHICAL | TUNED 16 kB | 1.05 | 1.5 | 4.6% | 35.2% | 1.05 | 0.00 |
-| W5 FRONTIER | TUNED 16 kB | 1.01 | 4.2 | 0.5% | 76.3% | 1.01 | 0.00 |
+| W5 FRONTIER | TUNED 16 kB + MT decode | 1.01 | 4.2 | 0.5% | 76.3% | 1.01 | 0.00 |
 
 ### attribution
 
 | Workload | Config | Header | Needed | Redundant refetch | Never needed | Range padding | Blocks refetched |
 |---|---|---|---|---|---|---|---|
-| W1 WINDOWS | TUNED 16 kB | 0.0% | 99.3% | 0.1% | 0.6% | 0.0% | 101 of 1,326 |
+| W1 WINDOWS | TUNED 16 kB + MT decode | 0.0% | 99.5% | 0.0% | 0.4% | 0.0% | 47 of 1,093 |
 | W2 SCATTERED | TUNED 16 kB | 0.0% | 83.0% | 15.7% | 1.3% | 0.0% | 1,638 of 2,625 |
-| W3 LINEAR | TUNED 16 kB | 0.0% | 95.6% | 2.0% | 2.4% | 0.0% | 348 of 1,273 |
+| W3 LINEAR | TUNED 16 kB + MT decode | 0.0% | 98.8% | 0.1% | 1.0% | 0.0% | 44 of 927 |
 | W4 HIERARCHICAL | TUNED 16 kB | 0.0% | 95.4% | 0.1% | 4.5% | 0.0% | 28 of 1,429 |
-| W5 FRONTIER | TUNED 16 kB | 0.1% | 99.4% | 0.2% | 0.3% | 0.0% | 16 of 535 |
+| W5 FRONTIER | TUNED 16 kB + MT decode | 0.1% | 99.4% | 0.2% | 0.3% | 0.0% | 16 of 535 |
 
 ### bandwidth
 
@@ -133,3 +143,32 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | W3 LINEAR | 300,393,025 | 913,309,696 | 3.0x | 335.5 MB | 110.34 MB |
 | W4 HIERARCHICAL | 86,171,446 | 264,241,152 | 3.1x | 329.0 MB | 107.28 MB |
 | W5 FRONTIER | 434,473,604 | 530,579,456 | 1.2x | 108.8 MB | 89.07 MB |
+
+### multithread
+
+| Workload | RTT | Requests, 1 thread | Requests, MT | Wall, 1 thread | Wall, MT | Speedup |
+|---|---|---|---|---|---|---|
+| W1 WINDOWS | 5 ms | 665 | 665 | 11.0s | 19.8s | 0.56x |
+| W1 WINDOWS | 50 ms | 665 | 665 | 51.1s | 38.9s | 1.31x |
+| W1 WINDOWS | 150 ms | 665 | 665 | 95.4s | 93.1s | 1.02x |
+| W2 SCATTERED | 5 ms | 2,220 | 2,220 | 27.9s | 26.6s | 1.05x |
+| W2 SCATTERED | 50 ms | 2,220 | 2,220 | 146.3s | 141.2s | 1.04x |
+| W2 SCATTERED | 150 ms | 2,220 | 2,220 | 370.9s | 368.5s | 1.01x |
+| W3 LINEAR | 5 ms | 749 | 754 | 8.2s | 8.5s | 0.97x |
+| W3 LINEAR | 50 ms | 749 | 754 | 43.9s | 43.1s | 1.02x |
+| W3 LINEAR | 150 ms | 749 | 754 | 108.1s | 108.1s | 1.00x |
+| W4 HIERARCHICAL | 5 ms | 549 | 549 | 6.8s | 17.1s | 0.40x |
+| W4 HIERARCHICAL | 50 ms | 549 | 549 | 38.4s | 35.8s | 1.07x |
+| W4 HIERARCHICAL | 150 ms | 549 | 549 | 93.3s | 92.5s | 1.01x |
+| W5 FRONTIER | 5 ms | 211 | 211 | 2.1s | 1.5s | 1.35x |
+| W5 FRONTIER | 50 ms | 211 | 211 | 7.7s | 7.3s | 1.05x |
+| W5 FRONTIER | 150 ms | 211 | 211 | 18.7s | 18.1s | 1.03x |
+
+### prefix
+
+| Source | Tiles | Mean tile | Prefix needed | Saving | p95 margin | Worst margin | Matches GDAL |
+|---|---|---|---|---|---|---|---|
+| cop_dem_glo30 | 20 | 1,968 kB | 54.9% | 45.1% | 36.4% | 48.3% | n/a |
+| esa_worldcover_v200 | 4 | 62 kB | 50.2% | 49.8% | 6.8% | 7.6% | n/a |
+| sentinel2_l2a_B04 | 12 | 1,075 kB | 51.3% | 48.7% | 11.2% | 27.6% | yes |
+| sentinel2_l2a_B08 | 12 | 1,023 kB | 49.6% | 50.4% | 0.9% | 1.4% | yes |

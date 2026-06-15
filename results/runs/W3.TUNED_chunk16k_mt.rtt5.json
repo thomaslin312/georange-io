@@ -1,0 +1,175 @@
+{
+  "workload": "W3",
+  "config": "TUNED_chunk16k_mt",
+  "gdal_config": {
+    "AWS_S3_ENDPOINT": "proxy:9000",
+    "AWS_HTTPS": "NO",
+    "AWS_VIRTUAL_HOSTING": "FALSE",
+    "AWS_NO_SIGN_REQUEST": "YES",
+    "AWS_DEFAULT_REGION": "us-east-1",
+    "GDAL_HTTP_MERGE_CONSECUTIVE_RANGES": "YES",
+    "GDAL_HTTP_MULTIRANGE": "YES",
+    "GDAL_HTTP_MULTIPLEX": "YES",
+    "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
+    "GDAL_CACHEMAX": 2147483648,
+    "VSI_CACHE": "TRUE",
+    "VSI_CACHE_SIZE": "536870912",
+    "CPL_VSIL_CURL_ALLOWED_EXTENSIONS": ".tif",
+    "CPL_VSIL_CURL_CHUNK_SIZE": "16384",
+    "GDAL_NUM_THREADS": "ALL_CPUS"
+  },
+  "latency_ms": 5.0,
+  "jitter_ms": 0.0,
+  "connect_latency_ms": 0.0,
+  "bandwidth_mbps": 0.0,
+  "spec": {
+    "seed": 20240926,
+    "n_reads": 7824,
+    "params": {
+      "n_corridors": 20,
+      "buffer_km": 2.0,
+      "step_km": 1.0,
+      "length_km": [
+        150.0,
+        250.0
+      ],
+      "segments_per_corridor": 5,
+      "region": {
+        "west": -120.0,
+        "south": 36.0,
+        "east": -115.0,
+        "north": 40.0
+      }
+    }
+  },
+  "theoretical": {
+    "n_reads": 7824,
+    "n_files": 23,
+    "n_blocks": 871,
+    "n_empty_blocks": 0,
+    "min_block_bytes": 335347704,
+    "header_bytes": 134180,
+    "min_total_bytes": 335481884,
+    "min_requests": 894,
+    "min_requests_coalesced": 273,
+    "n_contiguous_runs": 250,
+    "coalescing_pad_bytes": 4968,
+    "per_level": {
+      "0": {
+        "blocks": 871,
+        "bytes": 335347704
+      }
+    },
+    "missing": []
+  },
+  "versions": {
+    "gdal": "3.13.3",
+    "rasterio": "1.5.1",
+    "rasterio_gdal": "3.13.3",
+    "proj": "9.8.1",
+    "build_info": {
+      "OGR_ENABLED": "YES",
+      "CURL_ENABLED": "YES",
+      "CURL_VERSION": "8.18.0",
+      "GEOS_ENABLED": "YES",
+      "GEOS_VERSION": "3.14.1-CAPI-1.20.5",
+      "PROJ_BUILD_VERSION": "9.8.1",
+      "PROJ_RUNTIME_VERSION": "9.8.1",
+      "COMPILER": "GCC 15.2.0"
+    },
+    "curl": "8.18.0"
+  },
+  "passes": [
+    {
+      "pass": "cold",
+      "wall_s": 8.4966,
+      "reads_executed": 7824,
+      "reads_skipped": 0,
+      "reads_total": 7824,
+      "truncated": false,
+      "peak_rss_mb": 1511.6,
+      "proxy": {
+        "record": "session_end",
+        "label": "W3.TUNED_chunk16k_mt.rtt5.cold",
+        "n_requests": 754,
+        "n_bytes": 339275279,
+        "wall_s": 8.499484539031982,
+        "ts": 1788766371.308926,
+        "path": "/logs/W3.TUNED_chunk16k_mt.rtt5.cold.jsonl"
+      },
+      "log": "/work/results/raw/W3.TUNED_chunk16k_mt.rtt5.cold.jsonl",
+      "checksum": 7826985.050720215,
+      "metrics": {
+        "bytes_fetched": 339275279,
+        "requests": 754,
+        "byte_amplification": 1.0113073020658248,
+        "request_amplification": 2.761904761904762,
+        "min_total_bytes": 335481884,
+        "min_requests": 273,
+        "min_requests_naive": 894,
+        "n_files": 23,
+        "n_contiguous_runs": 250,
+        "min_block_bytes": 335347704,
+        "header_bytes": 134180,
+        "n_blocks": 871,
+        "requests_by_kind": {
+          "GET_RANGE": 754
+        },
+        "bytes_by_kind": {
+          "GET_RANGE": 339275279
+        },
+        "distinct_keys_touched": 23,
+        "mean_range_bytes": 449967.21352785145,
+        "connections": 34,
+        "http_versions": {
+          "1.1": 754
+        },
+        "statuses": {
+          "206": 754
+        }
+      }
+    },
+    {
+      "pass": "warm",
+      "wall_s": 0.3971,
+      "reads_executed": 7824,
+      "reads_skipped": 0,
+      "reads_total": 7824,
+      "truncated": false,
+      "peak_rss_mb": 1511.9,
+      "proxy": {
+        "record": "session_end",
+        "label": "W3.TUNED_chunk16k_mt.rtt5.warm",
+        "n_requests": 0,
+        "n_bytes": 0,
+        "wall_s": 0.3987395763397217,
+        "ts": 1788766371.7228754,
+        "path": "/logs/W3.TUNED_chunk16k_mt.rtt5.warm.jsonl"
+      },
+      "log": "/work/results/raw/W3.TUNED_chunk16k_mt.rtt5.warm.jsonl",
+      "checksum": 7826985.050720215,
+      "metrics": {
+        "bytes_fetched": 0,
+        "requests": 0,
+        "byte_amplification": 0.0,
+        "request_amplification": 0.0,
+        "min_total_bytes": 335481884,
+        "min_requests": 273,
+        "min_requests_naive": 894,
+        "n_files": 23,
+        "n_contiguous_runs": 250,
+        "min_block_bytes": 335347704,
+        "header_bytes": 134180,
+        "n_blocks": 871,
+        "requests_by_kind": {},
+        "bytes_by_kind": {},
+        "distinct_keys_touched": 0,
+        "mean_range_bytes": 0,
+        "connections": 0,
+        "http_versions": {},
+        "statuses": {}
+      }
+    }
+  ],
+  "ts": 1788766371.7269387
+}

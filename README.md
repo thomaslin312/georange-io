@@ -64,6 +64,12 @@ tile layout, so waste is attributed to a cause rather than just counted, and
 `baseline/granularity.py` measures how much of the minimum is forced by the
 format's block size rather than by the query.
 
+`baseline/prefix_decode.py` asks a different question: how much of a tile a
+sparse read actually needs. A COG tile is one DEFLATE stream, so reading an
+early row never requires the tail of it. It measures the byte and decode saving
+available to a reader that stops early, and verifies the recovered pixels
+against GDAL.
+
 Two assumptions the design rests on are checked rather than asserted.
 `baseline/check_invariance.py` confirms that what GDAL fetches does not depend
 on injected latency, which is what licenses running the chunk-size comparison at
