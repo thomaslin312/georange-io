@@ -1,0 +1,52 @@
+{
+  "latency_ms": 50.0,
+  "cases": [
+    {
+      "case": "4 adjacent data blocks of s2/11SLA/B04.tif",
+      "naive": {
+        "requests": 5,
+        "bytes": 7979008,
+        "wall_s": 0.37
+      },
+      "advised": {
+        "requests": 5,
+        "bytes": 7979008,
+        "wall_s": 0.38
+      },
+      "request_ratio": 1.0,
+      "byte_ratio": 1.0
+    },
+    {
+      "case": "10 adjacent data blocks of s2/11SLA/B04.tif",
+      "naive": {
+        "requests": 9,
+        "bytes": 9721706,
+        "wall_s": 0.7
+      },
+      "advised": {
+        "requests": 9,
+        "bytes": 9721706,
+        "wall_s": 0.68
+      },
+      "request_ratio": 1.0,
+      "byte_ratio": 1.0
+    },
+    {
+      "case": "W3 corridor, 400 windows of worldcover/ESA_WorldCover_10m_2021_v200_N36W120_Map.tif",
+      "naive": {
+        "requests": 76,
+        "bytes": 6834535,
+        "wall_s": 3.69
+      },
+      "advised": {
+        "requests": 76,
+        "bytes": 6834535,
+        "wall_s": 3.5
+      },
+      "request_ratio": 1.0,
+      "byte_ratio": 1.0
+    }
+  ],
+  "adviseread_is_a_noop": true,
+  "verdict": "AdviseRead does not reduce requests: the scheduling gap is real and unreachable through GDAL"
+}
