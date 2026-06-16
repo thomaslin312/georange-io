@@ -2528,5 +2528,189 @@
     "distinct_blocks_fetched": 0,
     "blocks_fetched_more_than_once": 0,
     "worst_block_fetch_ratio": 0.0
+  },
+  "W6.DEFAULT.rtt50.cold": {
+    "requests": 4126,
+    "bytes": 2641541208,
+    "attribution_bytes": {
+      "header": 170880,
+      "needed": 1773572620,
+      "redundant": 840609618,
+      "unneeded": 27152384,
+      "padding": 0,
+      "list_and_other": 35706
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 67.14,
+      "redundant": 31.82,
+      "unneeded": 1.03,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 4723,
+    "blocks_fetched_more_than_once": 3099,
+    "worst_block_fetch_ratio": 43.0
+  },
+  "W6.DEFAULT.rtt50.warm": {
+    "requests": 3982,
+    "bytes": 2602890052,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 1773572620,
+      "redundant": 803580935,
+      "unneeded": 25736497,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 68.14,
+      "redundant": 30.87,
+      "unneeded": 0.99,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 4590,
+    "blocks_fetched_more_than_once": 3097,
+    "worst_block_fetch_ratio": 42.0
+  },
+  "W6.TUNED_chunk16k.rtt50.cold": {
+    "requests": 2927,
+    "bytes": 1934983180,
+    "attribution_bytes": {
+      "header": 170880,
+      "needed": 1773572620,
+      "redundant": 142180035,
+      "unneeded": 19059645,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 91.66,
+      "redundant": 7.35,
+      "unneeded": 0.99,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 4820,
+    "blocks_fetched_more_than_once": 2963,
+    "worst_block_fetch_ratio": 30.0
+  },
+  "W6.TUNED_chunk16k.rtt50.warm": {
+    "requests": 2399,
+    "bytes": 1663310244,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 1625337641,
+      "redundant": 23275617,
+      "unneeded": 14696986,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 97.72,
+      "redundant": 1.4,
+      "unneeded": 0.88,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 4275,
+    "blocks_fetched_more_than_once": 2499,
+    "worst_block_fetch_ratio": 26.0
+  },
+  "W6D.DEFAULT.rtt50.cold": {
+    "requests": 2571,
+    "bytes": 1806501140,
+    "attribution_bytes": {
+      "header": 170880,
+      "needed": 1773572620,
+      "redundant": 17017098,
+      "unneeded": 15704836,
+      "padding": 0,
+      "list_and_other": 35706
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 98.18,
+      "redundant": 0.94,
+      "unneeded": 0.87,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 4716,
+    "blocks_fetched_more_than_once": 2136,
+    "worst_block_fetch_ratio": 3.0
+  },
+  "W6D.DEFAULT.rtt50.warm": {
+    "requests": 2475,
+    "bytes": 1805695386,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 1773572620,
+      "redundant": 17033482,
+      "unneeded": 15089284,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 98.22,
+      "redundant": 0.94,
+      "unneeded": 0.84,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 4583,
+    "blocks_fetched_more_than_once": 2137,
+    "worst_block_fetch_ratio": 3.0
+  },
+  "W6D.TUNED_chunk16k.rtt50.cold": {
+    "requests": 2571,
+    "bytes": 1807251866,
+    "attribution_bytes": {
+      "header": 170880,
+      "needed": 1773572620,
+      "redundant": 17017098,
+      "unneeded": 16491268,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.01,
+      "needed": 98.14,
+      "redundant": 0.94,
+      "unneeded": 0.91,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 4820,
+    "blocks_fetched_more_than_once": 2136,
+    "worst_block_fetch_ratio": 3.0
+  },
+  "W6D.TUNED_chunk16k.rtt50.warm": {
+    "requests": 2474,
+    "bytes": 1805662618,
+    "attribution_bytes": {
+      "header": 0,
+      "needed": 1773572620,
+      "redundant": 17009317,
+      "unneeded": 15080681,
+      "padding": 0,
+      "list_and_other": 0
+    },
+    "attribution_pct": {
+      "header": 0.0,
+      "needed": 98.22,
+      "redundant": 0.94,
+      "unneeded": 0.84,
+      "padding": 0.0,
+      "list_and_other": 0.0
+    },
+    "distinct_blocks_fetched": 4583,
+    "blocks_fetched_more_than_once": 2136,
+    "worst_block_fetch_ratio": 3.0
   }
 }

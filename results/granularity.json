@@ -33,5 +33,19 @@
     "granularity_ratio": 1.22,
     "min_total_mb": 108.77,
     "mb_if_reads_were_pixel_exact": 89.068
+  },
+  "W6": {
+    "unique_requested_px": 4800,
+    "px_in_blocks_touched": 1761607680,
+    "granularity_ratio": 367001.6,
+    "min_total_mb": 1773.74,
+    "mb_if_reads_were_pixel_exact": 0.005
+  },
+  "W6D": {
+    "unique_requested_px": 4800,
+    "px_in_blocks_touched": 1761607680,
+    "granularity_ratio": 367001.6,
+    "min_total_mb": 1773.74,
+    "mb_if_reads_were_pixel_exact": 0.005
   }
 }

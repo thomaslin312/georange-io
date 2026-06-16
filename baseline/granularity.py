@@ -79,7 +79,7 @@ def main() -> int:
     out = {}
     print(f"{'Workload':<6} {'unique req px':>16} {'px in blocks':>16} "
           f"{'granularity':>12} {'min MB':>9} {'MB if exact':>12}")
-    for w in ("w1", "w2", "w3", "w4", "w5"):
+    for w in ("w1", "w2", "w3", "w4", "w5", "w6", "w6d"):
         p = ROOT / "results" / "specs" / f"{w}.json"
         if not p.exists():
             continue

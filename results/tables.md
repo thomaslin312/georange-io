@@ -5,7 +5,8 @@
 | Copernicus DEM GLO-30 | 20 | 0.79 GB | EPSG:4326 | 1 arcsec (~31 m) | 1024x1024 | DEFLATE | 3 | 440 |
 | ESA WorldCover 10 m v200 (2021) | 4 | 0.45 GB | EPSG:4326 | 0.3 arcsec (~9 m) | 1024x1024 | DEFLATE | 6 | 6,960 |
 | Sentinel-2 L2A | 72 | 8.21 GB | EPSG:32611 | 10 m | 1024x1024 | DEFLATE | 4 | 18,480 |
-| **Total** | **96** | **9.45 GB** |  |  |  |  |  |  |
+| sentinel2_l2a_ts | 48 | 4.66 GB | EPSG:32611 | 10 m | 1024x1024 | DEFLATE | 4 | 13,968 |
+| **Total** | **144** | **14.11 GB** |  |  |  |  |  |  |
 
 ### environment
 
@@ -42,6 +43,8 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | W3 LINEAR | 7,824 | 23 | 871 | 335.3 MB | 134 kB | 335.5 MB | 273 | 894 |
 | W4 HIERARCHICAL | 1,402 | 12 | 564 | 328.9 MB | 43 kB | 329.0 MB | 356 | 576 |
 | W5 FRONTIER | 86 | 9 | 506 | 108.7 MB | 90 kB | 108.8 MB | 50 | 515 |
+| W6 | 4,800 | 48 | 2,688 | 1,773.6 MB | 171 kB | 1,773.7 MB | 1,008 | 2,736 |
+| W6D | 4,800 | 48 | 2,688 | 1,773.6 MB | 171 kB | 1,773.7 MB | 1,008 | 2,736 |
 
 ### main_cold
 
@@ -72,6 +75,10 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | W5 FRONTIER | TUNED 256 kB | -- | -- | -- | 1.10 | 4.0 | 7.3s | -- | -- | -- |
 | W5 FRONTIER | TUNED 1 MB | -- | -- | -- | 1.36 | 4.0 | 7.6s | -- | -- | -- |
 | W5 FRONTIER | TUNED 16 kB + MT decode | 1.01 | 4.2 | 1.5s | 1.01 | 4.2 | 7.3s | 1.01 | 4.2 | 18.1s |
+| W6 | DEFAULT | -- | -- | -- | 1.49 | 4.1 | 288.2s | -- | -- | -- |
+| W6 | TUNED 16 kB | -- | -- | -- | 1.09 | 2.9 | 206.7s | -- | -- | -- |
+| W6D | DEFAULT | -- | -- | -- | 1.02 | 2.6 | 180.6s | -- | -- | -- |
+| W6D | TUNED 16 kB | -- | -- | -- | 1.02 | 2.6 | 181.0s | -- | -- | -- |
 
 ### main_warm
 
@@ -102,6 +109,10 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | W5 FRONTIER | TUNED 256 kB | -- | -- | -- | 0.00 | 0.0 | 0.2s | -- | -- | -- |
 | W5 FRONTIER | TUNED 1 MB | -- | -- | -- | 0.00 | 0.0 | 0.3s | -- | -- | -- |
 | W5 FRONTIER | TUNED 16 kB + MT decode | 0.00 | 0.0 | 0.0s | 0.00 | 0.0 | 0.0s | 0.00 | 0.0 | 0.1s |
+| W6 | DEFAULT | -- | -- | -- | 1.47 | 4.0 | 278.3s | -- | -- | -- |
+| W6 | TUNED 16 kB | -- | -- | -- | 0.94 | 2.4 | 169.2s | -- | -- | -- |
+| W6D | DEFAULT | -- | -- | -- | 1.02 | 2.5 | 173.5s | -- | -- | -- |
+| W6D | TUNED 16 kB | -- | -- | -- | 1.02 | 2.5 | 174.4s | -- | -- | -- |
 
 ### headroom
 
@@ -112,6 +123,8 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | W3 LINEAR | TUNED 16 kB + MT decode | 1.01 | 2.8 | 1.1% | 63.8% | 1.27 | 0.00 |
 | W4 HIERARCHICAL | TUNED 16 kB | 1.05 | 1.5 | 4.6% | 35.2% | 1.05 | 0.00 |
 | W5 FRONTIER | TUNED 16 kB + MT decode | 1.01 | 4.2 | 0.5% | 76.3% | 1.01 | 0.00 |
+| W6 | TUNED 16 kB | 1.09 | 2.9 | 8.3% | 65.6% | 1.49 | 0.94 |
+| W6D | TUNED 16 kB | 1.02 | 2.6 | 1.9% | 60.8% | 1.02 | 1.02 |
 
 ### attribution
 
@@ -122,6 +135,8 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | W3 LINEAR | TUNED 16 kB + MT decode | 0.0% | 98.8% | 0.1% | 1.0% | 0.0% | 44 of 927 |
 | W4 HIERARCHICAL | TUNED 16 kB | 0.0% | 95.4% | 0.1% | 4.5% | 0.0% | 28 of 1,429 |
 | W5 FRONTIER | TUNED 16 kB + MT decode | 0.1% | 99.4% | 0.2% | 0.3% | 0.0% | 16 of 535 |
+| W6 | TUNED 16 kB | 0.0% | 91.7% | 7.3% | 1.0% | 0.0% | 2,963 of 4,820 |
+| W6D | TUNED 16 kB | 0.0% | 98.1% | 0.9% | 0.9% | 0.0% | 2,136 of 4,820 |
 
 ### bandwidth
 
@@ -143,6 +158,8 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | W3 LINEAR | 300,393,025 | 913,309,696 | 3.0x | 335.5 MB | 110.34 MB |
 | W4 HIERARCHICAL | 86,171,446 | 264,241,152 | 3.1x | 329.0 MB | 107.28 MB |
 | W5 FRONTIER | 434,473,604 | 530,579,456 | 1.2x | 108.8 MB | 89.07 MB |
+| W6 | 4,800 | 1,761,607,680 | 367,001.6x | 1,773.7 MB | 0.01 MB |
+| W6D | 4,800 | 1,761,607,680 | 367,001.6x | 1,773.7 MB | 0.01 MB |
 
 ### multithread
 

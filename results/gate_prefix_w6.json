@@ -1,0 +1,30 @@
+{
+  "spec": "W6",
+  "blocks": 2688,
+  "margin": 0.12,
+  "whole_blocks_mb": 1773.6,
+  "oracle_prefix_mb": 1080.9,
+  "speculative_prefix_mb": 1275.5,
+  "oracle_saving": 0.3905,
+  "speculative_saving": 0.2808,
+  "undershoot_blocks": 34,
+  "undershoot_rate": 0.0126,
+  "per_source": {
+    "B04": {
+      "blocks": 1344,
+      "whole": 1750396129,
+      "oracle": 1067138589,
+      "spec": 1258952972,
+      "oracle_saving": 0.3903,
+      "speculative_saving": 0.2808
+    },
+    "SCL": {
+      "blocks": 1344,
+      "whole": 23176491,
+      "oracle": 13766795,
+      "spec": 16543198,
+      "oracle_saving": 0.406,
+      "speculative_saving": 0.2862
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "latency_ms": 150.0,
+  "workloads": {
+    "W3": {
+      "min_requests_coalesced": 273,
+      "scheduler_floor_wall_s": 39.4,
+      "runs": [
+        {
+          "threads": 1,
+          "requests": 749,
+          "bytes": 350820621,
+          "connections": 2,
+          "wall_s": 108.11,
+          "speedup_vs_1_thread": 1.0,
+          "extra_bytes_vs_1_thread": 1.0
+        },
+        {
+          "threads": 4,
+          "requests": 1787,
+          "bytes": 708067427,
+          "connections": 8,
+          "wall_s": 91.67,
+          "speedup_vs_1_thread": 1.18,
+          "extra_bytes_vs_1_thread": 2.018
+        },
+        {
+          "threads": 8,
+          "requests": 2926,
+          "bytes": 1174693475,
+          "connections": 16,
+          "wall_s": 79.3,
+          "speedup_vs_1_thread": 1.36,
+          "extra_bytes_vs_1_thread": 3.348
+        },
+        {
+          "threads": 16,
+          "requests": 4493,
+          "bytes": 1893404287,
+          "connections": 32,
+          "wall_s": 54.42,
+          "speedup_vs_1_thread": 1.99,
+          "extra_bytes_vs_1_thread": 5.397
+        }
+      ]
+    },
+    "W2": {
+      "min_requests_coalesced": 490,
+      "scheduler_floor_wall_s": 82.24,
+      "runs": [
+        {
+          "threads": 1,
+          "requests": 2220,
+          "bytes": 769928681,
+          "connections": 1,
+          "wall_s": 372.59,
+          "speedup_vs_1_thread": 1.0,
+          "extra_bytes_vs_1_thread": 1.0
+        },
+        {
+          "threads": 4,
+          "requests": 6484,
+          "bytes": 4451515284,
+          "connections": 4,
+          "wall_s": 272.39,
+          "speedup_vs_1_thread": 1.37,
+          "extra_bytes_vs_1_thread": 5.782
+        },
+        {
+          "threads": 8,
+          "requests": 7922,
+          "bytes": 6595420901,
+          "connections": 8,
+          "wall_s": 164.73,
+          "speedup_vs_1_thread": 2.26,
+          "extra_bytes_vs_1_thread": 8.566
+        },
+        {
+          "threads": 16,
+          "requests": 8881,
+          "bytes": 8076548232,
+          "connections": 16,
+          "wall_s": 91.26,
+          "speedup_vs_1_thread": 4.08,
+          "extra_bytes_vs_1_thread": 10.49
+        }
+      ]
+    }
+  }
+}
