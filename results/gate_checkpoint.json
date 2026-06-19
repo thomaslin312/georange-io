@@ -1,0 +1,54 @@
+{
+  "spec": "W6",
+  "blocks_sampled": 300,
+  "blocks_touched": 2688,
+  "whole_mb": 222.3,
+  "prefix_mb": 149.0,
+  "verified_rows": "40/40",
+  "spans": {
+    "65536": {
+      "checkpoints_per_tile": 12.5,
+      "fetch_mb_index_cached": 6.0,
+      "fetch_mb_index_remote": 10.7,
+      "decode_mb": 53.8,
+      "index_mb": 123.1,
+      "index_pct_of_archive": 55.4,
+      "speedup_cached": 37.18,
+      "speedup_remote": 20.84,
+      "speedup_vs_prefix_cached": 24.93
+    },
+    "131072": {
+      "checkpoints_per_tile": 7.1,
+      "fetch_mb_index_cached": 9.6,
+      "fetch_mb_index_remote": 14.3,
+      "decode_mb": 58.8,
+      "index_mb": 69.5,
+      "index_pct_of_archive": 31.3,
+      "speedup_cached": 23.19,
+      "speedup_remote": 15.58,
+      "speedup_vs_prefix_cached": 15.55
+    },
+    "262144": {
+      "checkpoints_per_tile": 3.9,
+      "fetch_mb_index_cached": 14.5,
+      "fetch_mb_index_remote": 19.2,
+      "decode_mb": 65.5,
+      "index_mb": 38.3,
+      "index_pct_of_archive": 17.2,
+      "speedup_cached": 15.33,
+      "speedup_remote": 11.59,
+      "speedup_vs_prefix_cached": 10.28
+    },
+    "524288": {
+      "checkpoints_per_tile": 2.0,
+      "fetch_mb_index_cached": 30.5,
+      "fetch_mb_index_remote": 35.2,
+      "decode_mb": 88.3,
+      "index_mb": 19.3,
+      "index_pct_of_archive": 8.7,
+      "speedup_cached": 7.28,
+      "speedup_remote": 6.31,
+      "speedup_vs_prefix_cached": 4.88
+    }
+  }
+}

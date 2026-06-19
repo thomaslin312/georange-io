@@ -445,6 +445,29 @@ def table_prefix() -> str:
                      "Matches GDAL"], out)
 
 
+def table_checkpoint() -> str:
+    p = RES / "gate_checkpoint.json"
+    if not p.exists():
+        return "_run baseline/gate_checkpoint.py_"
+    d = json.loads(p.read_text())
+    rows = [["Whole tiles", "--", f"{d['whole_mb']:,.1f} MB", "1.00x",
+             f"{d['whole_mb']:,.1f} MB", "1.00x", "none"],
+            ["Prefix decode", "--", f"{d['prefix_mb']:,.1f} MB",
+             f"{d['whole_mb']/d['prefix_mb']:.2f}x",
+             f"{d['prefix_mb']:,.1f} MB",
+             f"{d['whole_mb']/d['prefix_mb']:.2f}x", "none"]]
+    for span in sorted(d["spans"], key=int):
+        v = d["spans"][span]
+        rows.append([f"Checkpoint index", f"{int(span)//1024} kB",
+                     f"{v['fetch_mb_index_cached']:,.1f} MB",
+                     f"{v['speedup_cached']:.2f}x",
+                     f"{v['fetch_mb_index_remote']:,.1f} MB",
+                     f"{v['speedup_remote']:.2f}x",
+                     f"{v['index_pct_of_archive']:.1f}%"])
+    return md_table(["Approach", "Span", "Bytes, index cached", "Gain",
+                     "Bytes, index fetched", "Gain", "Index size"], rows)
+
+
 def plot_amp_vs_rtt(rows, metric="byte_amp", fname="amplification_vs_rtt.png"):
     ws = sorted({r["workload"] for r in rows})
     if not ws:
@@ -578,6 +601,7 @@ def main() -> int:
         "granularity": table_granularity(),
         "multithread": table_multithread(rows),
         "prefix": table_prefix(),
+        "checkpoint": table_checkpoint(),
     }
     (RES / "tables.json").write_text(json.dumps(parts, indent=2))
     (RES / "tables.md").write_text(

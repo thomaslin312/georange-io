@@ -189,3 +189,14 @@ Path geometry for both is persisted in `results/w5_oracle.json` (`path_lonlat`) 
 | esa_worldcover_v200 | 4 | 62 kB | 50.2% | 49.8% | 6.8% | 7.6% | n/a |
 | sentinel2_l2a_B04 | 12 | 1,075 kB | 51.3% | 48.7% | 11.2% | 27.6% | yes |
 | sentinel2_l2a_B08 | 12 | 1,023 kB | 49.6% | 50.4% | 0.9% | 1.4% | yes |
+
+### checkpoint
+
+| Approach | Span | Bytes, index cached | Gain | Bytes, index fetched | Gain | Index size |
+|---|---|---|---|---|---|---|
+| Whole tiles | -- | 222.3 MB | 1.00x | 222.3 MB | 1.00x | none |
+| Prefix decode | -- | 149.0 MB | 1.49x | 149.0 MB | 1.49x | none |
+| Checkpoint index | 64 kB | 6.0 MB | 37.18x | 10.7 MB | 20.84x | 55.4% |
+| Checkpoint index | 128 kB | 9.6 MB | 23.19x | 14.3 MB | 15.58x | 31.3% |
+| Checkpoint index | 256 kB | 14.5 MB | 15.33x | 19.2 MB | 11.59x | 17.2% |
+| Checkpoint index | 512 kB | 30.5 MB | 7.28x | 35.2 MB | 6.31x | 8.7% |

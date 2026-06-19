@@ -64,6 +64,13 @@ tile layout, so waste is attributed to a cause rather than just counted, and
 `baseline/granularity.py` measures how much of the minimum is forced by the
 format's block size rather than by the query.
 
+`baseline/tile_index.py` builds a checkpoint index into a tile's DEFLATE
+stream so a reader can start in the middle of it instead of at byte zero. It
+drives libz through ctypes, because Python's `zlib` does not expose
+`inflatePrime`, which the bit-position restore needs.
+`baseline/gate_checkpoint.py` measures what that is worth against reading whole
+tiles, and against merely stopping early.
+
 `baseline/prefix_decode.py` asks a different question: how much of a tile a
 sparse read actually needs. A COG tile is one DEFLATE stream, so reading an
 early row never requires the tail of it. It measures the byte and decode saving

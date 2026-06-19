@@ -22,7 +22,7 @@ MAX_WALL_S   ?= 1800
         oracle granularity \
         analyze manifest report status logs verify crosscheck
 
-baseline: up stage index specs sweep oracle granularity prefix crosscheck analyze \
+baseline: up stage index specs sweep oracle granularity prefix checkpoint crosscheck analyze \
           check-rtt-invariance manifest report
 	@echo
 	@echo "Phase 0 complete. See REPORT.md, results/summary.csv, results/plots/."
@@ -103,6 +103,9 @@ check-rtt-invariance:
 
 oracle:
 	$(BENCH) python3 baseline/oracle_w5.py
+
+checkpoint:
+	$(BENCH) python3 baseline/gate_checkpoint.py --blocks 300
 
 prefix:
 	$(BENCH) python3 baseline/prefix_decode.py
