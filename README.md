@@ -83,6 +83,21 @@ on injected latency, which is what licenses running the chunk-size comparison at
 a single RTT. `baseline/crosscheck.py` reconciles the proxy's accounting against
 GDAL's own `CPL_DEBUG` record of the ranges it pulled.
 
+## The reader
+
+`georange_io/` is the thing the measurements argued for. It takes a list of
+(file, x, y) requests, groups them by block so each block is fetched once, and
+fetches and inflates each block only as far as the deepest request in it needs.
+
+```bash
+make verify          # every value must match GDAL, on three workloads
+```
+
+Correctness is the gate, not a nicety: the claim is identical values for fewer
+bytes, so `georange_io/verify.py` compares every single value against GDAL and
+fails on one mismatch. It currently passes on 14,933 reads spanning all three
+predictors, both block sizes and both dtypes in the corpus.
+
 ## Reproducibility
 
 - Every workload has a fixed seed, persisted in its spec (`baseline/workloads/common.py`).

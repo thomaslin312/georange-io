@@ -141,6 +141,9 @@ def index_object(cli, key: str, size: int) -> dict:
                 "nbx": nbx, "nby": nby, "nplanes": nplanes,
                 "dtype": str(p.dtype), "samples": spp, "planar": planar,
                 "compression": int(p.compression),
+                # a partial-tile reader must undo the predictor itself
+                "predictor": int(p.predictor) if p.predictor is not None else 1,
+                "byteorder": tf.byteorder,
                 "offsets": offs.tolist(), "bytecounts": cnts.tolist(),
                 "empty_tiles": int((cnts == 0).sum()),
                 "sum_bytes": int(cnts.sum()),

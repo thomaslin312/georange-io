@@ -116,6 +116,18 @@ granularity:
 crosscheck:
 	$(PY) baseline/crosscheck.py
 
+## --- the reader -----------------------------------------------------------
+#
+# The correctness gate. The reader's value is entirely "identical values, fewer
+# bytes", so if any pixel disagrees with GDAL the byte numbers mean nothing.
+SB_SPECS ?= results/specs/w6p5.json results/specs/w6.json results/specs/w2.json
+SB_MARGIN ?= 0.03
+
+verify:
+	@for s in $(SB_SPECS); do \
+	  $(BENCH) python3 georange_io/verify.py --spec $$s --margin $(SB_MARGIN) \
+	    || exit 1; done
+
 ## --- analysis -------------------------------------------------------------
 analyze:
 	$(BENCH) python3 baseline/diagnose.py
