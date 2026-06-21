@@ -20,7 +20,7 @@ MAX_WALL_S   ?= 1800
 .PHONY: baseline up down clean-results stage index specs sweep \
         sweep-chunks sweep-rtt sweep-bwcap sweep-full check-rtt-invariance \
         oracle granularity \
-        analyze manifest report status logs verify crosscheck
+        analyze manifest report status logs versions verify crosscheck
 
 baseline: up stage index specs sweep oracle granularity prefix checkpoint crosscheck analyze \
           check-rtt-invariance manifest report
@@ -139,7 +139,7 @@ manifest:
 report:
 	$(PY) baseline/render_report.py
 
-verify:
+versions:
 	$(BENCH) python3 -c "from osgeo import gdal; import rasterio; \
 	print('GDAL', gdal.VersionInfo('RELEASE_NAME')); \
 	print('rasterio', rasterio.__version__, 'PROJ', rasterio.__proj_version__)"
