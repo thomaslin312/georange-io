@@ -44,7 +44,14 @@ def s3():
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--spec", default="results/specs/w6p5.json")
-    ap.add_argument("--span", type=int, default=262144)
+    ap.add_argument("--span", type=int, default=0,
+                    help="fixed output span between restart points; 0 derives "
+                         "it per tile from --index-fraction")
+    ap.add_argument("--index-fraction", type=float, default=0.15,
+                    help="index budget as a fraction of the tile's compressed "
+                         "size. A tile too small to afford one restart point "
+                         "gets no index, which is correct: a 56 kB WorldCover "
+                         "tile would otherwise carry a 128 kB index.")
     ap.add_argument("--dir", default="results/sbx")
     a = ap.parse_args()
 
@@ -63,6 +70,7 @@ def main() -> int:
     outdir = ROOT / a.dir
     t0 = time.time()
     tot_src = tot_idx = n_blocks = 0
+    skipped = [0]
     for n, key in enumerate(sorted(want), 1):
         L = idx[key]["levels"][0]
         blocks = {}
@@ -72,12 +80,23 @@ def main() -> int:
                 continue
             comp = cli.get_object(Bucket=BUCKET, Key=key,
                                   Range=f"bytes={off}-{off+cnt-1}")["Body"].read()
-            ti, _ = build_index(comp, a.span)
+            if a.span:
+                span = a.span
+            else:
+                import numpy as _np
+                uncomp = L["blockh"] * L["blockw"] * _np.dtype(L["dtype"]).itemsize
+                budget = a.index_fraction * cnt
+                n_pts = int(budget // 32768)
+                if n_pts < 1:
+                    skipped[0] += 1
+                    continue          # too small to be worth indexing
+                span = max(32768, uncomp // n_pts)
+            ti, _ = build_index(comp, span)
             blocks[bi] = ti.points
             tot_src += cnt
             n_blocks += 1
         if blocks:
-            size = sbx.write(outdir / (key + ".sbx"), a.span, blocks)
+            size = sbx.write(outdir / (key + ".sbx"), a.span or 0, blocks)
             tot_idx += size
         if n % 8 == 0 or n == len(want):
             print(f"  {n}/{len(want)} files, {n_blocks:,} blocks", flush=True)
@@ -87,6 +106,9 @@ def main() -> int:
     print(f"  source blocks {tot_src/1e6:,.1f} MB")
     print(f"  sidecars      {tot_idx/1e6:,.1f} MB "
           f"({100*tot_idx/max(1,tot_src):.1f}% of the blocks indexed)")
+    if skipped[0]:
+        print(f"  skipped       {skipped[0]:,} blocks too small to be worth "
+              "an index")
     print(f"  -> {outdir}")
     return 0
 

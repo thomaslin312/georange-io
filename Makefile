@@ -128,6 +128,9 @@ sbx:
 	  $(BENCH) python3 georange_io/build_sidecars.py --spec $$s --span 262144 \
 	    || exit 1; done
 
+gate-s3:
+	$(PY) georange_io/gate_s3.py --reps 4
+
 verify:
 	@for s in $(SB_SPECS); do \
 	  $(BENCH) python3 georange_io/verify.py --spec $$s --margin $(SB_MARGIN) \

@@ -52,6 +52,15 @@ SUPPORTED_COMPRESSION = {8, 32946}          # Deflate, Adobe Deflate
 SUPPORTED_PREDICTOR = {1, 2, 3}
 
 
+class Unsupported(Exception):
+    """Raised rather than returning values this reader cannot produce correctly.
+
+    Everything here rests on being byte-identical to GDAL. A file with an
+    encoding the partial-decode path does not implement must be refused, not
+    guessed at: silently wrong pixels are far worse than an exception, and a
+    caller can fall back to GDAL for whatever is refused."""
+
+
 @dataclass
 class Stats:
     requests: int = 0
@@ -186,12 +195,35 @@ class SparseReader:
         rec = self.idx.get(key)
         if not rec or not rec.get("levels"):
             return False
+        return not self.why_unsupported(key)
+
+    def why_unsupported(self, key: str) -> str | None:
+        rec = self.idx.get(key)
+        if not rec or not rec.get("levels"):
+            return "not in the index"
         L = rec["levels"][0]
-        return (L["compression"] in SUPPORTED_COMPRESSION
-                and L.get("predictor", 1) in SUPPORTED_PREDICTOR
-                and L.get("samples", 1) == 1
-                and L.get("planar", 1) == 1
-                and rec.get("byteorder", "<") == "<")
+        if L["compression"] not in SUPPORTED_COMPRESSION:
+            return f"compression {L['compression']} is not Deflate"
+        if L.get("predictor", 1) not in SUPPORTED_PREDICTOR:
+            return f"predictor {L.get('predictor')} unhandled"
+        if L.get("samples", 1) != 1:
+            return f"{L.get('samples')} samples per pixel"
+        if L.get("planar", 1) != 1:
+            return "planar configuration is not contiguous"
+        # absence is not evidence of little-endian; an index built before this
+        # field existed must be refused rather than assumed
+        bo = L.get("byteorder", rec.get("byteorder"))
+        if bo != "<":
+            return f"byte order {bo!r} is not little-endian"
+        return None
+
+    def split(self, requests):
+        """Partition requests into those this reader can serve and those a
+        caller must hand to GDAL."""
+        ok, no = [], []
+        for i, r in enumerate(requests):
+            (ok if self.supports(r[0]) else no).append(i)
+        return ok, no
 
     # -- planning ----------------------------------------------------------
     def _plan_fetch(self, key: str, job: _Job) -> None:
@@ -381,6 +413,17 @@ class SparseReader:
 
     # -- public ------------------------------------------------------------
     def sample(self, requests) -> np.ndarray:
+        bad = {}
+        for key in {r[0] for r in requests}:
+            why = self.why_unsupported(key)
+            if why:
+                bad[key] = why
+        if bad:
+            first = list(bad.items())[:3]
+            raise Unsupported(
+                f"{len(bad)} file(s) cannot be served correctly by this "
+                f"reader; use split() and fall back to GDAL. "
+                + "; ".join(f"{k}: {v}" for k, v in first))
         out = np.zeros(len(requests), np.float64)
         jobs = self.plan(requests)
         groups = self.coalesce(jobs)

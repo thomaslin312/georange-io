@@ -1,0 +1,86 @@
+{
+  "endpoint": "sentinel-cogs.s3.us-west-2.amazonaws.com",
+  "object": "s2ts/11SLA/2024-01-01/B04.tif",
+  "tile": 29,
+  "tile_bytes": 1775128,
+  "reps": 4,
+  "measurements": [
+    {
+      "bytes": 16384,
+      "ttfb_s": 0.133,
+      "transfer_s": 0.0071,
+      "total_s": 0.1401,
+      "effective_mbps": 18.6
+    },
+    {
+      "bytes": 65536,
+      "ttfb_s": 0.1226,
+      "transfer_s": 0.6278,
+      "total_s": 0.7504,
+      "effective_mbps": 0.8
+    },
+    {
+      "bytes": 262144,
+      "ttfb_s": 0.1205,
+      "transfer_s": 3.6408,
+      "total_s": 3.7613,
+      "effective_mbps": 0.6
+    },
+    {
+      "bytes": 1048576,
+      "ttfb_s": 0.1069,
+      "transfer_s": 15.7817,
+      "total_s": 15.8886,
+      "effective_mbps": 0.5
+    },
+    {
+      "bytes": 1775128,
+      "ttfb_s": 0.1174,
+      "transfer_s": 25.7198,
+      "total_s": 25.8372,
+      "effective_mbps": 0.6
+    }
+  ],
+  "median_ttfb_s": 0.1205,
+  "effective_mbps": 0.6,
+  "fraction_of_request_saved_by_bandwidth": {
+    "50": 0.696,
+    "200": 0.367,
+    "1000": 0.104,
+    "5000": 0.023
+  },
+  "projected_workload_wall_s": {
+    "W6 TIMESERIES": [
+      {
+        "mbps": 10,
+        "gdal_s": 1900.7,
+        "georange_io_s": 643.9,
+        "gain": 2.95
+      },
+      {
+        "mbps": 50,
+        "gdal_s": 662.3,
+        "georange_io_s": 226.2,
+        "gain": 2.93
+      },
+      {
+        "mbps": 200,
+        "gdal_s": 430.1,
+        "georange_io_s": 147.9,
+        "gain": 2.91
+      },
+      {
+        "mbps": 1000,
+        "gdal_s": 368.2,
+        "georange_io_s": 127.0,
+        "gain": 2.9
+      },
+      {
+        "mbps": 5000,
+        "gdal_s": 355.8,
+        "georange_io_s": 122.9,
+        "gain": 2.9
+      }
+    ]
+  }
+}
