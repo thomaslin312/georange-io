@@ -90,6 +90,10 @@ def main() -> int:
     ap.add_argument("--latency-ms", type=float, default=0.0)
     ap.add_argument("--margin", type=float, default=0.12)
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--workers", type=int, default=1)
+    ap.add_argument("--rtt-s", type=float, default=0.05)
+    ap.add_argument("--bandwidth-mbps", type=float, default=100.0)
+    ap.add_argument("--sbx-dir", default="")
     ap.add_argument("--out", default="")
     args = ap.parse_args()
 
@@ -110,7 +114,9 @@ def main() -> int:
     print(f"  GDAL       {gn:>6,} req  {gb/1e6:9.2f} MB  {gw:7.2f}s")
 
     rd = SparseReader(ROOT / "results" / "cog_index.json", PROXY, BUCKET,
-                      margin=args.margin)
+                      margin=args.margin, workers=args.workers,
+                      rtt_s=args.rtt_s, bandwidth_mbps=args.bandwidth_mbps,
+                      sbx_dir=(ROOT / args.sbx_dir) if args.sbx_dir else None)
     unsupported = sorted({k for k, _, _ in reqs if not rd.supports(k)})
     if unsupported:
         print(f"  !! reader declines {len(unsupported)} files: {unsupported[:3]}")

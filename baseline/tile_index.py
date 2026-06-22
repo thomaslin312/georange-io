@@ -202,6 +202,54 @@ def read_from(comp: bytes, idx: TileIndex, out_start: int, out_end: int) -> byte
         _lib.inflateEnd(ctypes.byref(strm))
 
 
+def inflate_at(comp_from_point: bytes, bits: int, window: bytes,
+               need_out: int) -> bytes:
+    """Inflate up to need_out bytes starting from a restart point.
+
+    comp_from_point must begin at the byte holding the restart point, which is
+    (in_byte - 1) when bits is non-zero and in_byte otherwise. Returns what it
+    managed to produce; a short return means the caller fetched too little.
+    """
+    strm = ZStream()
+    _init(strm, -15)
+    try:
+        if bits:
+            rc = _lib.inflatePrime(ctypes.byref(strm), bits,
+                                   comp_from_point[0] >> (8 - bits))
+            if rc != Z_OK:
+                raise RuntimeError(f"inflatePrime failed: {rc}")
+            tail = comp_from_point[1:]
+        else:
+            tail = comp_from_point
+        win = (ctypes.c_ubyte * len(window)).from_buffer_copy(window)
+        rc = _lib.inflateSetDictionary(ctypes.byref(strm), win, len(window))
+        if rc != Z_OK:
+            raise RuntimeError(f"inflateSetDictionary failed: {rc}")
+        buf_in = (ctypes.c_ubyte * len(tail)).from_buffer_copy(tail)
+        strm.next_in = buf_in
+        strm.avail_in = len(tail)
+
+        out = bytearray()
+        chunk = (ctypes.c_ubyte * WINSIZE)()
+        while len(out) < need_out:
+            take = min(WINSIZE, need_out - len(out))
+            strm.next_out = chunk
+            strm.avail_out = take
+            rc = _lib.inflate(ctypes.byref(strm), Z_NO_FLUSH)
+            produced = take - strm.avail_out
+            if produced:
+                out += bytes(chunk[:produced])
+            if rc == Z_STREAM_END:
+                break
+            if rc not in (Z_OK, Z_BUF_ERROR):
+                break
+            if produced == 0 and strm.avail_in == 0:
+                break
+        return bytes(out)
+    finally:
+        _lib.inflateEnd(ctypes.byref(strm))
+
+
 def fetch_bytes_for(comp: bytes, idx: TileIndex, out_start: int,
                     out_end: int) -> tuple[int, int]:
     """What a checkpointed reader actually costs to serve [out_start, out_end).

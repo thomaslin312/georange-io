@@ -3,27 +3,31 @@
   "n_reads": 4800,
   "identical": true,
   "mismatches": 0,
-  "margin": 0.12,
+  "margin": 0.03,
   "gdal": {
     "requests": 2927,
     "bytes": 1934983180,
-    "wall_s": 22.16
+    "wall_s": 26.77
   },
   "georange-io": {
-    "requests": 2690,
-    "bytes": 1278433188,
-    "wall_s": 10.23
+    "requests": 1011,
+    "bytes": 652620765,
+    "wall_s": 11.36
   },
-  "byte_gain": 1.514,
-  "request_gain": 1.088,
+  "byte_gain": 2.965,
+  "request_gain": 2.895,
   "reader_stats": {
-    "requests": 2690,
-    "bytes_fetched": 1278433188,
+    "requests": 1011,
+    "bytes_fetched": 652620765,
     "blocks": 2688,
-    "undershoots": 2,
+    "groups": 1011,
+    "undershoots": 0,
+    "coalesced_extra_bytes": 135164278,
     "bytes_if_whole_blocks": 1773572620,
-    "declined": 0,
-    "byte_gain_vs_whole_blocks": 1.387
+    "blocks_from_checkpoint": 1089,
+    "checkpoint_window_bytes": 35684352,
+    "byte_gain_vs_whole_blocks": 2.718,
+    "blocks_per_request": 2.66
   },
   "declined_files": []
 }

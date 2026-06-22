@@ -123,6 +123,11 @@ crosscheck:
 SB_SPECS ?= results/specs/w6p5.json results/specs/w6.json results/specs/w2.json
 SB_MARGIN ?= 0.03
 
+sbx:
+	@for s in $(SB_SPECS); do \
+	  $(BENCH) python3 georange_io/build_sidecars.py --spec $$s --span 262144 \
+	    || exit 1; done
+
 verify:
 	@for s in $(SB_SPECS); do \
 	  $(BENCH) python3 georange_io/verify.py --spec $$s --margin $(SB_MARGIN) \
