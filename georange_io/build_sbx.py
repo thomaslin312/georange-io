@@ -96,7 +96,9 @@ def main() -> int:
             tot_src += cnt
             n_blocks += 1
         if blocks:
-            size = sbx.write(outdir / (key + ".sbx"), a.span or 0, blocks)
+            size = sbx.write(outdir / (key + ".sbx"), a.span or 0, blocks,
+                             source_size=int(idx[key]["size"]),
+                             source_hash=sbx.layout_hash(L))
             tot_idx += size
         if n % 8 == 0 or n == len(want):
             print(f"  {n}/{len(want)} files, {n_blocks:,} blocks", flush=True)

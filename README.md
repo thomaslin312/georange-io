@@ -90,13 +90,20 @@ GDAL's own `CPL_DEBUG` record of the ranges it pulled.
 fetches and inflates each block only as far as the deepest request in it needs.
 
 ```bash
+make test            # windows, overview levels, and every refusal path
 make verify          # every value must match GDAL, on three workloads
 ```
 
 Correctness is the gate, not a nicety: the claim is identical values for fewer
 bytes, so `georange_io/verify.py` compares every single value against GDAL and
 fails on one mismatch. It currently passes on 14,933 reads spanning all three
-predictors, both block sizes and both dtypes in the corpus.
+predictors, both block sizes and both dtypes in the corpus, plus window reads
+at every overview level.
+
+The reader refuses rather than guessing. An encoding it cannot decode, a window
+running off the edge of a level, an index that does not describe the object
+being read, or a sidecar built for a different file are all errors, because the
+failure mode of each is plausible-looking wrong pixels rather than a crash.
 
 ## Reproducibility
 

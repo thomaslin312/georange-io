@@ -7,27 +7,28 @@
   "gdal": {
     "requests": 2927,
     "bytes": 1934983180,
-    "wall_s": 26.77
+    "wall_s": 35.02
   },
   "georange-io": {
-    "requests": 1011,
-    "bytes": 652620765,
-    "wall_s": 11.36
+    "requests": 1215,
+    "bytes": 582883319,
+    "wall_s": 21.66
   },
-  "byte_gain": 2.965,
-  "request_gain": 2.895,
+  "byte_gain": 3.32,
+  "request_gain": 2.409,
   "reader_stats": {
-    "requests": 1011,
-    "bytes_fetched": 652620765,
+    "requests": 1215,
+    "bytes_fetched": 582883319,
     "blocks": 2688,
-    "groups": 1011,
-    "undershoots": 0,
-    "coalesced_extra_bytes": 135164278,
+    "groups": 1212,
+    "undershoots": 3,
+    "coalesced_extra_bytes": 18268433,
     "bytes_if_whole_blocks": 1773572620,
-    "blocks_from_checkpoint": 1089,
-    "checkpoint_window_bytes": 35684352,
-    "byte_gain_vs_whole_blocks": 2.718,
-    "blocks_per_request": 2.66
+    "blocks_from_checkpoint": 1083,
+    "checkpoint_window_bytes": 35487744,
+    "stale_sidecars": 0,
+    "byte_gain_vs_whole_blocks": 3.043,
+    "blocks_per_request": 2.21
   },
   "declined_files": []
 }

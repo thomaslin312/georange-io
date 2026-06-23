@@ -131,6 +131,9 @@ sbx:
 gate-s3:
 	$(PY) georange_io/gate_s3.py --reps 4
 
+test:
+	$(BENCH) python3 georange_io/test_windows.py
+
 verify:
 	@for s in $(SB_SPECS); do \
 	  $(BENCH) python3 georange_io/verify.py --spec $$s --margin $(SB_MARGIN) \

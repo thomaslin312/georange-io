@@ -1,0 +1,34 @@
+{
+  "spec": "W6",
+  "n_reads": 240,
+  "identical": true,
+  "mismatches": 0,
+  "margin": 0.03,
+  "gdal": {
+    "requests": 336,
+    "bytes": 151219406,
+    "wall_s": 1.86
+  },
+  "georange-io": {
+    "requests": 214,
+    "bytes": 52575020,
+    "wall_s": 0.31
+  },
+  "byte_gain": 2.876,
+  "request_gain": 1.57,
+  "reader_stats": {
+    "requests": 214,
+    "bytes_fetched": 52575020,
+    "blocks": 240,
+    "groups": 213,
+    "undershoots": 1,
+    "coalesced_extra_bytes": 651431,
+    "bytes_if_whole_blocks": 145604107,
+    "blocks_from_checkpoint": 23,
+    "checkpoint_window_bytes": 753664,
+    "stale_sidecars": 0,
+    "byte_gain_vs_whole_blocks": 2.769,
+    "blocks_per_request": 1.12
+  },
+  "declined_files": []
+}

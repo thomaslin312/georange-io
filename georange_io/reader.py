@@ -15,6 +15,11 @@ fetches the first byte. Three things follow from that:
                DEFLATE restart point rather than at byte zero, so neither the
                fetch nor the inflate has to begin at the start of the tile
 
+It reads points or windows, at native resolution or any overview level. It
+refuses anything it cannot serve correctly, and it validates the tile offsets
+it was given against the object it is reading, for free, from the Content-Range
+of the first response.
+
 The coalescing rule is the part a general reader cannot have. Merging two
 blocks means fetching everything between them, so it is worth it exactly when
 
@@ -46,7 +51,8 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT / "baseline") not in sys.path:
     sys.path.insert(0, str(_ROOT / "baseline"))
 from tile_index import inflate_at            # noqa: E402
-from georange_io.sbx import Sbx               # noqa: E402
+from georange_io.sbx import (Sbx, StaleSidecar,      # noqa: E402,F401
+                            open_for as sbx_open_for)
 
 SUPPORTED_COMPRESSION = {8, 32946}          # Deflate, Adobe Deflate
 SUPPORTED_PREDICTOR = {1, 2, 3}
@@ -72,6 +78,7 @@ class Stats:
     bytes_if_whole_blocks: int = 0
     blocks_from_checkpoint: int = 0
     checkpoint_window_bytes: int = 0
+    stale_sidecars: int = 0
 
     def as_dict(self) -> dict:
         d = dict(self.__dict__)
@@ -86,6 +93,7 @@ class Stats:
 @dataclass
 class _Job:
     key: str
+    level: int
     block: int
     offset: int
     count: int
@@ -125,7 +133,12 @@ class _Pool:
             c = self.local.conn = cls(self.host, self.port, timeout=300)
         return c
 
-    def get_range(self, path: str, start: int, length: int) -> bytes:
+    def get_range(self, path: str, start: int, length: int):
+        """Returns (body, total object size or None).
+
+        The total comes out of Content-Range at no extra cost, which is what
+        lets the reader check that the tile offsets it was handed still
+        describe the object it is actually reading."""
         hdrs = {"Range": f"bytes={start}-{start+length-1}",
                 "Accept-Encoding": "identity"}
         for attempt in (0, 1):
@@ -136,7 +149,13 @@ class _Pool:
                 data = r.read()
                 if r.status not in (200, 206):
                     raise RuntimeError(f"HTTP {r.status} for {path}")
-                return data
+                total = None
+                cr = r.getheader("Content-Range")
+                if cr and "/" in cr:
+                    tail = cr.rsplit("/", 1)[1].strip()
+                    if tail.isdigit():
+                        total = int(tail)
+                return data, total
             except Exception:
                 try:
                     c.close()
@@ -184,10 +203,21 @@ class SparseReader:
         with self._sbx_lock:
             if key not in self._sbx:
                 p = self.sbx_dir / (key + ".sbx")
-                try:
-                    self._sbx[key] = Sbx(p) if p.exists() else None
-                except Exception:
+                if not p.exists():
                     self._sbx[key] = None
+                else:
+                    try:
+                        self._sbx[key] = sbx_open_for(p, self.idx[key])
+                    except StaleSidecar as e:
+                        # a sidecar built for a different object would decode
+                        # cleanly and return wrong pixels, so drop it loudly
+                        with self._lock:
+                            self.stats.stale_sidecars += 1
+                        print(f"georange_io: ignoring stale sidecar: {e}",
+                              file=sys.stderr)
+                        self._sbx[key] = None
+                    except Exception:
+                        self._sbx[key] = None
             return self._sbx[key]
 
     # -- capability check --------------------------------------------------
@@ -228,7 +258,7 @@ class SparseReader:
     # -- planning ----------------------------------------------------------
     def _plan_fetch(self, key: str, job: _Job) -> None:
         """Decide where this block's fetch starts and how long it should be."""
-        L = self.idx[key]["levels"][0]
+        L = self.idx[key]["levels"][job.level]
         dt = np.dtype(L["dtype"])
         row_bytes = L["blockw"] * dt.itemsize
         target_out = (job.deepest_row + 1) * row_bytes
@@ -239,7 +269,8 @@ class SparseReader:
         # the window and cannot be reconstructed.
         first_out = job.shallowest_row * row_bytes
         pt = None
-        sc = self._sidecar(key)
+        # sidecars are built for native resolution only
+        sc = self._sidecar(key) if job.level == 0 else None
         if sc is not None and job.block in sc:
             pt = sc.best(job.block, first_out)
         if pt is not None and pt.out > 0:
@@ -257,24 +288,45 @@ class SparseReader:
             job.prefix = int(min(job.count,
                                  max(self.min_fetch, job.count * frac)))
 
+    @staticmethod
+    def _norm(r):
+        """(key,x,y) | (key,x,y,w,h) | (key,level,x,y,w,h) -> uniform tuple."""
+        if len(r) == 3:
+            return r[0], 0, r[1], r[2], 1, 1
+        if len(r) == 5:
+            return r[0], 0, r[1], r[2], r[3], r[4]
+        if len(r) == 6:
+            return r
+        raise ValueError(f"unrecognised request shape: {r!r}")
+
     def plan(self, requests) -> list[_Job]:
-        groups: dict[tuple[str, int], _Job] = {}
-        for i, (key, x, y) in enumerate(requests):
-            L = self.idx[key]["levels"][0]
-            bx, by = x // L["blockw"], y // L["blockh"]
-            bi = by * L["nbx"] + bx
-            k = (key, bi)
-            j = groups.get(k)
-            if j is None:
-                j = groups[k] = _Job(key=key, block=bi,
-                                     offset=L["offsets"][bi],
-                                     count=L["bytecounts"][bi])
-            ly = y - by * L["blockh"]
-            j.items.append((i, x - bx * L["blockw"], ly))
-            if ly > j.deepest_row:
-                j.deepest_row = ly
-            if ly < j.shallowest_row:
-                j.shallowest_row = ly
+        groups: dict[tuple[str, int, int], _Job] = {}
+        for i, raw in enumerate(requests):
+            key, lvl, x, y, w, h = self._norm(raw)
+            L = self.idx[key]["levels"][lvl]
+            x0 = max(0, x); y0 = max(0, y)
+            x1 = min(L["width"], x + w); y1 = min(L["height"], y + h)
+            if x1 <= x0 or y1 <= y0:
+                continue
+            for by in range(y0 // L["blockh"], (y1 - 1) // L["blockh"] + 1):
+                for bx in range(x0 // L["blockw"], (x1 - 1) // L["blockw"] + 1):
+                    bi = by * L["nbx"] + bx
+                    k = (key, lvl, bi)
+                    j = groups.get(k)
+                    if j is None:
+                        j = groups[k] = _Job(key=key, level=lvl, block=bi,
+                                             offset=L["offsets"][bi],
+                                             count=L["bytecounts"][bi])
+                    ox, oy = bx * L["blockw"], by * L["blockh"]
+                    lx0 = max(x0, ox) - ox
+                    ly0 = max(y0, oy) - oy
+                    lx1 = min(x1, ox + L["blockw"]) - ox
+                    ly1 = min(y1, oy + L["blockh"]) - oy
+                    # destination offset within this request's output array
+                    j.items.append((i, ly0, ly1, lx0, lx1,
+                                    (oy + ly0) - y, (ox + lx0) - x))
+                    j.deepest_row = max(j.deepest_row, ly1 - 1)
+                    j.shallowest_row = min(j.shallowest_row, ly0)
         for j in groups.values():
             if j.count:
                 self._plan_fetch(j.key, j)
@@ -356,7 +408,15 @@ class SparseReader:
         return raw
 
     def _fetch(self, key: str, start: int, length: int) -> bytes:
-        data = self.pool.get_range(f"/{self.bucket}/{key}", start, length)
+        data, total = self.pool.get_range(f"/{self.bucket}/{key}", start,
+                                          length)
+        if total is not None:
+            want = int(self.idx[key].get("size", total))
+            if total != want:
+                raise Unsupported(
+                    f"{key}: the index describes a {want:,}-byte object but "
+                    f"the store returned {total:,} bytes; the tile offsets do "
+                    "not belong to this file")
         with self._lock:
             self.stats.requests += 1
             self.stats.bytes_fetched += len(data)
@@ -376,10 +436,10 @@ class SparseReader:
         planes = b.reshape(dt.itemsize, width)
         return np.ascontiguousarray(planes.T).tobytes()
 
-    def _run_group(self, g: _Group, out: np.ndarray) -> None:
+    def _run_group(self, g: _Group, out) -> None:
         buf = self._fetch(g.key, g.start, g.length)
         rec = self.idx[g.key]
-        L = rec["levels"][0]
+        L = rec["levels"][g.jobs[0].level]
         dt = np.dtype(L["dtype"])
         width = L["blockw"]
         row_bytes = width * dt.itemsize
@@ -396,7 +456,10 @@ class SparseReader:
                 base = 0
                 raw = self._inflate(g.key, comp, target_out, job,
                                     have=len(comp))
-            for (i, lx, ly) in job.items:
+            # decode each needed row once, then slice it for every item
+            lo_row, hi_row = job.shallowest_row, job.deepest_row
+            rows = {}
+            for ly in range(lo_row, hi_row + 1):
                 off = ly * row_bytes - base
                 row = raw[off:off + row_bytes]
                 if len(row) < row_bytes:
@@ -404,15 +467,24 @@ class SparseReader:
                         f"{g.key} block {job.block}: short inflate, "
                         f"{len(row)} of {row_bytes} bytes for row {ly}")
                 vals = self._undo_row(row, dt, width, pred)
-                if pred == 3:
-                    v = np.frombuffer(vals, dtype=dt.newbyteorder(">"),
-                                      count=width)
-                else:
-                    v = vals
-                out[i] = float(v[lx])
+                rows[ly] = (np.frombuffer(vals, dtype=dt.newbyteorder(">"),
+                                          count=width) if pred == 3 else vals)
+            for (i, ly0, ly1, lx0, lx1, dy0, dx0) in job.items:
+                dst = out[i]
+                for ly in range(ly0, ly1):
+                    dst[dy0 + (ly - ly0), dx0:dx0 + (lx1 - lx0)] = \
+                        rows[ly][lx0:lx1]
 
     # -- public ------------------------------------------------------------
-    def sample(self, requests) -> np.ndarray:
+    def read(self, requests, allow_partial: bool = False) -> list:
+        """Read windows. Accepts (key, x, y, w, h) or (key, level, x, y, w, h)
+        and returns one 2-D array per request.
+
+        A window not wholly inside the level is refused by default. Quietly
+        returning zeros for the part that does not exist is the same class of
+        mistake as decoding a file we do not understand: the caller gets an
+        array that looks valid. Pass allow_partial=True to opt into zero fill.
+        """
         bad = {}
         for key in {r[0] for r in requests}:
             why = self.why_unsupported(key)
@@ -424,7 +496,20 @@ class SparseReader:
                 f"{len(bad)} file(s) cannot be served correctly by this "
                 f"reader; use split() and fall back to GDAL. "
                 + "; ".join(f"{k}: {v}" for k, v in first))
-        out = np.zeros(len(requests), np.float64)
+        norm = [self._norm(r) for r in requests]
+        if not allow_partial:
+            for (k, lv, x, y, w, h) in norm:
+                if lv >= len(self.idx[k]["levels"]):
+                    raise Unsupported(f"{k}: no level {lv}")
+                L = self.idx[k]["levels"][lv]
+                if x < 0 or y < 0 or x + w > L["width"] or y + h > L["height"]:
+                    raise Unsupported(
+                        f"{k} level {lv}: window ({x},{y},{w},{h}) is not "
+                        f"inside {L['width']}x{L['height']}; pass "
+                        "allow_partial=True to zero-fill instead")
+        out = [np.zeros((h, w), np.dtype(
+                   self.idx[k]["levels"][lv]["dtype"]))
+               for (k, lv, _x, _y, w, h) in norm]
         jobs = self.plan(requests)
         groups = self.coalesce(jobs)
         self.stats.blocks = len([j for j in jobs if j.count])
@@ -434,8 +519,9 @@ class SparseReader:
         for j in jobs:                              # sparse tiles need no fetch
             if j.count == 0:
                 fill = self.idx[j.key].get("nodata") or 0
-                for (i, _lx, _ly) in j.items:
-                    out[i] = fill
+                for (i, ly0, ly1, lx0, lx1, dy0, dx0) in j.items:
+                    out[i][dy0:dy0 + (ly1 - ly0),
+                           dx0:dx0 + (lx1 - lx0)] = fill
 
         if self.workers == 1:
             for g in groups:
@@ -444,3 +530,8 @@ class SparseReader:
             with ThreadPoolExecutor(self.workers) as ex:
                 list(ex.map(lambda g: self._run_group(g, out), groups))
         return out
+
+    def sample(self, points) -> np.ndarray:
+        """Read single pixels. points are (key, x, y); returns one value each."""
+        arrs = self.read([(k, x, y, 1, 1) for (k, x, y) in points])
+        return np.array([float(a[0, 0]) for a in arrs], np.float64)
