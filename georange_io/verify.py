@@ -94,6 +94,9 @@ def main() -> int:
     ap.add_argument("--rtt-s", type=float, default=0.05)
     ap.add_argument("--bandwidth-mbps", type=float, default=100.0)
     ap.add_argument("--sbx-dir", default="")
+    ap.add_argument("--no-index", action="store_true",
+                    help="describe every file from its own header instead of "
+                         "using the prebuilt index")
     ap.add_argument("--out", default="")
     args = ap.parse_args()
 
@@ -113,7 +116,8 @@ def main() -> int:
     truth, gn, gb, gw = gdal_values(reqs, "_V.gdal")
     print(f"  GDAL       {gn:>6,} req  {gb/1e6:9.2f} MB  {gw:7.2f}s")
 
-    rd = SparseReader(ROOT / "results" / "cog_index.json", PROXY, BUCKET,
+    rd = SparseReader(None if args.no_index
+                      else ROOT / "results" / "cog_index.json", PROXY, BUCKET,
                       margin=args.margin, workers=args.workers,
                       rtt_s=args.rtt_s, bandwidth_mbps=args.bandwidth_mbps,
                       sbx_dir=(ROOT / args.sbx_dir) if args.sbx_dir else None)
@@ -138,6 +142,9 @@ def main() -> int:
     print(f"  bytes   {gb/max(1,sb):.2f}x fewer      "
           f"requests {gn/max(1,sn):.2f}x fewer")
     print(f"  reader stats: {json.dumps(rd.stats.as_dict())}")
+    if args.no_index:
+        print(f"  described {getattr(rd.idx, 'described', 0)} files from their "
+              "own headers, with no prebuilt index")
 
     res = {"spec": spec.name, "n_reads": len(reqs), "identical": bool(same),
            "mismatches": bad, "margin": args.margin,

@@ -85,9 +85,27 @@ GDAL's own `CPL_DEBUG` record of the ranges it pulled.
 
 ## The reader
 
-`georange_io/` is the thing the measurements argued for. It takes a list of
-(file, x, y) requests, groups them by block so each block is fetched once, and
-fetches and inflates each block only as far as the deepest request in it needs.
+`georange_io/` is the thing the measurements argued for, and it is an
+installable package rather than a harness:
+
+```python
+from georange_io import SparseReader
+
+rd = SparseReader(base_url="https://sentinel-cogs.s3.us-west-2.amazonaws.com",
+                  bucket="sentinel-s2-l2a-cogs")
+values  = rd.sample([("path/B04.tif", 5000, 3000), ...])
+windows = rd.read([("path/B04.tif", 0, 100, 100, 512, 512), ...])
+```
+
+Nothing has to be indexed in advance. Each file is described from its own
+header on first use, which for a cloud-optimised file is one request. It groups
+requests by block so each is fetched once, fetches and inflates each block only
+as far as the deepest request in it needs, merges nearby blocks when the extra
+bytes cost less than the round trips saved, and where a `.sbx` sidecar exists
+enters a block at a DEFLATE restart point instead of at byte zero.
+
+`read_any` delegates anything the fast path declines to GDAL, so a caller gets
+one uniform result.
 
 ```bash
 make test            # windows, overview levels, and every refusal path

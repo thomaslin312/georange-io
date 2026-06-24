@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "georange-io"
+version = "0.1.0"
+description = "A sparse reader for COG archives: plans, truncates and restarts, so point and time-series queries fetch a fraction of what a general reader must."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = ["numpy>=1.26", "tifffile>=2024.1.30"]
+
+[project.optional-dependencies]
+# rasterio is needed only to delegate files the fast path declines
+fallback = ["rasterio>=1.4"]
+# the sidecar builder reads whole tiles from object storage
+build = ["boto3>=1.34"]
+dev = ["rasterio>=1.4", "boto3>=1.34", "PyYAML>=6"]
+
+[tool.setuptools]
+packages = ["georange_io"]

@@ -127,6 +127,34 @@ def main() -> int:
     except Unsupported:
         print("  unknown file refused")
 
+    print("\nno prebuilt index:")
+    lazy = SparseReader(None, PROXY, BUCKET, margin=0.05)
+    k0 = picks[0][0]
+    L0 = idx[k0]["levels"][0]
+    reqs = [(k0, 0, 4000, 4000, 300, 300)]
+    a = lazy.read(reqs)[0]
+    b = rd.read(reqs)[0]
+    ok = np.array_equal(a, b)
+    fails += (not ok)
+    print(f"  a file described from its own header reads identically: {ok} "
+          f"({lazy.idx.described} file(s) described)")
+
+    print("\ndelegation to GDAL:")
+    import copy
+    seed = {k: copy.deepcopy(idx[k]) for k in (picks[0][0], picks[2][0])}
+    seed[picks[2][0]]["levels"][0]["compression"] = 5      # pretend LZW
+    mixed = SparseReader(seed, PROXY, BUCKET, margin=0.05)
+    mreq = [(picks[0][0], 0, 2000, 2000, 32, 32),
+            (picks[2][0], 0, 900, 900, 32, 32)]
+    fast, slow = mixed.split([mixed._norm(r) for r in mreq])
+    got = mixed.read_any(mreq)
+    truth = [gdal_window(*mixed._norm(r)) for r in mreq]
+    ok = (len(slow) == 1 and
+          all(np.array_equal(x, y) for x, y in zip(truth, got)))
+    fails += (not ok)
+    print(f"  one file refused and routed to GDAL, both results correct: {ok} "
+          f"(fast {fast}, delegated {slow})")
+
     print(f"\n{'ALL CHECKS PASSED' if not fails else str(fails)+' FAILURES'}")
     return 1 if fails else 0
 

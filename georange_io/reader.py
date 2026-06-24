@@ -53,6 +53,7 @@ if str(_ROOT / "baseline") not in sys.path:
 from tile_index import inflate_at            # noqa: E402
 from georange_io.sbx import (Sbx, StaleSidecar,      # noqa: E402,F401
                             open_for as sbx_open_for)
+from georange_io.cog import CogIndex               # noqa: E402
 
 SUPPORTED_COMPRESSION = {8, 32946}          # Deflate, Adobe Deflate
 SUPPORTED_PREDICTOR = {1, 2, 3}
@@ -79,6 +80,7 @@ class Stats:
     blocks_from_checkpoint: int = 0
     checkpoint_window_bytes: int = 0
     stale_sidecars: int = 0
+    delegated: int = 0
 
     def as_dict(self) -> dict:
         d = dict(self.__dict__)
@@ -177,12 +179,25 @@ class _Pool:
 
 
 class SparseReader:
-    def __init__(self, index_path: str | Path, base_url: str, bucket: str,
+    def __init__(self, index=None, base_url: str = "", bucket: str = "",
                  margin: float = 0.03, min_fetch: int = 16384,
                  rtt_s: float = 0.05, bandwidth_mbps: float = 100.0,
-                 workers: int = 1, sbx_dir: str | Path | None = None):
-        self.idx = json.loads(Path(index_path).read_text())
+                 workers: int = 1, sbx_dir: str | Path | None = None,
+                 gdal_path_for=None):
         self.bucket = bucket
+        self.pool = _Pool(base_url)
+        # index may be a prebuilt mapping, a path to one, or nothing at all;
+        # anything it does not cover is described from the object's own header
+        seed = None
+        if isinstance(index, (str, Path)):
+            seed = json.loads(Path(index).read_text())
+        elif isinstance(index, dict):
+            seed = index
+        if index is not None and not isinstance(index, (str, Path, dict)):
+            self.idx = index
+        else:
+            self.idx = CogIndex(pool=self.pool,
+                                path_for=lambda k: f"/{bucket}/{k}", seed=seed)
         self.margin = margin
         self.min_fetch = min_fetch
         self.workers = max(1, workers)
@@ -190,7 +205,8 @@ class SparseReader:
         # trip. Zero disables coalescing, infinity merges everything in a file.
         self.merge_budget = (rtt_s * bandwidth_mbps * 1e6 / 8.0
                              if bandwidth_mbps > 0 else float("inf"))
-        self.pool = _Pool(base_url)
+        self.gdal_path_for = gdal_path_for or (
+            lambda k: f"/vsis3/{bucket}/{k}")
         self.stats = Stats()
         self._lock = threading.Lock()
         self.sbx_dir = Path(sbx_dir) if sbx_dir else None
@@ -529,6 +545,43 @@ class SparseReader:
         else:
             with ThreadPoolExecutor(self.workers) as ex:
                 list(ex.map(lambda g: self._run_group(g, out), groups))
+        return out
+
+    def read_any(self, requests, allow_partial: bool = False) -> list:
+        """Read everything, delegating whatever this reader cannot decode.
+
+        Anything refused goes to GDAL, so a caller gets one uniform result and
+        never has to know which files took the fast path. Requires rasterio.
+        """
+        ok, no = self.split([self._norm(r) for r in requests])
+        out: list = [None] * len(requests)
+        if ok:
+            for slot, arr in zip(ok, self.read([requests[i] for i in ok],
+                                               allow_partial=allow_partial)):
+                out[slot] = arr
+        if no:
+            import rasterio
+            from rasterio.windows import Window
+            cache: dict = {}
+            try:
+                for i in no:
+                    key, lvl, x, y, w, h = self._norm(requests[i])
+                    ck = (key, lvl)
+                    ds = cache.get(ck)
+                    if ds is None:
+                        kw = {} if lvl == 0 else {"OVERVIEW_LEVEL": lvl - 1}
+                        ds = cache[ck] = rasterio.open(
+                            self.gdal_path_for(key), **kw)
+                    out[i] = ds.read(1, window=Window(x, y, w, h),
+                                     boundless=allow_partial, fill_value=0)
+                    with self._lock:
+                        self.stats.delegated += 1
+            finally:
+                for d in cache.values():
+                    try:
+                        d.close()
+                    except Exception:
+                        pass
         return out
 
     def sample(self, points) -> np.ndarray:
