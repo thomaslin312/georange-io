@@ -22,8 +22,8 @@ MAX_WALL_S   ?= 1800
         oracle granularity \
         analyze manifest report status logs versions verify crosscheck
 
-baseline: up stage index specs sweep oracle granularity prefix checkpoint \
-          crosscheck analyze check-rtt-invariance sbx test verify manifest report
+baseline: up stage index specs sweep oracle granularity prefix checkpoint unit \
+          crosscheck analyze check-rtt-invariance sbx unit test verify manifest report
 	@echo
 	@echo "Phase 0 complete. See REPORT.md, results/summary.csv, results/plots/."
 
@@ -131,7 +131,10 @@ sbx:
 gate-s3:
 	$(PY) georange_io/gate_s3.py --reps 4
 
-test:
+unit:
+	$(BENCH) bash -lc "cd /work && PYTHONPATH=/work:/work/baseline python3 -m pytest tests/test_unit.py -q"
+
+test: unit
 	$(BENCH) python3 georange_io/test_windows.py
 
 verify:

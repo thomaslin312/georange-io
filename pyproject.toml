@@ -8,7 +8,16 @@ version = "0.1.0"
 description = "A sparse reader for COG archives: plans, truncates and restarts, so point and time-series queries fetch a fraction of what a general reader must."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = { file = "LICENSE" }
+authors = [{ name = "Thomas Lin" }]
+keywords = ["cog", "geotiff", "raster", "sentinel-2", "remote-sensing", "deflate"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: GIS",
+]
 dependencies = ["numpy>=1.26", "tifffile>=2024.1.30"]
 
 [project.optional-dependencies]
@@ -16,7 +25,7 @@ dependencies = ["numpy>=1.26", "tifffile>=2024.1.30"]
 fallback = ["rasterio>=1.4"]
 # the sidecar builder reads whole tiles from object storage
 build = ["boto3>=1.34"]
-dev = ["rasterio>=1.4", "boto3>=1.34", "PyYAML>=6"]
+dev = ["rasterio>=1.4", "boto3>=1.34", "PyYAML>=6", "pytest>=8"]
 
 [tool.setuptools]
 packages = ["georange_io"]

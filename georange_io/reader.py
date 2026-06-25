@@ -183,9 +183,11 @@ class SparseReader:
                  margin: float = 0.03, min_fetch: int = 16384,
                  rtt_s: float = 0.05, bandwidth_mbps: float = 100.0,
                  workers: int = 1, sbx_dir: str | Path | None = None,
-                 gdal_path_for=None):
+                 gdal_path_for=None, pool=None):
         self.bucket = bucket
-        self.pool = _Pool(base_url)
+        # an injectable transport keeps the reader testable without a network,
+        # an object store, or a staged corpus
+        self.pool = pool if pool is not None else _Pool(base_url)
         # index may be a prebuilt mapping, a path to one, or nothing at all;
         # anything it does not cover is described from the object's own header
         seed = None
