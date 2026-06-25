@@ -22,8 +22,8 @@ MAX_WALL_S   ?= 1800
         oracle granularity \
         analyze manifest report status logs versions verify crosscheck
 
-baseline: up stage index specs sweep oracle granularity prefix checkpoint crosscheck analyze \
-          check-rtt-invariance manifest report
+baseline: up stage index specs sweep oracle granularity prefix checkpoint \
+          crosscheck analyze check-rtt-invariance sbx test verify manifest report
 	@echo
 	@echo "Phase 0 complete. See REPORT.md, results/summary.csv, results/plots/."
 
