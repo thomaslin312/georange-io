@@ -93,7 +93,7 @@ def test_values_match_the_file(predictor, dt):
         # tifffile cannot *write* the floating-point predictor without
         # imagecodecs, which is a heavy binary dependency to add for a test
         # fixture. The reader's predictor-3 path is exercised against real
-        # Copernicus DEM data by georange_io/verify.py on W2, where it matches
+        # Copernicus DEM data by experiments/verify.py on W2, where it matches
         # GDAL on 9,893 of 9,893 reads.
         pytest.skip(f"cannot build a predictor-{predictor} fixture here: {e}")
     pool = FakePool({"/b/x.tif": blob})
@@ -146,7 +146,7 @@ def test_workers_do_not_change_what_is_fetched(cog):
 # --- restart points --------------------------------------------------------
 
 def test_restart_reproduces_the_stream(cog):
-    from tile_index import build_index, read_from
+    from georange_io.tile_index import build_index, read_from
     data, blob, pool = cog
     rec = describe(pool, "/b/x.tif")
     L = rec["levels"][0]
@@ -160,7 +160,7 @@ def test_restart_reproduces_the_stream(cog):
 
 
 def test_sidecar_round_trip_and_staleness(tmp_path, cog):
-    from tile_index import build_index
+    from georange_io.tile_index import build_index
     data, blob, pool = cog
     rec = describe(pool, "/b/x.tif")
     L = rec["levels"][0]

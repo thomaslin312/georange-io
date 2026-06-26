@@ -31,7 +31,7 @@ the right answer flips when bandwidth is finite.
 
 Everything it does not handle it declines, so a caller can fall back to GDAL.
 Correctness is not negotiable: values must be identical to GDAL's, and
-georange_io/verify.py checks that against every read in a workload.
+experiments/verify.py checks that against every read in a workload.
 """
 from __future__ import annotations
 
@@ -47,10 +47,7 @@ from urllib.parse import urlparse
 
 import numpy as np
 
-_ROOT = Path(__file__).resolve().parent.parent
-if str(_ROOT / "baseline") not in sys.path:
-    sys.path.insert(0, str(_ROOT / "baseline"))
-from tile_index import inflate_at            # noqa: E402
+from georange_io.tile_index import inflate_at  # noqa: E402
 from georange_io.sbx import (Sbx, StaleSidecar,      # noqa: E402,F401
                             open_for as sbx_open_for)
 from georange_io.cog import CogIndex               # noqa: E402

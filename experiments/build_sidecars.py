@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT))
 
 from spec import WorkloadSpec                     # noqa: E402
 from theoretical import blocks_for_window         # noqa: E402
-from tile_index import build_index                # noqa: E402
+from georange_io.tile_index import build_index     # noqa: E402
 from georange_io import sbx                        # noqa: E402
 
 BUCKET = os.environ.get("GEORANGE_IO_BUCKET", "georange-io")

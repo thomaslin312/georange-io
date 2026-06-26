@@ -33,7 +33,8 @@ sys.path.insert(0, str(ROOT / "baseline"))
 
 from spec import WorkloadSpec                     # noqa: E402
 from theoretical import blocks_for_window         # noqa: E402
-from tile_index import build_index, fetch_bytes_for, read_from  # noqa: E402
+from georange_io.tile_index import (build_index,           # noqa: E402
+                                   fetch_bytes_for, read_from)
 
 BUCKET = os.environ.get("GEORANGE_IO_BUCKET", "georange-io")
 ENDPOINT = os.environ.get("MINIO_DIRECT", "http://minio:9000")

@@ -8,3 +8,4 @@ infra/minio-data/
 results/sbx/
 georange_io.egg-info/
 build/
+dist/

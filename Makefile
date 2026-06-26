@@ -125,21 +125,21 @@ SB_MARGIN ?= 0.03
 
 sbx:
 	@for s in $(SB_SPECS); do \
-	  $(BENCH) python3 georange_io/build_sidecars.py --spec $$s --span 262144 \
+	  $(BENCH) python3 experiments/build_sidecars.py --spec $$s --span 262144 \
 	    || exit 1; done
 
 gate-s3:
-	$(PY) georange_io/gate_s3.py --reps 4
+	$(PY) experiments/gate_s3.py --reps 4
 
 unit:
 	$(BENCH) bash -lc "cd /work && PYTHONPATH=/work:/work/baseline python3 -m pytest tests/test_unit.py -q"
 
 test: unit
-	$(BENCH) python3 georange_io/test_windows.py
+	$(BENCH) python3 experiments/test_windows.py
 
 verify:
 	@for s in $(SB_SPECS); do \
-	  $(BENCH) python3 georange_io/verify.py --spec $$s --margin $(SB_MARGIN) \
+	  $(BENCH) python3 experiments/verify.py --spec $$s --margin $(SB_MARGIN) \
 	    || exit 1; done
 
 ## --- analysis -------------------------------------------------------------
