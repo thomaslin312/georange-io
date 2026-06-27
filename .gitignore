@@ -9,3 +9,4 @@ results/sbx/
 georange_io.egg-info/
 build/
 dist/
+results/sbx_aws/

@@ -20,7 +20,7 @@ MAX_WALL_S   ?= 1800
 .PHONY: baseline up down clean-results stage index specs sweep \
         sweep-chunks sweep-rtt sweep-bwcap sweep-full check-rtt-invariance \
         oracle granularity \
-        analyze manifest report status logs versions verify crosscheck
+        analyze manifest report status logs versions verify crosscheck bench-aws
 
 baseline: up stage index specs sweep oracle granularity prefix checkpoint unit \
           crosscheck analyze check-rtt-invariance sbx unit test verify manifest report

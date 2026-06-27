@@ -1,0 +1,47 @@
+{
+  "host": "https://sentinel-cogs.s3.us-west-2.amazonaws.com",
+  "points": 10,
+  "dates": 24,
+  "n_reads": 240,
+  "values_agree": true,
+  "runs": [
+    {
+      "engine": "gdal",
+      "wall_s": 137.01,
+      "requests": 237,
+      "bytes": 312180736,
+      "checksum": 590586.0,
+      "label": "gdal"
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 108.25,
+      "requests": 175,
+      "bytes": 151941697,
+      "blocks_from_checkpoint": 0,
+      "workers": 1,
+      "checksum": 590586.0,
+      "label": "georange_io, 1 worker(s)"
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 26.63,
+      "requests": 175,
+      "bytes": 151941697,
+      "blocks_from_checkpoint": 0,
+      "workers": 8,
+      "checksum": 590586.0,
+      "label": "georange_io, 8 worker(s)"
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 31.86,
+      "requests": 174,
+      "bytes": 129367993,
+      "blocks_from_checkpoint": 79,
+      "workers": 8,
+      "checksum": 590586.0,
+      "label": "georange_io, 8 worker(s) + sidecar"
+    }
+  ]
+}
