@@ -83,6 +83,16 @@ on injected latency, which is what licenses running the chunk-size comparison at
 a single RTT. `baseline/crosscheck.py` reconciles the proxy's accounting against
 GDAL's own `CPL_DEBUG` record of the ranges it pulled.
 
+## Installing
+
+```bash
+pip install georange-io            # the distribution is georange-io; the import is georange_io
+```
+
+The name `georange_io` was already taken on PyPI by an unrelated package. An
+georange-io is a ridge left by a stream running under a glacier, which seemed a
+reasonable neighbour for a georange_io.
+
 ## The reader
 
 `georange_io/` is the thing the measurements argued for, and it is an
