@@ -21,7 +21,7 @@
       "blocks_from_checkpoint": 0,
       "workers": 1,
       "checksum": 590586.0,
-      "label": "georange_io, 1 worker(s)"
+      "label": "GeoRange IO, 1 worker(s)"
     },
     {
       "engine": "georange-io",
@@ -31,7 +31,7 @@
       "blocks_from_checkpoint": 0,
       "workers": 8,
       "checksum": 590586.0,
-      "label": "georange_io, 8 worker(s)"
+      "label": "GeoRange IO, 8 worker(s)"
     },
     {
       "engine": "georange-io",
@@ -41,7 +41,7 @@
       "blocks_from_checkpoint": 79,
       "workers": 8,
       "checksum": 590586.0,
-      "label": "georange_io, 8 worker(s) + sidecar"
+      "label": "GeoRange IO, 8 worker(s) + sidecar"
     }
   ]
 }

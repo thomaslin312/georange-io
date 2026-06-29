@@ -19,11 +19,11 @@ MAX_WALL_S   ?= 1800
 
 .PHONY: baseline up down clean-results stage index specs sweep \
         sweep-chunks sweep-rtt sweep-bwcap sweep-full check-rtt-invariance \
-        oracle granularity \
+        oracle granularity sidecars \
         analyze manifest report status logs versions verify crosscheck bench-aws
 
-baseline: up stage index specs sweep oracle granularity prefix checkpoint unit \
-          crosscheck analyze check-rtt-invariance sbx unit test verify manifest report
+baseline: up stage index specs sweep oracle granularity prefix checkpoint \
+          crosscheck analyze check-rtt-invariance sidecars unit test verify manifest report
 	@echo
 	@echo "Phase 0 complete. See REPORT.md, results/summary.csv, results/plots/."
 
@@ -120,11 +120,11 @@ crosscheck:
 #
 # The correctness gate. The reader's value is entirely "identical values, fewer
 # bytes", so if any pixel disagrees with GDAL the byte numbers mean nothing.
-SB_SPECS ?= results/specs/w6p5.json results/specs/w6.json results/specs/w2.json
-SB_MARGIN ?= 0.03
+GRIO_SPECS ?= results/specs/w6p5.json results/specs/w6.json results/specs/w2.json
+GRIO_MARGIN ?= 0.03
 
-sbx:
-	@for s in $(SB_SPECS); do \
+sidecars:
+	@for s in $(GRIO_SPECS); do \
 	  $(BENCH) python3 experiments/build_sidecars.py --spec $$s --span 262144 \
 	    || exit 1; done
 
@@ -138,8 +138,8 @@ test: unit
 	$(BENCH) python3 experiments/test_windows.py
 
 verify:
-	@for s in $(SB_SPECS); do \
-	  $(BENCH) python3 experiments/verify.py --spec $$s --margin $(SB_MARGIN) \
+	@for s in $(GRIO_SPECS); do \
+	  $(BENCH) python3 experiments/verify.py --spec $$s --margin $(GRIO_MARGIN) \
 	    || exit 1; done
 
 ## --- analysis -------------------------------------------------------------

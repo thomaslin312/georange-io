@@ -4,18 +4,23 @@
 Section 12 of REPORT.md projects a wall-time gain by composing a measured
 per-request cost with measured request counts. That was all the connection here
 allowed. This measures it directly instead: the same requests, against the
-public Sentinel-2 bucket on AWS, through GDAL and through georange_io, on the
+public Sentinel-2 bucket on AWS, through GDAL and through GeoRange IO, on the
 same machine at the same time.
 
-Each engine runs in its own subprocess so neither starts with a warm cache, and
-GDAL gets the best configuration Phase 0 found rather than defaults.
+Each engine runs in its own subprocess so neither starts with a warm cache.
+The order is shuffled for every repetition to avoid systematically giving one
+engine a warmer CDN or a quieter network. GDAL gets the best configuration
+Phase 0 found rather than defaults.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import random
 import re
+import statistics
 import subprocess
 import sys
 import time
@@ -39,6 +44,12 @@ GDAL_CFG = {
     "CPL_VSIL_CURL_CHUNK_SIZE": "16384",
     "CPL_VSIL_CURL_ALLOWED_EXTENSIONS": ".tif",
 }
+
+
+def digest(values: np.ndarray) -> str:
+    """Exact, order-sensitive identity after a common numeric representation."""
+    canonical = np.ascontiguousarray(values, dtype="<f8")
+    return hashlib.sha256(canonical.view(np.uint8)).hexdigest()
 
 
 def build_requests(n_points: int, n_dates: int, seed: int = 5):
@@ -88,7 +99,7 @@ def child_gdal(reqs):
     wall = time.perf_counter() - t0
     nbytes = sum(int(b) - int(a) + 1 for a, b in ranges)
     return {"engine": "gdal", "wall_s": round(wall, 2), "requests": len(ranges),
-            "bytes": nbytes, "checksum": float(out.sum())}
+            "bytes": nbytes, "value_sha256": digest(out)}
 
 
 def child_georange_io(reqs, sbx_dir, workers, bw):
@@ -103,7 +114,7 @@ def child_georange_io(reqs, sbx_dir, workers, bw):
     return {"engine": "georange-io", "wall_s": round(wall, 2),
             "requests": st["requests"], "bytes": st["bytes_fetched"],
             "blocks_from_checkpoint": st["blocks_from_checkpoint"],
-            "workers": workers, "checksum": float(out.sum())}
+            "workers": workers, "value_sha256": digest(out)}
 
 
 def main() -> int:
@@ -113,6 +124,8 @@ def main() -> int:
     ap.add_argument("--sbx-dir", default="")
     ap.add_argument("--workers", type=int, default=1)
     ap.add_argument("--bandwidth-mbps", type=float, default=100.0)
+    ap.add_argument("--repetitions", type=int, default=3)
+    ap.add_argument("--order-seed", type=int, default=202606)
     ap.add_argument("--engine", default="")
     ap.add_argument("--out", default="results/bench_aws.json")
     a = ap.parse_args()
@@ -145,52 +158,74 @@ def main() -> int:
             sbx_dir = str(dst)
             print(f"sidecars available for the AWS keys ({made} copied)")
 
+    if a.repetitions < 1:
+        ap.error("--repetitions must be at least 1")
     print(f"\n{len(reqs):,} point reads: {a.points} locations x {a.dates} "
-          f"acquisitions, live from {HOST}\n")
+          f"acquisitions, {a.repetitions} repetitions live from {HOST}\n")
     runs = []
-    plan = [("gdal", {}), ("georange-io", {"workers": 1}),
-            ("georange-io", {"workers": 8})]
+    base_plan = [("gdal", {}), ("georange-io", {"workers": 1}),
+                 ("georange-io", {"workers": 8})]
     if sbx_dir:
-        plan.append(("georange-io", {"workers": 8, "sbx": sbx_dir}))
+        base_plan.append(("georange-io", {"workers": 8, "sbx": sbx_dir}))
 
-    print(f"{'engine':<26} {'requests':>9} {'bytes':>11} {'wall':>9}")
-    for engine, kw in plan:
-        cmd = [sys.executable, __file__, "--engine", engine,
-               "--points", str(a.points), "--dates", str(a.dates),
-               "--bandwidth-mbps", str(a.bandwidth_mbps)]
-        if "workers" in kw:
-            cmd += ["--workers", str(kw["workers"])]
-        if "sbx" in kw:
-            cmd += ["--sbx-dir", kw["sbx"]]
-        cp = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
-        got = None
-        for line in cp.stdout.splitlines():
-            if line.startswith("RESULT "):
-                got = json.loads(line[7:])
-        if got is None:
-            raise RuntimeError(f"{engine} failed:\n{cp.stderr[-1500:]}")
-        label = engine
-        if engine == "georange-io":
-            label += f", {kw['workers']} worker(s)"
+    print(f"{'run':>3} {'engine':<28} {'requests':>9} {'bytes':>11} {'wall':>9}")
+    for repetition in range(1, a.repetitions + 1):
+        plan = list(base_plan)
+        random.Random(a.order_seed + repetition).shuffle(plan)
+        for engine, kw in plan:
+            cmd = [sys.executable, __file__, "--engine", engine,
+                   "--points", str(a.points), "--dates", str(a.dates),
+                   "--bandwidth-mbps", str(a.bandwidth_mbps)]
+            if "workers" in kw:
+                cmd += ["--workers", str(kw["workers"])]
             if "sbx" in kw:
-                label += " + sidecar"
-        got["label"] = label
-        runs.append(got)
-        print(f"{label:<26} {got['requests']:>9,} "
-              f"{got['bytes']/1e6:>10,.1f}M {got['wall_s']:>8.2f}s")
+                cmd += ["--sbx-dir", kw["sbx"]]
+            cp = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
+            got = None
+            for line in cp.stdout.splitlines():
+                if line.startswith("RESULT "):
+                    got = json.loads(line[7:])
+            if got is None:
+                raise RuntimeError(f"{engine} failed:\n{cp.stderr[-1500:]}")
+            label = "GDAL" if engine == "gdal" else "GeoRange IO"
+            if engine == "georange-io":
+                label += f", {kw['workers']} worker(s)"
+                if "sbx" in kw:
+                    label += " + sidecar"
+            got.update(label=label, repetition=repetition)
+            runs.append(got)
+            print(f"{repetition:>3} {label:<28} {got['requests']:>9,} "
+                  f"{got['bytes']/1e6:>10,.1f}M {got['wall_s']:>8.2f}s")
 
-    base = runs[0]
-    same = all(abs(r["checksum"] - base["checksum"]) < 1e-6 for r in runs)
-    print(f"\n  every engine returned the same values: {same}")
-    print(f"\n  {'against GDAL':<26} {'requests':>9} {'bytes':>9} {'wall':>9}")
-    for r in runs[1:]:
-        print(f"  {r['label']:<26} {base['requests']/max(1,r['requests']):>8.2f}x "
-              f"{base['bytes']/max(1,r['bytes']):>8.2f}x "
-              f"{base['wall_s']/max(0.01,r['wall_s']):>8.2f}x")
+    same = len({r["value_sha256"] for r in runs}) == 1
+    summary = {}
+    for label in dict.fromkeys(r["label"] for r in runs):
+        selected = [r for r in runs if r["label"] == label]
+        summary[label] = {
+            "repetitions": len(selected),
+            "requests_median": statistics.median(r["requests"] for r in selected),
+            "bytes_median": statistics.median(r["bytes"] for r in selected),
+            "wall_s_median": round(statistics.median(
+                r["wall_s"] for r in selected), 2),
+            "wall_s_min": min(r["wall_s"] for r in selected),
+            "wall_s_max": max(r["wall_s"] for r in selected),
+        }
+    baseline = summary["GDAL"]
+    print(f"\n  every engine returned byte-identical value arrays: {same}")
+    print(f"\n  {'median against GDAL':<30} {'requests':>9} {'bytes':>9} {'wall':>9}")
+    for label, row in summary.items():
+        if label == "GDAL":
+            continue
+        print(f"  {label:<30} "
+              f"{baseline['requests_median']/max(1,row['requests_median']):>8.2f}x "
+              f"{baseline['bytes_median']/max(1,row['bytes_median']):>8.2f}x "
+              f"{baseline['wall_s_median']/max(0.01,row['wall_s_median']):>8.2f}x")
 
     (ROOT / a.out).write_text(json.dumps(
         {"host": HOST, "points": a.points, "dates": a.dates,
-         "n_reads": len(reqs), "values_agree": same, "runs": runs}, indent=2))
+         "n_reads": len(reqs), "repetitions": a.repetitions,
+         "order_seed": a.order_seed, "values_agree": same,
+         "runs": runs, "summary": summary}, indent=2))
     print(f"\nwrote {a.out}")
     return 0
 

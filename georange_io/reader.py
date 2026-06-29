@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import http.client
 import json
+import re
 import sys
 import threading
 import zlib
@@ -138,7 +139,10 @@ class _Pool:
         The total comes out of Content-Range at no extra cost, which is what
         lets the reader check that the tile offsets it was handed still
         describe the object it is actually reading."""
-        hdrs = {"Range": f"bytes={start}-{start+length-1}",
+        if start < 0 or length <= 0:
+            raise ValueError(f"invalid byte range: start={start}, length={length}")
+        requested_end = start + length - 1
+        hdrs = {"Range": f"bytes={start}-{requested_end}",
                 "Accept-Encoding": "identity"}
         for attempt in (0, 1):
             c = self._conn()
@@ -146,14 +150,21 @@ class _Pool:
                 c.request("GET", path, headers=hdrs)
                 r = c.getresponse()
                 data = r.read()
-                if r.status not in (200, 206):
+                if r.status != 206:
                     raise RuntimeError(f"HTTP {r.status} for {path}")
-                total = None
                 cr = r.getheader("Content-Range")
-                if cr and "/" in cr:
-                    tail = cr.rsplit("/", 1)[1].strip()
-                    if tail.isdigit():
-                        total = int(tail)
+                match = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+)", cr or "")
+                if match is None:
+                    raise RuntimeError(
+                        f"invalid Content-Range {cr!r} for {path}")
+                got_start, got_end, total = map(int, match.groups())
+                expected_end = min(requested_end, total - 1)
+                if (got_start != start or got_end != expected_end or
+                        len(data) != got_end - got_start + 1):
+                    raise RuntimeError(
+                        f"unexpected range for {path}: requested "
+                        f"{start}-{requested_end}, received {got_start}-{got_end} "
+                        f"with {len(data)} bytes")
                 return data, total
             except Exception:
                 try:
@@ -211,6 +222,22 @@ class SparseReader:
         self.sbx_dir = Path(sbx_dir) if sbx_dir else None
         self._sbx: dict[str, object] = {}
         self._sbx_lock = threading.Lock()
+        self._index_requests_accounted = 0
+        self._index_bytes_accounted = 0
+
+    def _sync_index_stats(self) -> None:
+        """Include on-demand COG header traffic in the public counters."""
+        requests = int(getattr(self.idx, "header_requests", 0))
+        nbytes = int(getattr(self.idx, "header_bytes", 0))
+        with self._lock:
+            self.stats.requests += requests - self._index_requests_accounted
+            self.stats.bytes_fetched += nbytes - self._index_bytes_accounted
+            # Header traffic is unavoidable in both the sparse and whole-tile
+            # paths, so include it on both sides of this diagnostic ratio.
+            self.stats.bytes_if_whole_blocks += (
+                nbytes - self._index_bytes_accounted)
+            self._index_requests_accounted = requests
+            self._index_bytes_accounted = nbytes
 
     def _sidecar(self, key: str):
         if self.sbx_dir is None:
@@ -228,7 +255,7 @@ class SparseReader:
                         # cleanly and return wrong pixels, so drop it loudly
                         with self._lock:
                             self.stats.stale_sidecars += 1
-                        print(f"georange_io: ignoring stale sidecar: {e}",
+                        print(f"GeoRange IO: ignoring stale sidecar: {e}",
                               file=sys.stderr)
                         self._sbx[key] = None
                     except Exception:
@@ -236,17 +263,19 @@ class SparseReader:
             return self._sbx[key]
 
     # -- capability check --------------------------------------------------
-    def supports(self, key: str) -> bool:
+    def supports(self, key: str, level: int = 0) -> bool:
         rec = self.idx.get(key)
         if not rec or not rec.get("levels"):
             return False
-        return not self.why_unsupported(key)
+        return not self.why_unsupported(key, level)
 
-    def why_unsupported(self, key: str) -> str | None:
+    def why_unsupported(self, key: str, level: int = 0) -> str | None:
         rec = self.idx.get(key)
         if not rec or not rec.get("levels"):
             return "not in the index"
-        L = rec["levels"][0]
+        if not isinstance(level, int) or level < 0 or level >= len(rec["levels"]):
+            return f"no level {level}"
+        L = rec["levels"][level]
         if L["compression"] not in SUPPORTED_COMPRESSION:
             return f"compression {L['compression']} is not Deflate"
         if L.get("predictor", 1) not in SUPPORTED_PREDICTOR:
@@ -260,6 +289,12 @@ class SparseReader:
         bo = L.get("byteorder", rec.get("byteorder"))
         if bo != "<":
             return f"byte order {bo!r} is not little-endian"
+        dt = np.dtype(L["dtype"])
+        predictor = L.get("predictor", 1)
+        if predictor == 2 and not np.issubdtype(dt, np.integer):
+            return f"predictor 2 requires an integer dtype, not {dt}"
+        if predictor == 3 and not np.issubdtype(dt, np.floating):
+            return f"predictor 3 requires a floating dtype, not {dt}"
         return None
 
     def split(self, requests):
@@ -267,7 +302,8 @@ class SparseReader:
         caller must hand to GDAL."""
         ok, no = [], []
         for i, r in enumerate(requests):
-            (ok if self.supports(r[0]) else no).append(i)
+            key, level, *_ = self._norm(r)
+            (ok if self.supports(key, level) else no).append(i)
         return ok, no
 
     # -- planning ----------------------------------------------------------
@@ -367,7 +403,8 @@ class SparseReader:
         for j in jobs:
             if j.count == 0:                       # sparse tile, no fetch
                 continue
-            if not run or j.key != run[0].key:
+            if (not run or j.key != run[0].key or
+                    j.level != run[0].level):
                 close()
                 run.append(j)
                 continue
@@ -454,12 +491,12 @@ class SparseReader:
     def _run_group(self, g: _Group, out) -> None:
         buf = self._fetch(g.key, g.start, g.length)
         rec = self.idx[g.key]
-        L = rec["levels"][g.jobs[0].level]
-        dt = np.dtype(L["dtype"])
-        width = L["blockw"]
-        row_bytes = width * dt.itemsize
-        pred = L.get("predictor", 1)
         for job in g.jobs:
+            L = rec["levels"][job.level]
+            dt = np.dtype(L["dtype"])
+            width = L["blockw"]
+            row_bytes = width * dt.itemsize
+            pred = L.get("predictor", 1)
             lo = job.start - g.start
             hi = min(len(buf), (job.offset + job.count) - g.start)
             comp = buf[lo:hi]
@@ -500,22 +537,26 @@ class SparseReader:
         mistake as decoding a file we do not understand: the caller gets an
         array that looks valid. Pass allow_partial=True to opt into zero fill.
         """
+        norm = [self._norm(r) for r in requests]
         bad = {}
-        for key in {r[0] for r in requests}:
-            why = self.why_unsupported(key)
+        for key, level in {(r[0], r[1]) for r in norm}:
+            why = self.why_unsupported(key, level)
             if why:
-                bad[key] = why
+                bad[(key, level)] = why
+        self._sync_index_stats()
         if bad:
             first = list(bad.items())[:3]
             raise Unsupported(
-                f"{len(bad)} file(s) cannot be served correctly by this "
+                f"{len(bad)} file level(s) cannot be served correctly by this "
                 f"reader; use split() and fall back to GDAL. "
-                + "; ".join(f"{k}: {v}" for k, v in first))
-        norm = [self._norm(r) for r in requests]
-        if not allow_partial:
-            for (k, lv, x, y, w, h) in norm:
-                if lv >= len(self.idx[k]["levels"]):
-                    raise Unsupported(f"{k}: no level {lv}")
+                + "; ".join(f"{k} level {lv}: {v}"
+                            for (k, lv), v in first))
+        for (k, lv, x, y, w, h) in norm:
+            if w <= 0 or h <= 0:
+                raise Unsupported(
+                    f"{k} level {lv}: window width and height must be "
+                    f"positive, got {w}x{h}")
+            if not allow_partial:
                 L = self.idx[k]["levels"][lv]
                 if x < 0 or y < 0 or x + w > L["width"] or y + h > L["height"]:
                     raise Unsupported(
@@ -527,9 +568,9 @@ class SparseReader:
                for (k, lv, _x, _y, w, h) in norm]
         jobs = self.plan(requests)
         groups = self.coalesce(jobs)
-        self.stats.blocks = len([j for j in jobs if j.count])
-        self.stats.groups = len(groups)
-        self.stats.bytes_if_whole_blocks = sum(j.count for j in jobs)
+        self.stats.blocks += len([j for j in jobs if j.count])
+        self.stats.groups += len(groups)
+        self.stats.bytes_if_whole_blocks += sum(j.count for j in jobs)
 
         for j in jobs:                              # sparse tiles need no fetch
             if j.count == 0:
@@ -586,4 +627,4 @@ class SparseReader:
     def sample(self, points) -> np.ndarray:
         """Read single pixels. points are (key, x, y); returns one value each."""
         arrs = self.read([(k, x, y, 1, 1) for (k, x, y) in points])
-        return np.array([float(a[0, 0]) for a in arrs], np.float64)
+        return np.array([a[0, 0] for a in arrs])

@@ -130,7 +130,7 @@ def main() -> int:
     sw = time.perf_counter() - t0
     ctl("/session/stop")
     sn, sb = tally("_V.georange_io")
-    print(f"  georange_io {sn:>6,} req  {sb/1e6:9.2f} MB  {sw:7.2f}s")
+    print(f"  GeoRange IO {sn:>6,} req  {sb/1e6:9.2f} MB  {sw:7.2f}s")
 
     same = np.array_equal(truth, got)
     bad = int((truth != got).sum())
@@ -138,7 +138,7 @@ def main() -> int:
     if not same:
         idx = np.flatnonzero(truth != got)[:5]
         for i in idx:
-            print(f"    {reqs[i]}  gdal={truth[i]}  georange_io={got[i]}")
+            print(f"    {reqs[i]}  gdal={truth[i]}  GeoRange IO={got[i]}")
     print(f"  bytes   {gb/max(1,sb):.2f}x fewer      "
           f"requests {gn/max(1,sn):.2f}x fewer")
     print(f"  reader stats: {json.dumps(rd.stats.as_dict())}")

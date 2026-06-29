@@ -5,8 +5,8 @@ services:
     image: minio/minio:latest
     command: server /data --address ":9000" --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: georange_io
-      MINIO_ROOT_PASSWORD: georange_io123
+      MINIO_ROOT_USER: georange-io
+      MINIO_ROOT_PASSWORD: georange-io123
       # Keep MinIO out of the measurement: no scanner churn during a sweep.
       MINIO_SCANNER_SPEED: slowest
     volumes:
@@ -51,7 +51,7 @@ services:
       AWS_VIRTUAL_HOSTING: "FALSE"
       AWS_NO_SIGN_REQUEST: "YES"
       AWS_DEFAULT_REGION: us-east-1
-      GEORANGE_IO_BUCKET: georange_io
+      GEORANGE_IO_BUCKET: georange-io
       GEORANGE_IO_PROXY_CONTROL: http://proxy:9010
       # Indexing, workload generation and the W5 oracle read MinIO directly,
       # bypassing the proxy, so none of that traffic lands in a measurement.

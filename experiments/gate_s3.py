@@ -124,7 +124,7 @@ def main() -> int:
               f"{base_ttfb*1000:.0f} ms:")
         for name, r in cases.items():
             print(f"    {name}")
-            print(f"      {'bandwidth':>10} {'GDAL':>10} {'georange_io':>12} "
+            print(f"      {'bandwidth':>10} {'GDAL':>10} {'GeoRange IO':>12} "
                   f"{'gain':>7}")
             rowsw = []
             for bw in (10, 50, 200, 1000, 5000):

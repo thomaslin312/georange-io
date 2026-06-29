@@ -93,11 +93,19 @@ class Sbx:
     def __init__(self, path: str | Path):
         self.path = Path(path)
         self._fh = self.path.open("rb")
+        header = self._fh.read(_HDR.size)
+        if len(header) != _HDR.size:
+            self._fh.close()
+            raise ValueError(f"{path}: truncated sidecar header")
         (magic, self.span, n, self.source_size,
-         self.source_hash) = _HDR.unpack(self._fh.read(_HDR.size))
+         self.source_hash) = _HDR.unpack(header)
         if magic != MAGIC:
+            self._fh.close()
             raise ValueError(f"{path}: not an sbx v2 file")
         raw = self._fh.read(_ENT.size * n)
+        if len(raw) != _ENT.size * n:
+            self._fh.close()
+            raise ValueError(f"{path}: truncated sidecar table")
         self._table = {}
         for i in range(n):
             b, cnt, off = _ENT.unpack_from(raw, i * _ENT.size)
@@ -119,8 +127,14 @@ class Sbx:
         self._fh.seek(self._body + off)
         pts = []
         for _ in range(cnt):
-            in_byte, bits, out, wlen = _PT.unpack(self._fh.read(_PT.size))
-            pts.append(Point(in_byte, bits, out, self._fh.read(wlen)))
+            raw = self._fh.read(_PT.size)
+            if len(raw) != _PT.size:
+                raise ValueError(f"{self.path}: truncated checkpoint")
+            in_byte, bits, out, wlen = _PT.unpack(raw)
+            window = self._fh.read(wlen)
+            if len(window) != wlen:
+                raise ValueError(f"{self.path}: truncated checkpoint window")
+            pts.append(Point(in_byte, bits, out, window))
         self._cache[block] = pts
         return pts
 
@@ -146,8 +160,12 @@ def open_for(path: str | Path, rec: dict) -> "Sbx":
     pixels, not an error.
     """
     sc = Sbx(path)
-    want_size = int(rec["size"])
-    want_hash = layout_hash(rec["levels"][0])
+    try:
+        want_size = int(rec["size"])
+        want_hash = layout_hash(rec["levels"][0])
+    except Exception:
+        sc.close()
+        raise
     if sc.source_size != want_size or sc.source_hash != want_hash:
         sc.close()
         raise StaleSidecar(

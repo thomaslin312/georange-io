@@ -23,7 +23,8 @@ import tifffile
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from georange_io import SparseReader, Unsupported, describe, sbx   # noqa: E402
-from georange_io.reader import _Pool                               # noqa: E402
+from georange_io.cog import CogIndex                               # noqa: E402
+from georange_io.reader import _Job, _Pool                         # noqa: E402
 
 
 class FakePool:
@@ -69,6 +70,33 @@ def reader(pool, **kw):
     return SparseReader(None, "", "b", pool=pool, **kw)
 
 
+class FakeResponse:
+    def __init__(self, status, body=b"", content_range=None):
+        self.status = status
+        self._body = body
+        self._content_range = content_range
+
+    def read(self):
+        return self._body
+
+    def getheader(self, name):
+        return self._content_range if name == "Content-Range" else None
+
+
+class FakeConnection:
+    def __init__(self, response):
+        self.response = response
+
+    def request(self, *args, **kwargs):
+        pass
+
+    def getresponse(self):
+        return self.response
+
+    def close(self):
+        pass
+
+
 # --- the tile map ----------------------------------------------------------
 
 def test_describe_matches_the_file(cog):
@@ -80,6 +108,42 @@ def test_describe_matches_the_file(cog):
     assert (L["blockw"], L["blockh"]) == (256, 256)
     assert L["nbx"] * L["nby"] == len(L["offsets"])
     assert L["predictor"] == 2 and L["compression"] in (8, 32946)
+
+
+def test_http_ranges_are_validated(monkeypatch):
+    pool = _Pool("https://example.invalid")
+    good = FakeConnection(FakeResponse(206, b"abcd", "bytes 4-7/10"))
+    monkeypatch.setattr(pool, "_conn", lambda: good)
+    assert pool.get_range("/x", 4, 4) == (b"abcd", 10)
+
+    ignored = FakeConnection(FakeResponse(200, b"0123456789"))
+    monkeypatch.setattr(pool, "_conn", lambda: ignored)
+    with pytest.raises(RuntimeError, match="HTTP 200"):
+        pool.get_range("/x", 4, 4)
+
+    wrong = FakeConnection(FakeResponse(206, b"abcd", "bytes 5-8/10"))
+    monkeypatch.setattr(pool, "_conn", lambda: wrong)
+    with pytest.raises(RuntimeError, match="unexpected range"):
+        pool.get_range("/x", 4, 4)
+
+
+def test_transient_description_failure_is_retried(monkeypatch):
+    import georange_io.cog as cog_module
+
+    calls = 0
+
+    def flaky(_pool, path):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise TimeoutError("temporary")
+        return {"key": path, "levels": [{"width": 1}]}
+
+    monkeypatch.setattr(cog_module, "describe", flaky)
+    idx = CogIndex(pool=object())
+    assert idx.get("x") is None
+    assert idx.get("x")["key"] == "/x"
+    assert calls == 2 and idx.described == 1
 
 
 # --- values ----------------------------------------------------------------
@@ -143,6 +207,39 @@ def test_workers_do_not_change_what_is_fetched(cog):
     assert one.stats.requests == many.stats.requests
 
 
+def test_different_overview_levels_are_never_coalesced():
+    rd = SparseReader({}, pool=FakePool({}), bandwidth_mbps=0.0)
+    jobs = [
+        _Job("x.tif", 0, 0, 100, 10, prefix=10, start=100),
+        _Job("x.tif", 1, 0, 110, 10, prefix=10, start=110),
+    ]
+    assert len(rd.coalesce(jobs)) == 2
+
+
+def test_stats_accumulate_across_reads(cog):
+    _, blob, pool = cog
+    rec = describe(pool, "/b/x.tif")
+    rd = SparseReader({"x.tif": rec}, "", "b",
+                      pool=FakePool({"/b/x.tif": blob}),
+                      bandwidth_mbps=0.0001)
+    rd.sample([("x.tif", 10, 5)])
+    first = rd.stats.as_dict()
+    rd.sample([("x.tif", 10, 5)])
+    second = rd.stats.as_dict()
+    for field in ("requests", "bytes_fetched", "blocks", "groups",
+                  "bytes_if_whole_blocks"):
+        assert second[field] == 2 * first[field]
+
+
+def test_stats_include_on_demand_header_traffic(cog):
+    _, blob, _ = cog
+    pool = FakePool({"/b/x.tif": blob})
+    rd = reader(pool, bandwidth_mbps=0.0001)
+    rd.sample([("x.tif", 10, 5)])
+    assert rd.stats.requests == pool.requests
+    assert rd.stats.bytes_fetched == pool.bytes
+
+
 # --- restart points --------------------------------------------------------
 
 def test_restart_reproduces_the_stream(cog):
@@ -184,6 +281,14 @@ def test_sidecar_round_trip_and_staleness(tmp_path, cog):
         sbx.open_for(p, retiled)
 
 
+@pytest.mark.parametrize("payload", [b"", b"SBX2", b"not a sidecar at all"])
+def test_corrupt_sidecar_is_refused(tmp_path, payload):
+    p = tmp_path / "broken.sbx"
+    p.write_bytes(payload)
+    with pytest.raises(ValueError):
+        sbx.Sbx(p)
+
+
 # --- refusals --------------------------------------------------------------
 
 def test_refuses_unknown_file(cog):
@@ -213,6 +318,33 @@ def test_refuses_window_off_the_edge(cog):
     part = rd.read([("x.tif", 1000, 1000, 64, 64)], allow_partial=True)
     assert part[0].shape == (64, 64)
     assert (part[0][:, 24:] == 0).all()
+
+
+@pytest.mark.parametrize("window_request", [
+    ("x.tif", -1, 0, 0, 1, 1),
+    ("x.tif", 1, 0, 0, 1, 1),
+    ("x.tif", 0, 0, 0, 1),
+    ("x.tif", 0, 0, -1, 1),
+])
+def test_refuses_invalid_level_or_window_even_when_partial(cog, window_request):
+    _, _, pool = cog
+    with pytest.raises(Unsupported):
+        reader(pool).read([window_request], allow_partial=True)
+
+
+def test_checks_encoding_at_the_requested_level(cog):
+    _, _, pool = cog
+    import copy
+    rec = describe(pool, "/b/x.tif")
+    rec["levels"].append(copy.deepcopy(rec["levels"][0]))
+    rec["levels"][1]["level"] = 1
+    rec["levels"][1]["compression"] = 5
+    rd = SparseReader({"x.tif": rec}, "", "b", pool=pool)
+    assert rd.supports("x.tif", 0)
+    assert not rd.supports("x.tif", 1)
+    assert rd.split([("x.tif", 1, 0, 0, 1, 1)]) == ([], [0])
+    with pytest.raises(Unsupported, match="compression 5"):
+        rd.read([("x.tif", 1, 0, 0, 1, 1)])
 
 
 def test_refuses_an_index_describing_another_object(cog):

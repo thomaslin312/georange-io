@@ -1,4 +1,4 @@
-"""georange_io: a sparse reader for COG archives.
+"""GeoRange IO: a sparse reader for COG archives.
 
 Reads points and windows from tiled, Deflate-compressed COGs while fetching a
 fraction of what a general-purpose reader must, by knowing the whole request

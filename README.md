@@ -1,12 +1,13 @@
-# GeoRange IO — Phase 0
+# GeoRange IO
 
-Baseline instrumentation and headroom analysis for an access-pattern-aware read
-engine for large remote rasters.
+An access-pattern-aware sparse reader for large remote Cloud Optimized GeoTIFF
+(COG) archives. GeoRange IO plans a batch of point or window reads before
+fetching, reuses each compressed block, stops DEFLATE decoding at the last
+needed row, and coalesces ranges using an explicit bandwidth/latency model.
 
-Phase 0 does not build the engine. It answers one question: **for which access
-patterns does GDAL actually leave headroom, and how much?** The output is
-[REPORT.md](REPORT.md), with a per-workload verdict and an explicit
-keep-or-cut recommendation.
+The implementation grew out of a measured headroom study. See
+[AUDIT.md](AUDIT.md) for the current correctness and performance audit, and
+[REPORT.md](REPORT.md) for the underlying experiments.
 
 ## Running it
 
@@ -86,12 +87,12 @@ GDAL's own `CPL_DEBUG` record of the ranges it pulled.
 ## Installing
 
 ```bash
-pip install georange-io            # the distribution is georange-io; the import is georange_io
+git clone https://github.com/thomaslin312/georange-io.git
+cd georange-io
+python -m pip install .
 ```
 
-The name `georange_io` was already taken on PyPI by an unrelated package. An
-georange-io is a ridge left by a stream running under a glacier, which seemed a
-reasonable neighbour for a georange_io.
+The distribution name is `georange-io`; the Python import is `georange_io`.
 
 ## The reader
 
@@ -123,7 +124,7 @@ make verify          # every value must match GDAL, on three workloads
 ```
 
 Correctness is the gate, not a nicety: the claim is identical values for fewer
-bytes, so `georange_io/verify.py` compares every single value against GDAL and
+bytes, so `experiments/verify.py` compares every single value against GDAL and
 fails on one mismatch. It currently passes on 14,933 reads spanning all three
 predictors, both block sizes and both dtypes in the corpus, plus window reads
 at every overview level.
@@ -132,6 +133,24 @@ The reader refuses rather than guessing. An encoding it cannot decode, a window
 running off the edge of a level, an index that does not describe the object
 being read, or a sidecar built for a different file are all errors, because the
 failure mode of each is plausible-looking wrong pixels rather than a crash.
+
+## Current measured result
+
+A three-repetition live AWS benchmark shuffles engine order on each repetition
+and compares SHA-256 digests of every returned value. For 60 sparse reads over
+12 Sentinel-2 acquisitions, all 12 engine runs agreed exactly:
+
+| Engine | Requests | Bytes | Median wall time |
+|---|---:|---:|---:|
+| tuned GDAL | 72 | 91.3 MB | 46.57 s |
+| GeoRange IO, 1 worker | 72 | 56.7 MB | 30.01 s |
+| GeoRange IO, 8 workers | 72 | 56.7 MB | 11.96 s |
+| GeoRange IO, 8 workers + sidecar | 72 | 31.7 MB | 8.24 s |
+
+That is a 1.61× byte reduction and 3.89× median wall-time gain without a
+sidecar; sidecars increase the byte reduction to 2.88×. On first access the
+request counts tie because both readers must fetch 12 COG headers. The full
+limits and methodology are in [AUDIT.md](AUDIT.md).
 
 ## Reproducibility
 

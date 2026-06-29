@@ -150,6 +150,8 @@ class CogIndex:
         self._d: dict[str, dict] = dict(seed or {})
         self._lock = threading.Lock()
         self.described = 0
+        self.header_requests = 0
+        self.header_bytes = 0
 
     def __contains__(self, key): return self.get(key) is not None
     def __getitem__(self, key):
@@ -170,8 +172,12 @@ class CogIndex:
             try:
                 rec = describe(self._pool, self._path_for(key))
             except Exception:
-                self._d[key] = None
+                # A timeout or transient object-store failure must not poison
+                # this key for the lifetime of the reader. Only successful
+                # descriptions are cached.
                 return default
             self._d[key] = rec
             self.described += 1
+            self.header_requests += int(rec.get("header_requests", 0))
+            self.header_bytes += int(rec.get("header_bytes", 0))
             return rec

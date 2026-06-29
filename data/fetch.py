@@ -85,7 +85,7 @@ def download(url: str, dest: Path, expect: int | None = None,
         if expect and have == expect:
             break
         try:
-            hdrs = {"User-Agent": "georange_io-phase0"}
+            hdrs = {"User-Agent": "georange-io-phase0"}
             if have:
                 hdrs["Range"] = f"bytes={have}-"
             req = urllib.request.Request(url, headers=hdrs)

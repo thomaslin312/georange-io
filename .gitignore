@@ -6,7 +6,7 @@ data/staging/
 .DS_Store
 infra/minio-data/
 results/sbx/
-georange_io.egg-info/
+*.egg-info/
 build/
 dist/
 results/sbx_aws/
