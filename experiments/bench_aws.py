@@ -104,9 +104,28 @@ def child_gdal(reqs):
 
 def child_georange_io(reqs, sbx_dir, workers, bw):
     from georange_io import SparseReader
+    content_identities = {}
+    if sbx_dir:
+        import yaml
+        staged = json.loads((ROOT / "data" / "staged.json").read_text())
+        sources = yaml.safe_load(
+            (ROOT / "data" / "sources_w6.yaml").read_text())["objects"]
+        for source in sources:
+            prefix = f"{HOST}/{BUCKET}/"
+            if source["url"].startswith(prefix):
+                aws_key = source["url"][len(prefix):]
+                # named sha, not digest: a local binding here shadows the
+                # module-level digest() helper for the whole function, and
+                # Python then treats every use of the name as local, so the
+                # value hash at the end raised UnboundLocalError even when no
+                # sidecar was configured
+                sha = staged.get(source["key"], {}).get("sha256")
+                if sha:
+                    content_identities[aws_key] = f"sha256:{sha}"
     rd = SparseReader(None, HOST, BUCKET, margin=0.03, workers=workers,
                       rtt_s=0.12, bandwidth_mbps=bw,
-                      sbx_dir=sbx_dir or None)
+                      sbx_dir=sbx_dir or None,
+                      content_identities=content_identities)
     t0 = time.perf_counter()
     out = rd.sample(reqs)
     wall = time.perf_counter() - t0
@@ -180,13 +199,28 @@ def main() -> int:
                 cmd += ["--workers", str(kw["workers"])]
             if "sbx" in kw:
                 cmd += ["--sbx-dir", kw["sbx"]]
-            cp = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
+            # A single transient read error against a live object store used
+            # to abort the whole benchmark and lose every repetition. Both
+            # engines hit these; GDAL surfaced a TIFFReadEncodedTile failure
+            # mid-run. Retry the whole measurement rather than the request, so
+            # a retried attempt is still a clean cold-cache process.
             got = None
-            for line in cp.stdout.splitlines():
-                if line.startswith("RESULT "):
-                    got = json.loads(line[7:])
+            last = ""
+            for attempt in range(3):
+                cp = subprocess.run(cmd, capture_output=True, text=True,
+                                    timeout=3600)
+                for line in cp.stdout.splitlines():
+                    if line.startswith("RESULT "):
+                        got = json.loads(line[7:])
+                if got is not None:
+                    break
+                last = cp.stderr[-1500:]
+                print(f"    {engine}: attempt {attempt + 1} failed, retrying",
+                      flush=True)
+                time.sleep(2 * (attempt + 1))
             if got is None:
-                raise RuntimeError(f"{engine} failed:\n{cp.stderr[-1500:]}")
+                raise RuntimeError(
+                    f"{engine} failed after 3 attempts:\n{last}")
             label = "GDAL" if engine == "gdal" else "GeoRange IO"
             if engine == "georange-io":
                 label += f", {kw['workers']} worker(s)"

@@ -93,6 +93,7 @@ python -m pip install .
 ```
 
 The distribution name is `georange-io`; the Python import is `georange_io`.
+The supported API and compatibility policy are documented in [API.md](API.md).
 
 ## The reader
 
@@ -102,10 +103,15 @@ installable package rather than a harness:
 ```python
 from georange_io import SparseReader
 
-rd = SparseReader(base_url="https://sentinel-cogs.s3.us-west-2.amazonaws.com",
-                  bucket="sentinel-s2-l2a-cogs")
-values  = rd.sample([("path/B04.tif", 5000, 3000), ...])
-windows = rd.read([("path/B04.tif", 0, 100, 100, 512, 512), ...])
+with SparseReader(
+    base_url="https://sentinel-cogs.s3.us-west-2.amazonaws.com",
+    bucket="sentinel-s2-l2a-cogs",
+    timeout_s=30,
+    retries=3,
+    workers=8,
+) as rd:
+    values = rd.sample([("path/B04.tif", 5000, 3000), ...])
+    windows = rd.read([("path/B04.tif", 0, 100, 100, 512, 512), ...])
 ```
 
 Nothing has to be indexed in advance. Each file is described from its own
@@ -133,6 +139,16 @@ The reader refuses rather than guessing. An encoding it cannot decode, a window
 running off the edge of a level, an index that does not describe the object
 being read, or a sidecar built for a different file are all errors, because the
 failure mode of each is plausible-looking wrong pixels rather than a crash.
+
+For private stores, pass static HTTP `headers` or a `headers_for(path, start,
+end)` callback that returns per-request authentication headers. `timeout_s`,
+`retries`, and `backoff_s` control bounded exponential retry behavior. Output,
+compressed-range, and uncompressed-block limits protect services from accidental
+or hostile allocations.
+
+Sidecars use the identity-bound SBX3 format. They are accepted only when their
+content SHA-256, object version, or ETag matches the source record. Older
+identity-free sidecars fail closed and the reader continues without them.
 
 ## Current measured result
 

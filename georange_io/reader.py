@@ -38,20 +38,23 @@ from __future__ import annotations
 import http.client
 import json
 import re
+import ssl
 import sys
 import threading
+import time
 import zlib
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 
 import numpy as np
 
 from georange_io.tile_index import inflate_at  # noqa: E402
 from georange_io.sbx import (Sbx, StaleSidecar,      # noqa: E402,F401
                             open_for as sbx_open_for)
-from georange_io.cog import CogIndex               # noqa: E402
+from georange_io.cog import (CogIndex, RangeResult,  # noqa: E402
+                             as_range_result)
 
 SUPPORTED_COMPRESSION = {8, 32946}          # Deflate, Adobe Deflate
 SUPPORTED_PREDICTOR = {1, 2, 3}
@@ -66,6 +69,21 @@ class Unsupported(Exception):
     caller can fall back to GDAL for whatever is refused."""
 
 
+class TransportError(RuntimeError):
+    """A remote server did not satisfy the validated range-read contract."""
+
+
+class ObjectChanged(TransportError):
+    """The source object changed between metadata and pixel range reads."""
+
+
+class _HTTPStatusError(TransportError):
+    def __init__(self, status: int, path: str, retryable: bool):
+        super().__init__(f"HTTP {status} for {path}")
+        self.status = status
+        self.retryable = retryable
+
+
 @dataclass
 class Stats:
     requests: int = 0
@@ -78,7 +96,9 @@ class Stats:
     blocks_from_checkpoint: int = 0
     checkpoint_window_bytes: int = 0
     stale_sidecars: int = 0
+    invalid_sidecars: int = 0
     delegated: int = 0
+    retries: int = 0
 
     def as_dict(self) -> dict:
         d = dict(self.__dict__)
@@ -118,20 +138,74 @@ class _Pool:
     """Thread-local keep-alive connections. One TCP connection per worker, so
     the request count the proxy sees is not inflated by reconnects."""
 
-    def __init__(self, base: str):
+    RETRY_STATUSES = frozenset({408, 425, 429, 500, 502, 503, 504})
+
+    def __init__(self, base: str, timeout_s: float = 30.0,
+                 retries: int = 3, backoff_s: float = 0.25,
+                 headers: dict[str, str] | None = None,
+                 headers_for=None,
+                 ssl_context: ssl.SSLContext | None = None):
         u = urlparse(base)
+        if u.scheme not in {"http", "https"} or not u.hostname:
+            raise ValueError("base_url must be an absolute http(s) URL")
+        if u.query or u.fragment:
+            raise ValueError("base_url cannot contain a query string or fragment")
+        if u.username is not None or u.password is not None:
+            raise ValueError(
+                "credentials in base_url are not supported; use headers instead")
+        if timeout_s <= 0:
+            raise ValueError("timeout_s must be positive")
+        if retries < 0 or backoff_s < 0:
+            raise ValueError("retries and backoff_s must be non-negative")
         self.host = u.hostname
         self.port = u.port or (443 if u.scheme == "https" else 80)
         self.https = u.scheme == "https"
+        self.base_path = u.path.rstrip("/")
+        self.timeout_s = float(timeout_s)
+        self.retries = int(retries)
+        self.backoff_s = float(backoff_s)
+        self.headers = dict(headers or {})
+        self.headers_for = headers_for
+        self.ssl_context = ssl_context
         self.local = threading.local()
+        self._connections: set = set()
+        self._lock = threading.Lock()
+        self._closed = False
 
     def _conn(self):
+        if self._closed:
+            raise RuntimeError("transport is closed")
         c = getattr(self.local, "conn", None)
         if c is None:
             cls = (http.client.HTTPSConnection if self.https
                    else http.client.HTTPConnection)
-            c = self.local.conn = cls(self.host, self.port, timeout=300)
+            kwargs = {"timeout": self.timeout_s}
+            if self.https and self.ssl_context is not None:
+                kwargs["context"] = self.ssl_context
+            c = self.local.conn = cls(self.host, self.port, **kwargs)
+            with self._lock:
+                self._connections.add(c)
         return c
+
+    def _discard(self, connection) -> None:
+        try:
+            connection.close()
+        except Exception:
+            pass
+        with self._lock:
+            self._connections.discard(connection)
+        if getattr(self.local, "conn", None) is connection:
+            self.local.conn = None
+
+    @staticmethod
+    def _identity(response) -> str | None:
+        version = response.getheader("x-amz-version-id")
+        if version and version != "null":
+            return f"version-id:{version}"
+        etag = response.getheader("ETag")
+        if etag:
+            return f"etag:{etag.strip()}"
+        return None
 
     def get_range(self, path: str, start: int, length: int):
         """Returns (body, total object size or None).
@@ -142,48 +216,59 @@ class _Pool:
         if start < 0 or length <= 0:
             raise ValueError(f"invalid byte range: start={start}, length={length}")
         requested_end = start + length - 1
-        hdrs = {"Range": f"bytes={start}-{requested_end}",
-                "Accept-Encoding": "identity"}
-        for attempt in (0, 1):
+        request_path = self.base_path + "/" + path.lstrip("/")
+        hdrs = dict(self.headers)
+        if self.headers_for is not None:
+            dynamic = self.headers_for(request_path, start, requested_end)
+            if dynamic:
+                hdrs.update(dict(dynamic))
+        hdrs.update({"Range": f"bytes={start}-{requested_end}",
+                     "Accept-Encoding": "identity"})
+        attempts = 0
+        for attempt in range(self.retries + 1):
+            attempts += 1
             c = self._conn()
             try:
-                c.request("GET", path, headers=hdrs)
+                c.request("GET", request_path, headers=hdrs)
                 r = c.getresponse()
                 data = r.read()
                 if r.status != 206:
-                    raise RuntimeError(f"HTTP {r.status} for {path}")
+                    raise _HTTPStatusError(
+                        r.status, request_path, r.status in self.RETRY_STATUSES)
                 cr = r.getheader("Content-Range")
                 match = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+)", cr or "")
                 if match is None:
-                    raise RuntimeError(
-                        f"invalid Content-Range {cr!r} for {path}")
+                    raise TransportError(
+                        f"invalid Content-Range {cr!r} for {request_path}")
                 got_start, got_end, total = map(int, match.groups())
                 expected_end = min(requested_end, total - 1)
                 if (got_start != start or got_end != expected_end or
                         len(data) != got_end - got_start + 1):
-                    raise RuntimeError(
-                        f"unexpected range for {path}: requested "
+                    raise TransportError(
+                        f"unexpected range for {request_path}: requested "
                         f"{start}-{requested_end}, received {got_start}-{got_end} "
                         f"with {len(data)} bytes")
-                return data, total
-            except Exception:
-                try:
-                    c.close()
-                except Exception:
-                    pass
-                self.local.conn = None
-                if attempt:
+                return RangeResult(data, total, self._identity(r), attempts)
+            except Exception as exc:
+                self._discard(c)
+                retryable = not isinstance(exc, _HTTPStatusError) or exc.retryable
+                if attempt >= self.retries or not retryable:
                     raise
+                if self.backoff_s:
+                    time.sleep(self.backoff_s * (2 ** attempt))
         raise RuntimeError("unreachable")
 
     def close(self):
-        c = getattr(self.local, "conn", None)
-        if c is not None:
+        with self._lock:
+            self._closed = True
+            connections = list(self._connections)
+            self._connections.clear()
+        for c in connections:
             try:
                 c.close()
             except Exception:
                 pass
-            self.local.conn = None
+        self.local.conn = None
 
 
 class SparseReader:
@@ -191,11 +276,31 @@ class SparseReader:
                  margin: float = 0.03, min_fetch: int = 16384,
                  rtt_s: float = 0.05, bandwidth_mbps: float = 100.0,
                  workers: int = 1, sbx_dir: str | Path | None = None,
-                 gdal_path_for=None, pool=None):
+                 gdal_path_for=None, pool=None, timeout_s: float = 30.0,
+                 retries: int = 3, backoff_s: float = 0.25,
+                 headers: dict[str, str] | None = None,
+                 headers_for=None,
+                 ssl_context: ssl.SSLContext | None = None,
+                 content_identities: dict[str, str] | None = None,
+                 max_fetch_bytes: int = 128 << 20,
+                 max_output_bytes: int = 1 << 30,
+                 max_block_bytes: int = 64 << 20):
+        if margin < 0 or min_fetch <= 0:
+            raise ValueError("margin must be non-negative and min_fetch positive")
+        if rtt_s < 0 or bandwidth_mbps < 0:
+            raise ValueError("rtt_s and bandwidth_mbps must be non-negative")
+        if (max_fetch_bytes <= 0 or max_output_bytes <= 0 or
+                max_block_bytes <= 0):
+            raise ValueError("fetch, output and block limits must be positive")
+        if not isinstance(workers, int) or isinstance(workers, bool) or workers < 1:
+            raise ValueError("workers must be a positive integer")
         self.bucket = bucket
         # an injectable transport keeps the reader testable without a network,
         # an object store, or a staged corpus
-        self.pool = pool if pool is not None else _Pool(base_url)
+        self.pool = pool if pool is not None else _Pool(
+            base_url, timeout_s=timeout_s, retries=retries,
+            backoff_s=backoff_s, headers=headers, headers_for=headers_for,
+            ssl_context=ssl_context)
         # index may be a prebuilt mapping, a path to one, or nothing at all;
         # anything it does not cover is described from the object's own header
         seed = None
@@ -207,10 +312,18 @@ class SparseReader:
             self.idx = index
         else:
             self.idx = CogIndex(pool=self.pool,
-                                path_for=lambda k: f"/{bucket}/{k}", seed=seed)
+                                path_for=self._object_path, seed=seed)
         self.margin = margin
         self.min_fetch = min_fetch
-        self.workers = max(1, workers)
+        self.workers = workers
+        self.max_fetch_bytes = int(max_fetch_bytes)
+        self.max_output_bytes = int(max_output_bytes)
+        self.max_block_bytes = int(max_block_bytes)
+        self.content_identities = dict(content_identities or {})
+        if any(not isinstance(k, str) or not isinstance(v, str) or not v or
+               len(v.encode("utf-8")) > 4096
+               for k, v in self.content_identities.items()):
+            raise ValueError("content identities must be non-empty strings")
         # bandwidth-delay product: the bytes worth spending to save one round
         # trip. Zero disables coalescing, infinity merges everything in a file.
         self.merge_budget = (rtt_s * bandwidth_mbps * 1e6 / 8.0
@@ -224,11 +337,18 @@ class SparseReader:
         self._sbx_lock = threading.Lock()
         self._index_requests_accounted = 0
         self._index_bytes_accounted = 0
+        self._index_retries_accounted = 0
+        self._operation_lock = threading.RLock()
+        self._closed = False
+
+    def _object_path(self, key: str) -> str:
+        return "/" + quote(f"{self.bucket}/{key}".lstrip("/"), safe="/")
 
     def _sync_index_stats(self) -> None:
         """Include on-demand COG header traffic in the public counters."""
         requests = int(getattr(self.idx, "header_requests", 0))
         nbytes = int(getattr(self.idx, "header_bytes", 0))
+        retries = int(getattr(self.idx, "header_retries", 0))
         with self._lock:
             self.stats.requests += requests - self._index_requests_accounted
             self.stats.bytes_fetched += nbytes - self._index_bytes_accounted
@@ -238,6 +358,8 @@ class SparseReader:
                 nbytes - self._index_bytes_accounted)
             self._index_requests_accounted = requests
             self._index_bytes_accounted = nbytes
+            self.stats.retries += retries - self._index_retries_accounted
+            self._index_retries_accounted = retries
 
     def _sidecar(self, key: str):
         if self.sbx_dir is None:
@@ -249,7 +371,12 @@ class SparseReader:
                     self._sbx[key] = None
                 else:
                     try:
-                        self._sbx[key] = sbx_open_for(p, self.idx[key])
+                        rec = self.idx[key]
+                        content_identity = self.content_identities.get(key)
+                        if content_identity is not None:
+                            rec = dict(rec)
+                            rec["content_identity"] = content_identity
+                        self._sbx[key] = sbx_open_for(p, rec)
                     except StaleSidecar as e:
                         # a sidecar built for a different object would decode
                         # cleanly and return wrong pixels, so drop it loudly
@@ -258,9 +385,25 @@ class SparseReader:
                         print(f"GeoRange IO: ignoring stale sidecar: {e}",
                               file=sys.stderr)
                         self._sbx[key] = None
-                    except Exception:
+                    except Exception as e:
+                        with self._lock:
+                            self.stats.invalid_sidecars += 1
+                        print(f"GeoRange IO: ignoring invalid sidecar: {e}",
+                              file=sys.stderr)
                         self._sbx[key] = None
             return self._sbx[key]
+
+    def _disable_sidecar(self, key: str, sidecar, error: Exception) -> None:
+        with self._sbx_lock:
+            if self._sbx.get(key) is sidecar:
+                self._sbx[key] = None
+        try:
+            sidecar.close()
+        except Exception:
+            pass
+        with self._lock:
+            self.stats.invalid_sidecars += 1
+        print(f"GeoRange IO: disabling invalid sidecar: {error}", file=sys.stderr)
 
     # -- capability check --------------------------------------------------
     def supports(self, key: str, level: int = 0) -> bool:
@@ -269,15 +412,58 @@ class SparseReader:
             return False
         return not self.why_unsupported(key, level)
 
+    def _invalid_level_metadata(self, rec: dict, L: dict) -> str | None:
+        """Return a reason instead of trusting a malformed TIFF/index record."""
+        try:
+            size = int(rec["size"])
+            width, height = int(L["width"]), int(L["height"])
+            blockw, blockh = int(L["blockw"]), int(L["blockh"])
+            nbx, nby = int(L["nbx"]), int(L["nby"])
+            dt = np.dtype(L["dtype"])
+            offsets = L["offsets"]
+            counts = L["bytecounts"]
+        except (KeyError, TypeError, ValueError) as exc:
+            return f"invalid metadata ({exc})"
+        if min(size, width, height, blockw, blockh, nbx, nby) <= 0:
+            return "invalid non-positive size or dimension metadata"
+        if nbx != (width + blockw - 1) // blockw:
+            return "tile-column count does not match image width"
+        if nby != (height + blockh - 1) // blockh:
+            return "tile-row count does not match image height"
+        expected = nbx * nby
+        if not isinstance(offsets, list) or not isinstance(counts, list):
+            return "tile offsets and byte counts must be lists"
+        if len(offsets) != expected or len(counts) != expected:
+            return f"tile table length does not match {nbx}x{nby} grid"
+        block_bytes = blockw * blockh * dt.itemsize
+        if block_bytes > self.max_block_bytes:
+            return (f"uncompressed block size {block_bytes:,} exceeds "
+                    f"max_block_bytes={self.max_block_bytes:,}")
+        for offset, count in zip(offsets, counts):
+            if (not isinstance(offset, int) or isinstance(offset, bool) or
+                    not isinstance(count, int) or isinstance(count, bool)):
+                return "tile offsets and byte counts must be integers"
+            if count < 0 or offset < 0 or (count and offset + count > size):
+                return "tile range lies outside the source object"
+        return None
+
     def why_unsupported(self, key: str, level: int = 0) -> str | None:
         rec = self.idx.get(key)
         if not rec or not rec.get("levels"):
+            error = getattr(self.idx, "errors", {}).get(key)
+            if error is not None:
+                return (f"description failed ({type(error).__name__}: "
+                        f"{error})")
             return "not in the index"
         if not isinstance(level, int) or level < 0 or level >= len(rec["levels"]):
             return f"no level {level}"
         L = rec["levels"][level]
-        if L["compression"] not in SUPPORTED_COMPRESSION:
-            return f"compression {L['compression']} is not Deflate"
+        invalid = self._invalid_level_metadata(rec, L)
+        if invalid:
+            return invalid
+        compression = L.get("compression")
+        if compression not in SUPPORTED_COMPRESSION:
+            return f"compression {compression} is not Deflate"
         if L.get("predictor", 1) not in SUPPORTED_PREDICTOR:
             return f"predictor {L.get('predictor')} unhandled"
         if L.get("samples", 1) != 1:
@@ -301,9 +487,14 @@ class SparseReader:
         """Partition requests into those this reader can serve and those a
         caller must hand to GDAL."""
         ok, no = [], []
+        decisions = {}
         for i, r in enumerate(requests):
             key, level, *_ = self._norm(r)
-            (ok if self.supports(key, level) else no).append(i)
+            pair = (key, level)
+            if pair not in decisions:
+                decisions[pair] = self.supports(key, level)
+            decision = decisions[pair]
+            (ok if decision else no).append(i)
         return ok, no
 
     # -- planning ----------------------------------------------------------
@@ -323,7 +514,16 @@ class SparseReader:
         # sidecars are built for native resolution only
         sc = self._sidecar(key) if job.level == 0 else None
         if sc is not None and job.block in sc:
-            pt = sc.best(job.block, first_out)
+            try:
+                pt = sc.best(job.block, first_out)
+                if pt is not None and not (
+                        0 <= pt.bits <= 7 and 0 <= pt.in_byte <= job.count and
+                        0 <= pt.out <= uncomp and len(pt.window) <= 32768):
+                    raise ValueError(
+                        f"{key} block {job.block}: checkpoint is out of bounds")
+            except Exception as exc:
+                self._disable_sidecar(key, sc, exc)
+                pt = None
         if pt is not None and pt.out > 0:
             job.point = pt
             job.start = job.offset + pt.in_byte - (1 if pt.bits else 0)
@@ -343,12 +543,20 @@ class SparseReader:
     def _norm(r):
         """(key,x,y) | (key,x,y,w,h) | (key,level,x,y,w,h) -> uniform tuple."""
         if len(r) == 3:
-            return r[0], 0, r[1], r[2], 1, 1
-        if len(r) == 5:
-            return r[0], 0, r[1], r[2], r[3], r[4]
-        if len(r) == 6:
-            return r
-        raise ValueError(f"unrecognised request shape: {r!r}")
+            norm = r[0], 0, r[1], r[2], 1, 1
+        elif len(r) == 5:
+            norm = r[0], 0, r[1], r[2], r[3], r[4]
+        elif len(r) == 6:
+            norm = tuple(r)
+        else:
+            raise ValueError(f"unrecognised request shape: {r!r}")
+        key, *numbers = norm
+        if not isinstance(key, str) or not key:
+            raise ValueError("request key must be a non-empty string")
+        if any(not isinstance(v, (int, np.integer)) or isinstance(v, bool)
+               for v in numbers):
+            raise ValueError("request coordinates and dimensions must be integers")
+        return (key, *(int(v) for v in numbers))
 
     def plan(self, requests) -> list[_Job]:
         groups: dict[tuple[str, int, int], _Job] = {}
@@ -403,6 +611,10 @@ class SparseReader:
         for j in jobs:
             if j.count == 0:                       # sparse tile, no fetch
                 continue
+            if j.prefix > self.max_fetch_bytes:
+                raise Unsupported(
+                    f"{j.key} block {j.block}: planned range {j.prefix:,} "
+                    f"exceeds max_fetch_bytes={self.max_fetch_bytes:,}")
             if (not run or j.key != run[0].key or
                     j.level != run[0].level):
                 close()
@@ -412,7 +624,8 @@ class SparseReader:
             merged = (j.start + j.prefix) - start
             separate = sum(x.prefix for x in run) + j.prefix
             saved = len(run)                       # round trips saved by merging
-            if merged - separate <= self.merge_budget * saved:
+            if (merged <= self.max_fetch_bytes and
+                    merged - separate <= self.merge_budget * saved):
                 run.append(j)
             else:
                 close()
@@ -460,17 +673,29 @@ class SparseReader:
         return raw
 
     def _fetch(self, key: str, start: int, length: int) -> bytes:
-        data, total = self.pool.get_range(f"/{self.bucket}/{key}", start,
-                                          length)
+        response = as_range_result(
+            self.pool.get_range(self._object_path(key), start, length))
+        data, total = response
+        rec = self.idx[key]
+        expected_identity = rec.get("object_identity")
+        if expected_identity is not None:
+            if response.object_identity is None:
+                raise ObjectChanged(
+                    f"{key}: range response omitted the object identity "
+                    "observed while reading its header")
+            if response.object_identity != expected_identity:
+                raise ObjectChanged(
+                    f"{key}: object changed between header and pixel reads")
         if total is not None:
-            want = int(self.idx[key].get("size", total))
+            want = int(rec.get("size", total))
             if total != want:
                 raise Unsupported(
                     f"{key}: the index describes a {want:,}-byte object but "
                     f"the store returned {total:,} bytes; the tile offsets do "
                     "not belong to this file")
         with self._lock:
-            self.stats.requests += 1
+            self.stats.requests += response.attempts
+            self.stats.retries += response.attempts - 1
             self.stats.bytes_fetched += len(data)
         return data
 
@@ -537,6 +762,12 @@ class SparseReader:
         mistake as decoding a file we do not understand: the caller gets an
         array that looks valid. Pass allow_partial=True to opt into zero fill.
         """
+        with self._operation_lock:
+            if self._closed:
+                raise RuntimeError("reader is closed")
+            return self._read(requests, allow_partial)
+
+    def _read(self, requests, allow_partial: bool) -> list:
         norm = [self._norm(r) for r in requests]
         bad = {}
         for key, level in {(r[0], r[1]) for r in norm}:
@@ -563,10 +794,17 @@ class SparseReader:
                         f"{k} level {lv}: window ({x},{y},{w},{h}) is not "
                         f"inside {L['width']}x{L['height']}; pass "
                         "allow_partial=True to zero-fill instead")
+        output_bytes = sum(
+            h * w * np.dtype(self.idx[k]["levels"][lv]["dtype"]).itemsize
+            for (k, lv, _x, _y, w, h) in norm)
+        if output_bytes > self.max_output_bytes:
+            raise Unsupported(
+                f"requested output is {output_bytes:,} bytes, exceeding "
+                f"max_output_bytes={self.max_output_bytes:,}")
         out = [np.zeros((h, w), np.dtype(
                    self.idx[k]["levels"][lv]["dtype"]))
                for (k, lv, _x, _y, w, h) in norm]
-        jobs = self.plan(requests)
+        jobs = self.plan(norm)
         groups = self.coalesce(jobs)
         self.stats.blocks += len([j for j in jobs if j.count])
         self.stats.groups += len(groups)
@@ -593,10 +831,24 @@ class SparseReader:
         Anything refused goes to GDAL, so a caller gets one uniform result and
         never has to know which files took the fast path. Requires rasterio.
         """
-        ok, no = self.split([self._norm(r) for r in requests])
-        out: list = [None] * len(requests)
+        with self._operation_lock:
+            if self._closed:
+                raise RuntimeError("reader is closed")
+            return self._read_any(requests, allow_partial)
+
+    def _read_any(self, requests, allow_partial: bool) -> list:
+        norm = [self._norm(r) for r in requests]
+        if any(w <= 0 or h <= 0 for _k, _lv, _x, _y, w, h in norm):
+            raise Unsupported("window width and height must be positive")
+        conservative_bytes = sum(w * h * 8 for _k, _lv, _x, _y, w, h in norm)
+        if conservative_bytes > self.max_output_bytes:
+            raise Unsupported(
+                f"requested output may exceed max_output_bytes="
+                f"{self.max_output_bytes:,}")
+        ok, no = self.split(norm)
+        out: list = [None] * len(norm)
         if ok:
-            for slot, arr in zip(ok, self.read([requests[i] for i in ok],
+            for slot, arr in zip(ok, self.read([norm[i] for i in ok],
                                                allow_partial=allow_partial)):
                 out[slot] = arr
         if no:
@@ -605,7 +857,7 @@ class SparseReader:
             cache: dict = {}
             try:
                 for i in no:
-                    key, lvl, x, y, w, h = self._norm(requests[i])
+                    key, lvl, x, y, w, h = norm[i]
                     ck = (key, lvl)
                     ds = cache.get(ck)
                     if ds is None:
@@ -628,3 +880,30 @@ class SparseReader:
         """Read single pixels. points are (key, x, y); returns one value each."""
         arrs = self.read([(k, x, y, 1, 1) for (k, x, y) in points])
         return np.array([a[0, 0] for a in arrs])
+
+    def close(self) -> None:
+        """Close sidecars and every transport connection owned by the reader."""
+        with self._operation_lock:
+            if self._closed:
+                return
+            self._closed = True
+            with self._sbx_lock:
+                sidecars = [v for v in self._sbx.values() if v is not None]
+                self._sbx.clear()
+            for sidecar in sidecars:
+                try:
+                    sidecar.close()
+                except Exception:
+                    pass
+            close = getattr(self.pool, "close", None)
+            if close is not None:
+                close()
+
+    def __enter__(self):
+        if self._closed:
+            raise RuntimeError("reader is closed")
+        return self
+
+    def __exit__(self, exc_type, exc, traceback):
+        self.close()
+        return False

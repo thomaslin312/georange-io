@@ -1,0 +1,14 @@
+{
+  "reads": 60,
+  "identical": true,
+  "plain": {
+    "requests": 72,
+    "bytes": 44465357
+  },
+  "sidecar": {
+    "requests": 72,
+    "bytes": 10448263,
+    "checkpoint_blocks": 55
+  },
+  "sidecar_bytes_on_disk": 12625857
+}

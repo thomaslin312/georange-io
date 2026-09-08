@@ -16,8 +16,41 @@ from __future__ import annotations
 
 import io
 import threading
+from dataclasses import dataclass
 
 import numpy as np
+
+
+@dataclass(frozen=True)
+class RangeResult:
+    """One validated range response plus source identity metadata.
+
+    Iteration intentionally yields only ``data`` and ``total`` so transports
+    written for the original two-tuple protocol continue to work.
+    """
+
+    data: bytes
+    total: int | None
+    object_identity: str | None = None
+    attempts: int = 1
+
+    def __iter__(self):
+        yield self.data
+        yield self.total
+
+
+def as_range_result(value) -> RangeResult:
+    """Normalize the public transport protocol, preserving old custom pools."""
+    if isinstance(value, RangeResult):
+        return value
+    try:
+        data, total = value
+    except (TypeError, ValueError) as exc:
+        raise TypeError(
+            "get_range() must return RangeResult or (bytes, total_size)") from exc
+    if not isinstance(data, (bytes, bytearray, memoryview)):
+        raise TypeError("get_range() returned a non-bytes body")
+    return RangeResult(bytes(data), total)
 
 
 class RemoteFile(io.RawIOBase):
@@ -26,9 +59,17 @@ class RemoteFile(io.RawIOBase):
     Reads are served in fixed blocks and cached, so a parser that seeks around
     the header a few hundred times costs one or two requests rather than one
     per seek.
+
+    The block size is 32 kB because that is what the corpus actually needs. It
+    parses every IFD and tile table in one request for all four products,
+    including a WorldCover file with 1,740 tiles. The previous 1 MB default
+    pulled 32x more for no benefit, and since header traffic is counted in the
+    public statistics it was directly degrading the measured gain: a
+    single-block read fetched 2.75 MB where GDAL fetched 1.74 MB, entirely
+    because of it.
     """
 
-    def __init__(self, pool, path: str, block: int = 1 << 20):
+    def __init__(self, pool, path: str, block: int = 1 << 15):
         self._pool = pool
         self._path = path
         self._block = block
@@ -36,19 +77,32 @@ class RemoteFile(io.RawIOBase):
         self._cache: dict[int, bytes] = {}
         self._size: int | None = None
         self.requests = 0
+        self.retries = 0
         self.bytes_read = 0
+        self.object_identity: str | None = None
 
     def _chunk(self, idx: int) -> bytes:
         got = self._cache.get(idx)
         if got is not None:
             return got
         lo = idx * self._block
-        data, total = self._pool.get_range(self._path, lo, self._block)
+        response = as_range_result(
+            self._pool.get_range(self._path, lo, self._block))
+        data, total = response
         if total is not None:
+            if self._size is not None and total != self._size:
+                raise RuntimeError(f"{self._path}: object size changed while reading")
             self._size = total
         elif self._size is None:
             self._size = lo + len(data)
-        self.requests += 1
+        if response.object_identity is not None:
+            if (self.object_identity is not None and
+                    response.object_identity != self.object_identity):
+                raise RuntimeError(
+                    f"{self._path}: object identity changed while reading")
+            self.object_identity = response.object_identity
+        self.requests += response.attempts
+        self.retries += response.attempts - 1
         self.bytes_read += len(data)
         self._cache[idx] = data
         return data
@@ -132,8 +186,9 @@ def describe(pool, path: str) -> dict:
             except (TypeError, ValueError):
                 nodata = None
         return {"key": path, "size": f.size, "nodata": nodata,
+                "object_identity": f.object_identity,
                 "levels": levels, "header_requests": f.requests,
-                "header_bytes": f.bytes_read}
+                "header_retries": f.retries, "header_bytes": f.bytes_read}
 
 
 class CogIndex:
@@ -151,7 +206,9 @@ class CogIndex:
         self._lock = threading.Lock()
         self.described = 0
         self.header_requests = 0
+        self.header_retries = 0
         self.header_bytes = 0
+        self.errors: dict[str, Exception] = {}
 
     def __contains__(self, key): return self.get(key) is not None
     def __getitem__(self, key):
@@ -171,13 +228,16 @@ class CogIndex:
                 return self._d[key]
             try:
                 rec = describe(self._pool, self._path_for(key))
-            except Exception:
+            except Exception as exc:
                 # A timeout or transient object-store failure must not poison
                 # this key for the lifetime of the reader. Only successful
                 # descriptions are cached.
+                self.errors[key] = exc
                 return default
+            self.errors.pop(key, None)
             self._d[key] = rec
             self.described += 1
             self.header_requests += int(rec.get("header_requests", 0))
+            self.header_retries += int(rec.get("header_retries", 0))
             self.header_bytes += int(rec.get("header_bytes", 0))
             return rec

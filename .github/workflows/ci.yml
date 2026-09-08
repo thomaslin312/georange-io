@@ -29,6 +29,10 @@ jobs:
           pip install -e . pytest
       - name: unit tests
         run: PYTHONPATH=.:baseline python -m pytest tests/test_unit.py -q
+      - name: compile and dependency check
+        run: |
+          python -m compileall -q georange_io
+          python -m pip check
 
   package:
     runs-on: ubuntu-latest
@@ -42,6 +46,9 @@ jobs:
           python -m pip install --upgrade pip build twine
           python -m build
           python -m twine check dist/*
+          python -m pip install --force-reinstall --no-deps dist/*.whl
+          cd /tmp
+          python -c "import georange_io; assert georange_io.__version__ == '0.2.0'"
       - uses: actions/upload-artifact@v4
         with:
           name: dist

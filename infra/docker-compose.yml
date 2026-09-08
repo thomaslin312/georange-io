@@ -51,7 +51,10 @@ services:
       AWS_VIRTUAL_HOSTING: "FALSE"
       AWS_NO_SIGN_REQUEST: "YES"
       AWS_DEFAULT_REGION: us-east-1
-      GEORANGE_IO_BUCKET: georange-io
+      # The staged corpus predates the rename and lives in a bucket of the
+      # old name. Overridable, but defaulting to it avoids a 14 GB copy or a
+      # 2.4 hour re-stage just to run the harnesses.
+      GEORANGE_IO_BUCKET: ${GEORANGE_IO_BUCKET:-switchback}
       GEORANGE_IO_PROXY_CONTROL: http://proxy:9010
       # Indexing, workload generation and the W5 oracle read MinIO directly,
       # bypassing the proxy, so none of that traffic lands in a measurement.
@@ -68,6 +71,11 @@ services:
 
 volumes:
   minio-data:
+    # Named explicitly rather than derived from the compose project name. The
+    # project was renamed from switchback to georange-io, and a derived name
+    # would have silently pointed at a new empty volume, making a 9.45 GB
+    # staged corpus look like it had vanished.
+    name: ${GEORANGE_CORPUS_VOLUME:-switchback_minio-data}
 
 networks:
   bench:

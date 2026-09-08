@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "georange-io"
-version = "0.1.0"
+version = "0.2.0"
 description = "Access-pattern-aware sparse reads for remote Cloud Optimized GeoTIFF archives."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -20,6 +20,12 @@ classifiers = [
 ]
 dependencies = ["numpy>=1.26", "tifffile>=2024.1.30"]
 
+[project.urls]
+Homepage = "https://github.com/thomaslin312/georange-io"
+Documentation = "https://github.com/thomaslin312/georange-io#readme"
+Issues = "https://github.com/thomaslin312/georange-io/issues"
+Changelog = "https://github.com/thomaslin312/georange-io/blob/main/CHANGELOG.md"
+
 [project.optional-dependencies]
 # rasterio is needed only to delegate files the fast path declines
 fallback = ["rasterio>=1.4"]
@@ -29,3 +35,6 @@ dev = ["rasterio>=1.4", "boto3>=1.34", "PyYAML>=6", "pytest>=8"]
 
 [tool.setuptools]
 packages = ["georange_io"]
+
+[tool.setuptools.package-data]
+georange_io = ["py.typed"]

@@ -96,9 +96,15 @@ def main() -> int:
             tot_src += cnt
             n_blocks += 1
         if blocks:
+            identity = (idx[key].get("content_identity") or
+                        idx[key].get("object_identity"))
+            if not identity:
+                raise RuntimeError(
+                    f"{key}: index has no content, version, or ETag identity")
             size = sbx.write(outdir / (key + ".sbx"), a.span or 0, blocks,
                              source_size=int(idx[key]["size"]),
-                             source_hash=sbx.layout_hash(L))
+                             source_hash=sbx.layout_hash(L),
+                             source_identity=identity)
             tot_idx += size
         if n % 8 == 0 or n == len(want):
             print(f"  {n}/{len(want)} files, {n_blocks:,} blocks", flush=True)

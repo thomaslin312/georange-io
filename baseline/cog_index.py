@@ -44,6 +44,15 @@ def client():
     )
 
 
+def object_identity(head: dict) -> str | None:
+    """Stable identity returned by S3-compatible HEAD responses."""
+    version = head.get("VersionId")
+    if version and version != "null":
+        return f"version-id:{version}"
+    etag = head.get("ETag")
+    return f"etag:{etag.strip()}" if etag else None
+
+
 class S3File(io.RawIOBase):
     """Minimal seekable read-only file over ranged S3 GETs, with a read-ahead
     cache. tifffile only touches the header region of a COG, so this stays cheap."""
@@ -205,7 +214,16 @@ def main() -> int:
     bad = []
     for i, k in enumerate(keys, 1):
         try:
-            rec = index_object(cli, k, staged[k]["bytes"])
+            head = cli.head_object(Bucket=BUCKET, Key=k)
+            size = int(head["ContentLength"])
+            if size != int(staged[k]["bytes"]):
+                raise ValueError(
+                    f"stored size {size} differs from manifest "
+                    f"{staged[k]['bytes']}")
+            rec = index_object(cli, k, size)
+            rec["object_identity"] = object_identity(head)
+            digest = staged[k].get("sha256")
+            rec["content_identity"] = f"sha256:{digest}" if digest else None
             if not rec.get("tiled") or "error" in rec:
                 bad.append((k, rec.get("error", "not tiled")))
             else:

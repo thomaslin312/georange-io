@@ -1,0 +1,102 @@
+[
+  {
+    "shape": "1 point",
+    "gdal_requests": 3,
+    "gdal_bytes": 1736704,
+    "gr_requests": 2,
+    "gr_bytes": 1584721,
+    "request_gain": 1.5,
+    "byte_gain": 1.096,
+    "identical": true
+  },
+  {
+    "shape": "10 points, same block",
+    "gdal_requests": 3,
+    "gdal_bytes": 1736704,
+    "gr_requests": 2,
+    "gr_bytes": 136793,
+    "request_gain": 1.5,
+    "byte_gain": 12.696,
+    "identical": true
+  },
+  {
+    "shape": "10 points, scattered",
+    "gdal_requests": 11,
+    "gdal_bytes": 14778368,
+    "gr_requests": 10,
+    "gr_bytes": 9471029,
+    "request_gain": 1.1,
+    "byte_gain": 1.56,
+    "identical": true
+  },
+  {
+    "shape": "point at row 5 of a block",
+    "gdal_requests": 3,
+    "gdal_bytes": 1736704,
+    "gr_requests": 2,
+    "gr_bytes": 93670,
+    "request_gain": 1.5,
+    "byte_gain": 18.541,
+    "identical": true
+  },
+  {
+    "shape": "point at row 1010 of a block",
+    "gdal_requests": 3,
+    "gdal_bytes": 1736704,
+    "gr_requests": 2,
+    "gr_bytes": 1731140,
+    "request_gain": 1.5,
+    "byte_gain": 1.003,
+    "identical": true
+  },
+  {
+    "shape": "one 512x512 window",
+    "gdal_requests": 4,
+    "gdal_bytes": 6008156,
+    "gr_requests": 4,
+    "gr_bytes": 4257187,
+    "request_gain": 1.0,
+    "byte_gain": 1.411,
+    "identical": true
+  },
+  {
+    "shape": "one 2048x2048 window",
+    "gdal_requests": 8,
+    "gdal_bytes": 14661779,
+    "gr_requests": 4,
+    "gr_bytes": 13285984,
+    "request_gain": 2.0,
+    "byte_gain": 1.104,
+    "identical": true
+  },
+  {
+    "shape": "40 x 256x256 windows",
+    "gdal_requests": 38,
+    "gdal_bytes": 76086316,
+    "gr_requests": 34,
+    "gr_bytes": 61231015,
+    "request_gain": 1.118,
+    "byte_gain": 1.243,
+    "identical": true
+  },
+  {
+    "shape": "whole 1024x1024 block",
+    "gdal_requests": 3,
+    "gdal_bytes": 1736704,
+    "gr_requests": 2,
+    "gr_bytes": 1731140,
+    "request_gain": 1.5,
+    "byte_gain": 1.003,
+    "identical": true
+  },
+  {
+    "shape": "5 points x 12 dates",
+    "gdal_requests": 80,
+    "gdal_bytes": 86343680,
+    "gr_requests": 68,
+    "gr_bytes": 42465967,
+    "request_gain": 1.176,
+    "byte_gain": 2.033,
+    "identical": true
+  }
+]

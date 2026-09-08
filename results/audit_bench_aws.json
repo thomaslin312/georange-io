@@ -1,0 +1,171 @@
+{
+  "host": "https://sentinel-cogs.s3.us-west-2.amazonaws.com",
+  "points": 5,
+  "dates": 12,
+  "n_reads": 60,
+  "repetitions": 3,
+  "order_seed": 202606,
+  "values_agree": true,
+  "runs": [
+    {
+      "engine": "georange-io",
+      "wall_s": 5.73,
+      "requests": 72,
+      "bytes": 44465357,
+      "blocks_from_checkpoint": 0,
+      "workers": 8,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GeoRange IO, 8 worker(s)",
+      "repetition": 1
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 31.06,
+      "requests": 72,
+      "bytes": 44465357,
+      "blocks_from_checkpoint": 0,
+      "workers": 1,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GeoRange IO, 1 worker(s)",
+      "repetition": 1
+    },
+    {
+      "engine": "gdal",
+      "wall_s": 61.38,
+      "requests": 72,
+      "bytes": 91275264,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GDAL",
+      "repetition": 1
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 6.46,
+      "requests": 72,
+      "bytes": 44465357,
+      "blocks_from_checkpoint": 0,
+      "workers": 8,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GeoRange IO, 8 worker(s) + sidecar",
+      "repetition": 1
+    },
+    {
+      "engine": "gdal",
+      "wall_s": 45.67,
+      "requests": 72,
+      "bytes": 91275264,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GDAL",
+      "repetition": 2
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 25.11,
+      "requests": 72,
+      "bytes": 44465357,
+      "blocks_from_checkpoint": 0,
+      "workers": 1,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GeoRange IO, 1 worker(s)",
+      "repetition": 2
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 5.6,
+      "requests": 72,
+      "bytes": 44465357,
+      "blocks_from_checkpoint": 0,
+      "workers": 8,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GeoRange IO, 8 worker(s) + sidecar",
+      "repetition": 2
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 4.68,
+      "requests": 72,
+      "bytes": 44465357,
+      "blocks_from_checkpoint": 0,
+      "workers": 8,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GeoRange IO, 8 worker(s)",
+      "repetition": 2
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 17.54,
+      "requests": 72,
+      "bytes": 44465357,
+      "blocks_from_checkpoint": 0,
+      "workers": 1,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GeoRange IO, 1 worker(s)",
+      "repetition": 3
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 6.3,
+      "requests": 72,
+      "bytes": 44465357,
+      "blocks_from_checkpoint": 0,
+      "workers": 8,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GeoRange IO, 8 worker(s) + sidecar",
+      "repetition": 3
+    },
+    {
+      "engine": "gdal",
+      "wall_s": 49.73,
+      "requests": 72,
+      "bytes": 91275264,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GDAL",
+      "repetition": 3
+    },
+    {
+      "engine": "georange-io",
+      "wall_s": 5.58,
+      "requests": 72,
+      "bytes": 44465357,
+      "blocks_from_checkpoint": 0,
+      "workers": 8,
+      "value_sha256": "cfd5b2c26bf5fdcf10e0be3bb24360fb6b3412f5ae32007d483962840c0faef0",
+      "label": "GeoRange IO, 8 worker(s)",
+      "repetition": 3
+    }
+  ],
+  "summary": {
+    "GeoRange IO, 8 worker(s)": {
+      "repetitions": 3,
+      "requests_median": 72,
+      "bytes_median": 44465357,
+      "wall_s_median": 5.58,
+      "wall_s_min": 4.68,
+      "wall_s_max": 5.73
+    },
+    "GeoRange IO, 1 worker(s)": {
+      "repetitions": 3,
+      "requests_median": 72,
+      "bytes_median": 44465357,
+      "wall_s_median": 25.11,
+      "wall_s_min": 17.54,
+      "wall_s_max": 31.06
+    },
+    "GDAL": {
+      "repetitions": 3,
+      "requests_median": 72,
+      "bytes_median": 91275264,
+      "wall_s_median": 49.73,
+      "wall_s_min": 45.67,
+      "wall_s_max": 61.38
+    },
+    "GeoRange IO, 8 worker(s) + sidecar": {
+      "repetitions": 3,
+      "requests_median": 72,
+      "bytes_median": 44465357,
+      "wall_s_median": 6.3,
+      "wall_s_min": 5.6,
+      "wall_s_max": 6.46
+    }
+  }
+}

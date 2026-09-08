@@ -15,10 +15,12 @@ No index has to be built in advance; each file is described from its own header
 on first use. Anything the fast path cannot decode correctly is refused, and
 `read_any` delegates it to GDAL instead.
 """
-from georange_io.cog import CogIndex, describe
-from georange_io.reader import SparseReader, Stats, Unsupported
+from georange_io.cog import CogIndex, RangeResult, describe
+from georange_io.reader import (ObjectChanged, SparseReader, Stats,
+                                TransportError, Unsupported)
 from georange_io.sbx import Sbx, StaleSidecar, open_for
 
-__all__ = ["SparseReader", "Stats", "Unsupported", "CogIndex", "describe",
-           "Sbx", "StaleSidecar", "open_for"]
-__version__ = "0.1.0"
+__all__ = ["SparseReader", "Stats", "Unsupported", "TransportError",
+           "ObjectChanged", "CogIndex", "RangeResult", "describe", "Sbx",
+           "StaleSidecar", "open_for"]
+__version__ = "0.2.0"

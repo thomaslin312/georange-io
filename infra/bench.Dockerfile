@@ -17,6 +17,7 @@ RUN python3 -m pip install --no-cache-dir --no-binary rasterio \
  && python3 -m pip install --no-cache-dir \
       "numpy>=1.26,<3" "tifffile>=2024.1.30" "boto3>=1.34" "aiohttp>=3.9" \
       "matplotlib>=3.8" "PyYAML>=6" "psutil>=5.9" "scikit-image>=0.22" \
+      "pytest>=8" \
       "shapely>=2.0" "pandas>=2.1" "heapdict>=1.0.1"
 
 WORKDIR /work
