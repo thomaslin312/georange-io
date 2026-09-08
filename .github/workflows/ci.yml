@@ -46,9 +46,15 @@ jobs:
           python -m pip install --upgrade pip build twine
           python -m build
           python -m twine check dist/*
-          python -m pip install --force-reinstall --no-deps dist/*.whl
+          # Install the wheel the way a user would, with dependencies.
+          # --no-deps left numpy and tifffile out and then imported the
+          # package, so this failed on a perfectly good wheel.
+          python -m pip install --force-reinstall dist/*.whl
           cd /tmp
-          python -c "import georange_io; assert georange_io.__version__ == '0.2.0'"
+          # Exercise the real entry points, not just __version__: a
+          # wheel that imports but cannot construct a reader has
+          # shipped before, when a module it needed was left out.
+          python -c "import georange_io; from georange_io import SparseReader, describe, sbx; from georange_io.tile_index import build_index; assert georange_io.__version__ == '0.2.0'; rd = SparseReader(base_url='https://example.invalid', bucket='b'); rd.close(); print('wheel imports and constructs a reader')"
       - uses: actions/upload-artifact@v4
         with:
           name: dist
