@@ -15,7 +15,7 @@ partitioned by `split`, or delegated to rasterio/GDAL by `read_any`.
 The public names exported from `georange_io` are:
 
 - `SparseReader`, `Stats`, and `Unsupported`
-- `TransportError` and `ObjectChanged`
+- `TransportError`, `CorruptObject` and `ObjectChanged`
 - `CogIndex`, `RangeResult`, and `describe`
 - `Sbx`, `StaleSidecar`, and `open_for`
 
@@ -67,5 +67,14 @@ magic/version is independent of the Python package version.
 - maximum uncompressed tile: 64 MiB
 
 Tune these for the deployment and catch `Unsupported` for capability/resource
-limits, `TransportError` for remote protocol failures, and `ObjectChanged` for
-source-version races.
+limits, `TransportError` for remote protocol failures, `CorruptObject` (a
+`TransportError`) when fetched bytes cannot be decoded as the tile they claim to
+be, and `ObjectChanged` for source-version races. No other exception type is
+part of the contract; randomized fuzzing of TIFF headers and sidecars asserts
+that corrupt input surfaces as one of these rather than as an underlying
+`zlib.error`.
+
+A sidecar is an accelerator and never changes an answer. If one is unreadable,
+stale, or holds no restart point for the blocks being read, the reader falls
+back to reading tiles from their beginning, logs a warning on the `georange_io`
+logger, and records the reason in `Stats`.

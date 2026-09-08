@@ -584,3 +584,127 @@ def test_split_partitions_by_capability(cog):
     rd = SparseReader({"a.tif": rec, "b.tif": bad}, "", "b", pool=pool)
     ok, no = rd.split([("a.tif", 0, 0, 1, 1), ("b.tif", 0, 0, 1, 1)])
     assert ok == [0] and no == [1]
+
+
+# --- sidecar identity and visibility ---------------------------------------
+
+def _one_block_sidecar(tmp_path, blob, rec, identity):
+    """Write a sidecar for the largest block of a file, under a given identity."""
+    from georange_io.tile_index import build_index
+    L = rec["levels"][0]
+    bi = int(np.argmax(L["bytecounts"]))
+    off, cnt = L["offsets"][bi], L["bytecounts"][bi]
+    idx, _ = build_index(blob[off:off + cnt], 16384)
+    p = tmp_path / "x.tif.sbx"
+    sbx.write(p, 16384, {bi: idx.points}, rec["size"],
+              sbx.layout_hash(L), identity)
+    return p
+
+
+def test_replacement_object_with_same_size_and_layout_is_refused(tmp_path, cog):
+    """The case a size-and-layout check alone cannot catch.
+
+    An object replaced in place can keep its byte length and its tile table
+    while every tile's contents differ. Only a strong identity separates them,
+    so the sidecar carries one and both sides must agree.
+    """
+    data, blob, pool = cog
+    rec = dict(describe(pool, "/b/x.tif"))
+    rec["content_identity"] = "sha256:" + "a" * 64
+    p = _one_block_sidecar(tmp_path, blob, rec, rec["content_identity"])
+
+    assert sbx.open_for(p, rec).source_size == rec["size"]
+
+    replaced = dict(rec)                       # same size, same tile layout
+    replaced["content_identity"] = "sha256:" + "b" * 64
+    with pytest.raises(sbx.StaleSidecar):
+        sbx.open_for(p, replaced)
+
+
+def test_identity_free_sidecar_fails_closed(tmp_path, cog):
+    data, blob, pool = cog
+    rec = describe(pool, "/b/x.tif")            # no content_identity on the record
+    p = _one_block_sidecar(tmp_path, blob, dict(rec), "sha256:" + "c" * 64)
+    with pytest.raises(sbx.StaleSidecar):
+        sbx.open_for(p, rec)
+
+
+def test_configured_sidecar_that_is_never_used_is_reported(tmp_path, cog, caplog):
+    """Silence here previously produced a false benchmark result.
+
+    A sidecar built for other blocks still returns correct values and raises
+    nothing; the only evidence is a zero counter. The reader now says so.
+    """
+    data, blob, pool = cog
+    rd = SparseReader(None, "", "b", pool=pool, sbx_dir=tmp_path)
+    with caplog.at_level("WARNING", logger="georange_io"):
+        got = rd.sample([("x.tif", 10, 10)])
+    assert got[0] == data[10, 10]               # still correct
+    assert rd.stats.blocks_from_checkpoint == 0
+    assert rd.stats.sidecars_missing >= 1
+    assert any("no block was served from a restart point" in r.message
+               for r in caplog.records)
+
+
+# --- randomized fuzzing ----------------------------------------------------
+#
+# The suite above probes specific hostile inputs. These mutate valid ones at
+# random, which is what catches the malformed input nobody thought to write by
+# hand. The contract under fuzzing is not "succeed" but "fail in a controlled
+# way": a declared exception, never a crash, a hang, or silently wrong pixels.
+
+CONTROLLED = (Unsupported, ValueError, RuntimeError, OSError, EOFError,
+              KeyError, IndexError, MemoryError, TypeError,
+              sbx.StaleSidecar, struct_error := __import__("struct").error)
+
+
+@pytest.mark.parametrize("seed", range(24))
+def test_fuzzed_tiff_headers_fail_controlled(seed, cog):
+    data, blob, _pool = cog
+    rng = np.random.default_rng(seed)
+    b = bytearray(blob[:65536])
+    for _ in range(int(rng.integers(1, 12))):
+        b[int(rng.integers(0, len(b)))] = int(rng.integers(0, 256))
+    mutated = bytes(b) + blob[65536:]
+    pool = FakePool({"/b/f.tif": mutated})
+    try:
+        rd = SparseReader(None, "", "b", pool=pool)
+        out = rd.read([("f.tif", 0, 0, 0, 8, 8)])
+    except CONTROLLED:
+        return
+    # If it did return, it must not have invented pixels: any value it produced
+    # has to match the untouched original at those coordinates.
+    assert np.array_equal(out[0], data[0:8, 0:8])
+
+
+@pytest.mark.parametrize("seed", range(24))
+def test_fuzzed_sidecars_fail_controlled(seed, tmp_path, cog):
+    from georange_io.tile_index import build_index
+    data, blob, pool = cog
+    rec = dict(describe(pool, "/b/x.tif"))
+    rec["content_identity"] = "sha256:" + "d" * 64
+    L = rec["levels"][0]
+    bi = int(np.argmax(L["bytecounts"]))
+    off, cnt = L["offsets"][bi], L["bytecounts"][bi]
+    idx, _ = build_index(blob[off:off + cnt], 16384)
+    good = tmp_path / "good.sbx"
+    sbx.write(good, 16384, {bi: idx.points}, rec["size"],
+              sbx.layout_hash(L), rec["content_identity"])
+
+    rng = np.random.default_rng(seed)
+    raw = bytearray(good.read_bytes())
+    for _ in range(int(rng.integers(1, 16))):
+        raw[int(rng.integers(0, len(raw)))] = int(rng.integers(0, 256))
+    bad_dir = tmp_path / "fuzzed"
+    bad_dir.mkdir(exist_ok=True)
+    (bad_dir / "x.tif.sbx").write_bytes(bytes(raw))
+
+    rd = SparseReader({"x.tif": rec}, "", "b", pool=pool, sbx_dir=bad_dir,
+                      content_identities={"x.tif": rec["content_identity"]})
+    try:
+        got = rd.sample([("x.tif", 300, 300)])
+    except CONTROLLED:
+        return
+    # A corrupt sidecar must never change the answer: it is an accelerator, and
+    # the reader falls back to reading the tile from its beginning.
+    assert got[0] == data[300, 300]

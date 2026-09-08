@@ -20,7 +20,9 @@ from georange_io.reader import (ObjectChanged, SparseReader, Stats,
                                 TransportError, Unsupported)
 from georange_io.sbx import Sbx, StaleSidecar, open_for
 
-__all__ = ["SparseReader", "Stats", "Unsupported", "TransportError",
+__all__ = ["CorruptObject", "ObjectChanged",
+           "TransportError",
+           "SparseReader", "Stats", "Unsupported", "TransportError",
            "ObjectChanged", "CogIndex", "RangeResult", "describe", "Sbx",
            "StaleSidecar", "open_for"]
 __version__ = "0.2.0"

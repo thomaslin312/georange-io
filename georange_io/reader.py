@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import http.client
 import json
+import logging
 import re
 import ssl
 import sys
@@ -60,6 +61,9 @@ SUPPORTED_COMPRESSION = {8, 32946}          # Deflate, Adobe Deflate
 SUPPORTED_PREDICTOR = {1, 2, 3}
 
 
+_log = logging.getLogger("georange_io")
+
+
 class Unsupported(Exception):
     """Raised rather than returning values this reader cannot produce correctly.
 
@@ -71,6 +75,16 @@ class Unsupported(Exception):
 
 class TransportError(RuntimeError):
     """A remote server did not satisfy the validated range-read contract."""
+
+
+class CorruptObject(TransportError):
+    """The bytes fetched could not be decoded as the tile they claim to be.
+
+    Raised instead of letting zlib's own exception escape: API.md promises a
+    caller only has to handle Unsupported, TransportError and ObjectChanged, and
+    a bare zlib.error from a corrupt or truncated stream broke that contract.
+    Found by randomized fuzzing of TIFF headers.
+    """
 
 
 class ObjectChanged(TransportError):
@@ -97,6 +111,8 @@ class Stats:
     checkpoint_window_bytes: int = 0
     stale_sidecars: int = 0
     invalid_sidecars: int = 0
+    sidecars_loaded: int = 0
+    sidecars_missing: int = 0
     delegated: int = 0
     retries: int = 0
 
@@ -334,6 +350,7 @@ class SparseReader:
         self._lock = threading.Lock()
         self.sbx_dir = Path(sbx_dir) if sbx_dir else None
         self._sbx: dict[str, object] = {}
+        self._sidecar_warned = False
         self._sbx_lock = threading.Lock()
         self._index_requests_accounted = 0
         self._index_bytes_accounted = 0
@@ -368,6 +385,8 @@ class SparseReader:
             if key not in self._sbx:
                 p = self.sbx_dir / (key + ".sbx")
                 if not p.exists():
+                    with self._lock:
+                        self.stats.sidecars_missing += 1
                     self._sbx[key] = None
                 else:
                     try:
@@ -377,19 +396,19 @@ class SparseReader:
                             rec = dict(rec)
                             rec["content_identity"] = content_identity
                         self._sbx[key] = sbx_open_for(p, rec)
+                        with self._lock:
+                            self.stats.sidecars_loaded += 1
                     except StaleSidecar as e:
                         # a sidecar built for a different object would decode
                         # cleanly and return wrong pixels, so drop it loudly
                         with self._lock:
                             self.stats.stale_sidecars += 1
-                        print(f"GeoRange IO: ignoring stale sidecar: {e}",
-                              file=sys.stderr)
+                        _log.warning("ignoring stale sidecar for %s: %s", key, e)
                         self._sbx[key] = None
                     except Exception as e:
                         with self._lock:
                             self.stats.invalid_sidecars += 1
-                        print(f"GeoRange IO: ignoring invalid sidecar: {e}",
-                              file=sys.stderr)
+                        _log.warning("ignoring invalid sidecar for %s: %s", key, e)
                         self._sbx[key] = None
             return self._sbx[key]
 
@@ -403,7 +422,7 @@ class SparseReader:
             pass
         with self._lock:
             self.stats.invalid_sidecars += 1
-        print(f"GeoRange IO: disabling invalid sidecar: {error}", file=sys.stderr)
+        _log.warning("disabling invalid sidecar for %s: %s", key, error)
 
     # -- capability check --------------------------------------------------
     def supports(self, key: str, level: int = 0) -> bool:
@@ -637,31 +656,42 @@ class SparseReader:
     def _inflate(self, key: str, comp: bytes, need_out: int,
                  job: _Job, have: int) -> bytes:
         """Inflate to need_out, extending the fetch if the guess fell short."""
-        d = zlib.decompressobj(15)
-        out = bytearray()
-        feed = comp
-        got = have
-        while len(out) < need_out:
-            chunk = d.decompress(feed, need_out - len(out))
-            out += chunk
-            feed = d.unconsumed_tail
-            if len(out) >= need_out or feed:
-                continue
-            if got >= job.count:
-                break
-            with self._lock:
-                self.stats.undershoots += 1
-            extra = self._fetch(key, job.offset + got, job.count - got)
-            feed = extra
-            got = job.count
-        return bytes(out)
+        try:
+            d = zlib.decompressobj(15)
+            out = bytearray()
+            feed = comp
+            got = have
+            while len(out) < need_out:
+                chunk = d.decompress(feed, need_out - len(out))
+                out += chunk
+                feed = d.unconsumed_tail
+                if len(out) >= need_out or feed:
+                    continue
+                if got >= job.count:
+                    break
+                with self._lock:
+                    self.stats.undershoots += 1
+                extra = self._fetch(key, job.offset + got, job.count - got)
+                feed = extra
+                got = job.count
+            return bytes(out)
+        except zlib.error as e:
+            # a corrupt or truncated tile stream must surface as one of the
+            # library's declared exceptions, not as zlib's own
+            raise CorruptObject(
+                f"{key}: tile data could not be decompressed: {e}") from e
 
     def _inflate_from(self, key: str, comp: bytes, job: _Job,
                       need_rel: int) -> bytes:
         """Inflate from this block's restart point, refetching the rest of the
         block if the speculative range fell short."""
         pt = job.point
-        raw = inflate_at(comp, pt.bits, pt.window, need_rel)
+        try:
+            raw = inflate_at(comp, pt.bits, pt.window, need_rel)
+        except zlib.error as e:
+            raise CorruptObject(
+                f"{key}: tile data could not be decompressed from a restart "
+                f"point: {e}") from e
         if len(raw) < need_rel:
             with self._lock:
                 self.stats.undershoots += 1
@@ -823,7 +853,37 @@ class SparseReader:
         else:
             with ThreadPoolExecutor(self.workers) as ex:
                 list(ex.map(lambda g: self._run_group(g, out), groups))
+        self._warn_if_sidecars_unused()
         return out
+
+    def _warn_if_sidecars_unused(self) -> None:
+        """A configured sidecar that never gets used is almost always a bug.
+
+        It is indistinguishable from a working one at the call site: correct
+        values, no error, and only a zero in blocks_from_checkpoint to show for
+        it. An entire audit cycle reported a sidecar speedup that was not
+        happening, because the sidecars had been built from a different
+        workload spec and covered none of the blocks being read.
+        """
+        if self.sbx_dir is None or self._sidecar_warned:
+            return
+        st = self.stats
+        if st.blocks_from_checkpoint or not st.blocks:
+            return
+        self._sidecar_warned = True
+        if st.sidecars_loaded:
+            reason = (f"{st.sidecars_loaded} sidecar(s) loaded but none held a "
+                      "restart point for the blocks read; they were probably "
+                      "built for a different set of pixels")
+        elif st.stale_sidecars or st.invalid_sidecars:
+            reason = (f"{st.stale_sidecars} stale and {st.invalid_sidecars} "
+                      "invalid sidecar(s) were refused")
+        else:
+            reason = f"no sidecar file was found for any of the objects read"
+        _log.warning(
+            "sidecar directory %s is configured but no block was served from a "
+            "restart point: %s. Reads are correct, just not accelerated.",
+            self.sbx_dir, reason)
 
     def read_any(self, requests, allow_partial: bool = False) -> list:
         """Read everything, delegating whatever this reader cannot decode.
