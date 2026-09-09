@@ -1,7 +1,7 @@
 # GeoRange IO Phase 0 -- baseline instrumentation and headroom analysis.
 #
 #   make baseline    the whole thing: infra up, stage, index, specs, sweep,
-#                    oracle, analysis, MANIFEST.md and REPORT.md tables
+#                    oracle, analysis, MANIFEST.md and the results tables
 #
 # Individual targets are safe to re-run; staging and indexing are idempotent.
 
@@ -20,12 +20,12 @@ MAX_WALL_S   ?= 1800
 .PHONY: baseline up down clean-results stage index specs sweep \
         sweep-chunks sweep-rtt sweep-bwcap sweep-full check-rtt-invariance \
         oracle granularity sidecars \
-        analyze manifest report status logs versions verify crosscheck bench-aws
+        analyze manifest status logs versions verify crosscheck bench-aws
 
 baseline: up stage index specs sweep oracle granularity prefix checkpoint \
-          crosscheck analyze check-rtt-invariance sidecars unit test verify manifest report
+          crosscheck analyze check-rtt-invariance sidecars unit test verify manifest
 	@echo
-	@echo "Phase 0 complete. See REPORT.md, results/summary.csv, results/plots/."
+	@echo "Phase 0 complete. See results/tables.md, results/summary.csv, results/plots/."
 
 ## --- infrastructure -------------------------------------------------------
 up:
@@ -149,9 +149,6 @@ analyze:
 
 manifest:
 	$(PY) data/make_manifest.py
-
-report:
-	$(PY) baseline/render_report.py
 
 versions:
 	$(BENCH) python3 -c "from osgeo import gdal; import rasterio; \

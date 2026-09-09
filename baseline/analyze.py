@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Turn the raw runs into the CSV, the tables and the plots REPORT.md uses."""
+"""Turn the raw runs into the CSV, the tables and the plots the README uses."""
 from __future__ import annotations
 
 import argparse

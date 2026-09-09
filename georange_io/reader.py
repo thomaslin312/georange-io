@@ -26,7 +26,7 @@ blocks means fetching everything between them, so it is worth it exactly when
     extra bytes / bandwidth  <  round trips saved x RTT
 
 which needs both a cost model and knowledge of what is coming. GDAL has a fixed
-byte-gap heuristic instead, and the bandwidth-capped sweep in REPORT.md showed
+byte-gap heuristic instead, and the bandwidth-capped sweep under results/ showed
 the right answer flips when bandwidth is finite.
 
 Everything it does not handle it declines, so a caller can fall back to GDAL.
@@ -80,7 +80,7 @@ class TransportError(RuntimeError):
 class CorruptObject(TransportError):
     """The bytes fetched could not be decoded as the tile they claim to be.
 
-    Raised instead of letting zlib's own exception escape: API.md promises a
+    Raised instead of letting zlib's own exception escape: the README promises a
     caller only has to handle Unsupported, TransportError and ObjectChanged, and
     a bare zlib.error from a corrupt or truncated stream broke that contract.
     Found by randomized fuzzing of TIFF headers.

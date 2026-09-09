@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """End-to-end against the real archive: the last unmeasured claim.
 
-Section 12 of REPORT.md projects a wall-time gain by composing a measured
-per-request cost with measured request counts. That was all the connection here
-allowed. This measures it directly instead: the same requests, against the
+The local sweep can only project a wall-time gain, by composing a measured
+per-request cost with measured request counts. That was all the connection at
+the time allowed. This measures it directly instead: the same requests, against the
 public Sentinel-2 bucket on AWS, through GDAL and through GeoRange IO, on the
 same machine at the same time.
 
