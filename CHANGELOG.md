@@ -8,7 +8,7 @@
   TLS contexts, connection cleanup, and retry metrics.
 - Add concurrency safety and output, fetch, block, index, and sidecar bounds.
 - Expand malformed-input and lifecycle regression coverage.
-- Document the supported API, compatibility contract, and security policy.
+- Document the supported API, compatibility contract, and operational defaults.
 
 ## 0.1.0
 
