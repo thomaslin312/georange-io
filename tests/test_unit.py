@@ -69,6 +69,22 @@ def cog():
     return data, blob, pool
 
 
+@pytest.fixture(scope="module")
+def big_cog():
+    """A COG whose tiles are large enough to hold interior DEFLATE block
+    boundaries.
+
+    Whether a stream is emitted as one block or several is the encoder's
+    choice, and it varies by zlib version: at tile=256 this data is a single
+    block under zlib 1.2.13 and several under 1.3.1. A single-block tile has
+    no interior restart point by definition, so tests that need one must not
+    depend on that choice.
+    """
+    data, blob = make_cog(tile=512)
+    pool = FakePool({"/b/x.tif": blob})
+    return data, blob, pool
+
+
 def reader(pool, **kw):
     return SparseReader(None, "", "b", pool=pool, **kw)
 
@@ -324,9 +340,9 @@ def test_request_generators_and_encoded_object_keys(cog):
 
 # --- restart points --------------------------------------------------------
 
-def test_restart_reproduces_the_stream(cog):
+def test_restart_reproduces_the_stream(big_cog):
     from georange_io.tile_index import build_index, read_from
-    data, blob, pool = cog
+    data, blob, pool = big_cog
     rec = describe(pool, "/b/x.tif")
     L = rec["levels"][0]
     bi = int(np.argmax(L["bytecounts"]))
@@ -338,9 +354,9 @@ def test_restart_reproduces_the_stream(cog):
         assert read_from(comp, idx, p.out, p.out + 512) == full[p.out:p.out + 512]
 
 
-def test_sidecar_round_trip_and_staleness(tmp_path, cog):
+def test_sidecar_round_trip_and_staleness(tmp_path, big_cog):
     from georange_io.tile_index import build_index
-    data, blob, pool = cog
+    data, blob, pool = big_cog
     rec = describe(pool, "/b/x.tif")
     L = rec["levels"][0]
     bi = int(np.argmax(L["bytecounts"]))
@@ -660,12 +676,19 @@ CONTROLLED = (Unsupported, ValueError, RuntimeError, OSError, EOFError,
 
 @pytest.mark.parametrize("seed", range(24))
 def test_fuzzed_tiff_headers_fail_controlled(seed, cog):
+    """A corrupt header must be refused, never silently believed.
+
+    The mutation is confined to the header, which ends where the first tile
+    begins. Corrupting compressed pixel data is a different contract and is
+    covered by test_corrupt_tile_payload_is_not_detectable below.
+    """
     data, blob, _pool = cog
+    header_end = min(describe(_pool, "/b/x.tif")["levels"][0]["offsets"])
     rng = np.random.default_rng(seed)
-    b = bytearray(blob[:65536])
+    b = bytearray(blob[:header_end])
     for _ in range(int(rng.integers(1, 12))):
         b[int(rng.integers(0, len(b)))] = int(rng.integers(0, 256))
-    mutated = bytes(b) + blob[65536:]
+    mutated = bytes(b) + blob[header_end:]
     pool = FakePool({"/b/f.tif": mutated})
     try:
         rd = SparseReader(None, "", "b", pool=pool)
@@ -675,6 +698,36 @@ def test_fuzzed_tiff_headers_fail_controlled(seed, cog):
     # If it did return, it must not have invented pixels: any value it produced
     # has to match the untouched original at those coordinates.
     assert np.array_equal(out[0], data[0:8, 0:8])
+
+
+@pytest.mark.parametrize("seed", range(8))
+def test_corrupt_tile_payload_is_not_detectable(seed, cog):
+    """Corrupt compressed pixel bytes may decode to wrong values, and that is
+    a known and accepted consequence of stopping early.
+
+    A zlib stream is only self-verifying at its Adler-32 trailer. Prefix
+    decoding exists precisely so the trailer is never reached, so a mutation
+    inside the compressed payload that still inflates cannot be caught. GDAL,
+    which always decodes the whole tile, would catch it.
+
+    The contract that does hold is the exception contract: whatever happens,
+    it surfaces as one of the declared types rather than as a zlib.error or a
+    crash.
+    """
+    data, blob, _pool = cog
+    header_end = min(describe(_pool, "/b/x.tif")["levels"][0]["offsets"])
+    rng = np.random.default_rng(1000 + seed)
+    b = bytearray(blob)
+    for _ in range(int(rng.integers(1, 12))):
+        b[int(rng.integers(header_end, len(b)))] = int(rng.integers(0, 256))
+    pool = FakePool({"/b/f.tif": bytes(b)})
+    try:
+        rd = SparseReader(None, "", "b", pool=pool)
+        out = rd.read([("f.tif", 0, 0, 0, 8, 8)])
+    except CONTROLLED:
+        return
+    assert out[0].shape == (8, 8)
+    assert out[0].dtype == data.dtype
 
 
 @pytest.mark.parametrize("seed", range(24))
