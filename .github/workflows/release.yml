@@ -12,7 +12,8 @@ name: release
 #     Workflow name      release.yml
 #     Environment        pypi
 #
-# Then push a tag to release:  git tag v0.2.0 && git push origin v0.2.0
+# Then bump the version in pyproject.toml and georange_io/__init__.py, and
+# push a matching tag to release:  git tag vX.Y.Z && git push origin vX.Y.Z
 
 on:
   push:
