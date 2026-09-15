@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.1
+
+- Export `CorruptObject` from the package root. 0.2.0 listed it in `__all__`
+  without importing it, so `from georange_io import CorruptObject` and
+  `from georange_io import *` both failed.
+- Replace the PyPI description, which still showed pre-audit measurements
+  (1.61x / 2.88x) and pointed at documents that no longer exist. Current
+  figures are 2.05x fewer bytes, 8.74x with a sidecar.
+- Make the restart-point and fuzz tests pass on every zlib version.
+
 ## 0.2.0
 
 - Bind SBX3 sidecars to SHA-256, object-version, or ETag identities.

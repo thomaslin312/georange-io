@@ -36,7 +36,7 @@ jobs:
           python -m twine check dist/*
           python -m pip install --force-reinstall --no-deps dist/*.whl
           cd /tmp
-          python -c "import georange_io; assert georange_io.__version__ == '0.2.0'"
+          python -c "import georange_io, os; ref = os.environ['GITHUB_REF_NAME']; assert not ref.startswith('v') or georange_io.__version__ == ref[1:], (georange_io.__version__, ref)"
       - uses: actions/upload-artifact@v4
         with:
           name: dist

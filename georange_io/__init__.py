@@ -16,13 +16,12 @@ on first use. Anything the fast path cannot decode correctly is refused, and
 `read_any` delegates it to GDAL instead.
 """
 from georange_io.cog import CogIndex, RangeResult, describe
-from georange_io.reader import (ObjectChanged, SparseReader, Stats,
-                                TransportError, Unsupported)
+from georange_io.reader import (CorruptObject, ObjectChanged, SparseReader,
+                                Stats, TransportError, Unsupported)
 from georange_io.sbx import Sbx, StaleSidecar, open_for
 
-__all__ = ["CorruptObject", "ObjectChanged",
-           "TransportError",
-           "SparseReader", "Stats", "Unsupported", "TransportError",
-           "ObjectChanged", "CogIndex", "RangeResult", "describe", "Sbx",
-           "StaleSidecar", "open_for"]
-__version__ = "0.2.0"
+__all__ = ["SparseReader", "Stats", "Unsupported",
+           "TransportError", "CorruptObject", "ObjectChanged",
+           "CogIndex", "RangeResult", "describe",
+           "Sbx", "StaleSidecar", "open_for"]
+__version__ = "0.2.1"

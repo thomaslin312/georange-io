@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "georange-io"
-version = "0.2.0"
+version = "0.2.1"
 description = "Access-pattern-aware sparse reads for remote Cloud Optimized GeoTIFF archives."
 readme = "README.md"
 requires-python = ">=3.11"

@@ -248,4 +248,4 @@ count and SHA-256 in `data/sources.yaml` and `data/staged.json`.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](https://github.com/thomaslin312/georange-io/blob/main/LICENSE).

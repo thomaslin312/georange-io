@@ -761,3 +761,16 @@ def test_fuzzed_sidecars_fail_controlled(seed, tmp_path, cog):
     # A corrupt sidecar must never change the answer: it is an accelerator, and
     # the reader falls back to reading the tile from its beginning.
     assert got[0] == data[300, 300]
+
+
+def test_every_advertised_public_name_imports():
+    """0.2.0 shipped with CorruptObject in __all__ but never imported, so a
+    star import failed. Check the package root, not the submodules."""
+    import georange_io
+    assert len(georange_io.__all__) == len(set(georange_io.__all__))
+    for name in georange_io.__all__:
+        assert hasattr(georange_io, name), name
+    ns = {}
+    exec("from georange_io import *", ns)
+    from georange_io import CorruptObject, TransportError
+    assert issubclass(CorruptObject, TransportError)
