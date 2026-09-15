@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 512" width="760" height="512" role="img" aria-labelledby="t d">
+<title id="t">How GeoRange IO reads one pixel</title>
+<desc id="d">Top: a schematic of one compressed tile. GDAL decompresses all of it; GeoRange IO stops at the row it needs; with a sidecar it also starts at a saved restart point near that row. Bottom: measured bytes downloaded for 60 point reads on AWS. GDAL 91.3 MB, GeoRange IO 44.5 MB (2.05× less), GeoRange IO with a sidecar 10.4 MB (8.74× less). Every value was identical to GDAL's.</desc>
+<style>
+  svg { --surface:#fcfcfb; --border:rgba(11,11,11,0.10); --ink:#0b0b0b; --ink2:#52514e;
+        --muted:#898781; --track:#e1e0d9; --axis:#c3c2b7; --fill:#2a78d6; }
+  @media (prefers-color-scheme: dark) {
+    svg { --surface:#1a1a19; --border:rgba(255,255,255,0.10); --ink:#ffffff; --ink2:#c3c2b7;
+          --muted:#898781; --track:#383835; --axis:#383835; --fill:#3987e5; }
+  }
+  text { font-family:system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; }
+  .bg { fill:var(--surface); stroke:var(--border); }
+  .h { font-size:16px; font-weight:600; fill:var(--ink); }
+  .sub { font-size:13px; fill:var(--ink2); }
+  .name { font-size:13px; font-weight:600; fill:var(--ink); }
+  .desc { font-size:12px; fill:var(--ink2); }
+  .value { font-size:13px; font-weight:600; fill:var(--ink); }
+  .track { fill:var(--track); }
+  .fill { fill:var(--fill); }
+  .marker { stroke:var(--ink); stroke-width:1.5; }
+  .rule { stroke:var(--track); stroke-width:1; }
+  .axis { stroke:var(--axis); stroke-width:1; }
+</style>
+<rect x="0.5" y="0.5" width="759" height="511" rx="12" class="bg"/>
+<text x="32.0" y="40.0" class="h" text-anchor="start">One tile is one compressed stream</text>
+<text x="32.0" y="62.0" class="sub" text-anchor="start">To read one pixel, a reader has to decompress from some starting point up to that pixel's row.</text>
+<text x="32.0" y="117.0" class="name" text-anchor="start">GDAL</text>
+<text x="32.0" y="134.0" class="desc" text-anchor="start">decompresses the whole tile</text>
+<path d="M266.0,110.0 H724.0 Q728.0,110.0 728.0,114.0 V126.0 Q728.0,130.0 724.0,130.0 H266.0 Q262.0,130.0 262.0,126.0 V114.0 Q262.0,110.0 266.0,110.0 Z" class="track"/>
+<path d="M266.0,110.0 H724.0 Q728.0,110.0 728.0,114.0 V126.0 Q728.0,130.0 724.0,130.0 H266.0 Q262.0,130.0 262.0,126.0 V114.0 Q262.0,110.0 266.0,110.0 Z" class="fill"/>
+<text x="32.0" y="167.0" class="name" text-anchor="start">GeoRange IO</text>
+<text x="32.0" y="184.0" class="desc" text-anchor="start">stops at that row</text>
+<path d="M266.0,160.0 H724.0 Q728.0,160.0 728.0,164.0 V176.0 Q728.0,180.0 724.0,180.0 H266.0 Q262.0,180.0 262.0,176.0 V164.0 Q262.0,160.0 266.0,160.0 Z" class="track"/>
+<path d="M266.0,160.0 H485.0 Q489.0,160.0 489.0,164.0 V176.0 Q489.0,180.0 485.0,180.0 H266.0 Q262.0,180.0 262.0,176.0 V164.0 Q262.0,160.0 266.0,160.0 Z" class="fill"/>
+<text x="32.0" y="217.0" class="name" text-anchor="start">GeoRange IO + sidecar</text>
+<text x="32.0" y="234.0" class="desc" text-anchor="start">starts at a saved restart point</text>
+<path d="M266.0,210.0 H724.0 Q728.0,210.0 728.0,214.0 V226.0 Q728.0,230.0 724.0,230.0 H266.0 Q262.0,230.0 262.0,226.0 V214.0 Q262.0,210.0 266.0,210.0 Z" class="track"/>
+<path d="M439.7,210.0 H485.0 Q489.0,210.0 489.0,214.0 V226.0 Q489.0,230.0 485.0,230.0 H439.7 Q435.7,230.0 435.7,226.0 V214.0 Q435.7,210.0 439.7,210.0 Z" class="fill"/>
+<line x1="489.0" y1="92.0" x2="489.0" y2="236.0" class="marker"/>
+<text x="489.0" y="86.0" class="desc" text-anchor="middle">the pixel's row</text>
+<rect x="262" y="247.0" width="10" height="10" rx="2" class="fill"/>
+<text x="278.0" y="256.0" class="desc" text-anchor="start">downloaded and decompressed</text>
+<rect x="476" y="247.0" width="10" height="10" rx="2" class="track"/>
+<text x="492.0" y="256.0" class="desc" text-anchor="start">skipped</text>
+<line x1="32" y1="280.0" x2="728" y2="280.0" class="rule"/>
+<text x="32.0" y="320.0" class="h" text-anchor="start">Measured on the live AWS Sentinel-2 archive</text>
+<text x="32.0" y="342.0" class="sub" text-anchor="start">Bytes downloaded for 60 point reads across 12 scenes, median of 3 runs.</text>
+<text x="32.0" y="360.0" class="sub" text-anchor="start">Every value was identical to GDAL's.</text>
+<text x="32.0" y="399.0" class="name" text-anchor="start">GDAL</text>
+<path d="M262.0,384.0 H574.0 Q578.0,384.0 578.0,388.0 V400.0 Q578.0,404.0 574.0,404.0 H262.0 Z" class="fill"/>
+<text x="586.0" y="399.0" class="value" text-anchor="start">91.3 MB</text>
+<text x="32.0" y="437.0" class="name" text-anchor="start">GeoRange IO</text>
+<path d="M262.0,422.0 H411.9 Q415.9,422.0 415.9,426.0 V438.0 Q415.9,442.0 411.9,442.0 H262.0 Z" class="fill"/>
+<text x="423.9" y="437.0" class="value" text-anchor="start">44.5 MB</text>
+<text x="485.9" y="437.0" class="desc" text-anchor="start">2.05× less</text>
+<text x="32.0" y="475.0" class="name" text-anchor="start">GeoRange IO + sidecar</text>
+<path d="M262.0,460.0 H294.2 Q298.2,460.0 298.2,464.0 V476.0 Q298.2,480.0 294.2,480.0 H262.0 Z" class="fill"/>
+<text x="306.2" y="475.0" class="value" text-anchor="start">10.4 MB</text>
+<text x="368.2" y="475.0" class="desc" text-anchor="start">8.74× less</text>
+<line x1="262" y1="378" x2="262" y2="486" class="axis"/>
+</svg>
