@@ -8,7 +8,7 @@ bandwidth/latency cost model.
 
 Values are byte-identical to GDAL's. The gain is in bytes moved.
 
-![GDAL decompresses a whole tile to read one pixel. GeoRange IO stops at the row it needs, and with a sidecar also starts at a saved restart point near it. Measured on AWS for 60 point reads: GDAL 91.3 MB, GeoRange IO 44.5 MB (2.05x less), GeoRange IO with a sidecar 10.4 MB (8.74x less), with every value identical to GDAL's.](https://raw.githubusercontent.com/thomaslin312/georange-io/main/.github/assets/how-it-works.svg)
+![For different query shapes, which pixels are asked for and what each reader downloads. GDAL downloads every tile a query touches in full. GeoRange IO downloads each tile only down to the deepest requested row: 18.5x less than GDAL for a pixel near the top of a tile, no saving for a pixel near the bottom or a whole tile. With a sidecar it also starts just above the requested row: 9.4x less for the pixel near the bottom, 4.9x for ten scattered pixels, 3.3x for a 512 by 512 window, 9.5x for five pixels over 12 dates, and still no saving for a whole tile. Every value was identical to GDAL's.](https://raw.githubusercontent.com/thomaslin312/georange-io/main/.github/assets/how-it-works.svg)
 
 ```bash
 pip install georange-io

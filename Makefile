@@ -8,7 +8,8 @@
 #   make test        unit tests; no infrastructure or network needed
 #   make verify      every value must match GDAL, on three workloads
 #   make bench-aws   the live AWS comparison quoted in the README
-#   make figure      redraw the README figure from that comparison's results
+#   make shapes-sidecar  measure every query shape with a sidecar, live on AWS
+#   make figure      redraw the README figure from that measurement
 #
 #   make up                 infrastructure only
 #   make stage index specs  corpus and workloads, no measurement
@@ -62,7 +63,7 @@ MAX_WALL_S   ?= 1800
 .PHONY: baseline up down clean-results stage index specs sweep \
         sweep-chunks sweep-rtt sweep-bwcap sweep-full check-rtt-invariance \
         oracle granularity sidecars \
-        analyze manifest status logs versions verify crosscheck bench-aws figure
+        analyze manifest status logs versions verify crosscheck bench-aws shapes-sidecar figure
 
 baseline: up stage index specs sweep oracle granularity prefix checkpoint \
           crosscheck analyze check-rtt-invariance sidecars unit test verify manifest
@@ -191,6 +192,9 @@ analyze:
 
 manifest:
 	$(PY) data/make_manifest.py
+
+shapes-sidecar:
+	$(PY) experiments/audit_shapes_sidecar.py
 
 figure:
 	$(PY) experiments/make_figure.py

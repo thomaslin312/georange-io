@@ -41,6 +41,21 @@ def s3():
                       s3={"addressing_style": "path"}, max_pool_connections=16))
 
 
+def restart_span(L, compressed_size: int, index_fraction: float = 0.15):
+    """Output bytes between restart points for one tile, or None if the tile
+    is too small to afford even one.
+
+    Each restart point stores a 32 kB window, so the budget buys
+    index_fraction * compressed_size // 32 kB of them, spread evenly.
+    """
+    import numpy as np
+    uncomp = L["blockh"] * L["blockw"] * np.dtype(L["dtype"]).itemsize
+    n_pts = int(index_fraction * compressed_size // 32768)
+    if n_pts < 1:
+        return None
+    return max(32768, uncomp // n_pts)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--spec", default="results/specs/w6p5.json")
@@ -80,17 +95,10 @@ def main() -> int:
                 continue
             comp = cli.get_object(Bucket=BUCKET, Key=key,
                                   Range=f"bytes={off}-{off+cnt-1}")["Body"].read()
-            if a.span:
-                span = a.span
-            else:
-                import numpy as _np
-                uncomp = L["blockh"] * L["blockw"] * _np.dtype(L["dtype"]).itemsize
-                budget = a.index_fraction * cnt
-                n_pts = int(budget // 32768)
-                if n_pts < 1:
-                    skipped[0] += 1
-                    continue          # too small to be worth indexing
-                span = max(32768, uncomp // n_pts)
+            span = a.span or restart_span(L, cnt, a.index_fraction)
+            if span is None:
+                skipped[0] += 1
+                continue              # too small to be worth indexing
             ti, _ = build_index(comp, span)
             blocks[bi] = ti.points
             tot_src += cnt

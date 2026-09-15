@@ -1,0 +1,2701 @@
+{
+  "sidecars": {
+    "tiles": 113,
+    "index_bytes": 24135660,
+    "tile_bytes": 171957356
+  },
+  "shapes": [
+    {
+      "shape": "1 point",
+      "gdal_bytes": 1736704,
+      "gr_bytes": 1584721,
+      "gr_sidecar_bytes": 287147,
+      "gr_sidecar_requests": 2,
+      "blocks_from_checkpoint": 1,
+      "byte_gain": 1.096,
+      "sidecar_byte_gain": 6.048,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 48,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              904,
+              904,
+              905,
+              905
+            ]
+          ],
+          "restart_row": 782
+        }
+      ]
+    },
+    {
+      "shape": "10 points, same block",
+      "gdal_bytes": 1736704,
+      "gr_bytes": 136793,
+      "gr_sidecar_bytes": 136793,
+      "gr_sidecar_requests": 2,
+      "blocks_from_checkpoint": 0,
+      "byte_gain": 12.696,
+      "sidecar_byte_gain": 12.696,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 48,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              4,
+              4,
+              5,
+              5
+            ],
+            [
+              5,
+              7,
+              6,
+              8
+            ],
+            [
+              6,
+              10,
+              7,
+              11
+            ],
+            [
+              7,
+              13,
+              8,
+              14
+            ],
+            [
+              8,
+              16,
+              9,
+              17
+            ],
+            [
+              9,
+              19,
+              10,
+              20
+            ],
+            [
+              10,
+              22,
+              11,
+              23
+            ],
+            [
+              11,
+              25,
+              12,
+              26
+            ],
+            [
+              12,
+              28,
+              13,
+              29
+            ],
+            [
+              13,
+              31,
+              14,
+              32
+            ]
+          ],
+          "restart_row": 0
+        }
+      ]
+    },
+    {
+      "shape": "10 points, scattered",
+      "gdal_bytes": 14778368,
+      "gr_bytes": 9471029,
+      "gr_sidecar_bytes": 3019322,
+      "gr_sidecar_requests": 10,
+      "blocks_from_checkpoint": 8,
+      "byte_gain": 1.56,
+      "sidecar_byte_gain": 4.895,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 40,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              252,
+              491,
+              253,
+              492
+            ]
+          ],
+          "restart_row": 412
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 53,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              88,
+              279,
+              89,
+              280
+            ]
+          ],
+          "restart_row": 177
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 74,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              576,
+              410,
+              577,
+              411
+            ]
+          ],
+          "restart_row": 287
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 82,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              428,
+              908,
+              429,
+              909
+            ]
+          ],
+          "restart_row": 776
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 75,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              65,
+              9,
+              66,
+              10
+            ],
+            [
+              325,
+              837,
+              326,
+              838
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 31,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              377,
+              570,
+              378,
+              571
+            ]
+          ],
+          "restart_row": 491
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 89,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              779,
+              491,
+              780,
+              492
+            ]
+          ],
+          "restart_row": 389
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 26,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              949,
+              962,
+              950,
+              963
+            ]
+          ],
+          "restart_row": 920
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 61,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              239,
+              712,
+              240,
+              713
+            ]
+          ],
+          "restart_row": 667
+        }
+      ]
+    },
+    {
+      "shape": "point at row 5 of a block",
+      "gdal_bytes": 1736704,
+      "gr_bytes": 93670,
+      "gr_sidecar_bytes": 93670,
+      "gr_sidecar_requests": 2,
+      "blocks_from_checkpoint": 0,
+      "byte_gain": 18.541,
+      "sidecar_byte_gain": 18.541,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 48,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              4,
+              5,
+              5,
+              6
+            ]
+          ],
+          "restart_row": 0
+        }
+      ]
+    },
+    {
+      "shape": "point at row 1010 of a block",
+      "gdal_bytes": 1736704,
+      "gr_bytes": 1731140,
+      "gr_sidecar_bytes": 184424,
+      "gr_sidecar_requests": 2,
+      "blocks_from_checkpoint": 1,
+      "byte_gain": 1.003,
+      "sidecar_byte_gain": 9.417,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 48,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              4,
+              1010,
+              5,
+              1011
+            ]
+          ],
+          "restart_row": 929
+        }
+      ]
+    },
+    {
+      "shape": "one 512x512 window",
+      "gdal_bytes": 6008156,
+      "gr_bytes": 4257187,
+      "gr_sidecar_bytes": 1807215,
+      "gr_sidecar_requests": 5,
+      "blocks_from_checkpoint": 2,
+      "byte_gain": 1.411,
+      "sidecar_byte_gain": 3.325,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 24,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              952,
+              952,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 936
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 25,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              952,
+              440,
+              1024
+            ]
+          ],
+          "restart_row": 921
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 35,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              952,
+              0,
+              1024,
+              440
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 36,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              440,
+              440
+            ]
+          ],
+          "restart_row": 0
+        }
+      ]
+    },
+    {
+      "shape": "one 2048x2048 window",
+      "gdal_bytes": 14661779,
+      "gr_bytes": 13285984,
+      "gr_sidecar_bytes": 9283736,
+      "gr_sidecar_requests": 6,
+      "blocks_from_checkpoint": 3,
+      "byte_gain": 1.104,
+      "sidecar_byte_gain": 1.579,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 12,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              976,
+              976,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 897
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 13,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              976,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 916
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 14,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              976,
+              976,
+              1024
+            ]
+          ],
+          "restart_row": 953
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 23,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              976,
+              0,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 24,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 25,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              976,
+              1024
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 34,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              976,
+              0,
+              1024,
+              976
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 35,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              1024,
+              976
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 36,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              976,
+              976
+            ]
+          ],
+          "restart_row": 0
+        }
+      ]
+    },
+    {
+      "shape": "40 x 256x256 windows",
+      "gdal_bytes": 76086316,
+      "gr_bytes": 61231015,
+      "gr_sidecar_bytes": 32484424,
+      "gr_sidecar_requests": 45,
+      "blocks_from_checkpoint": 36,
+      "byte_gain": 1.243,
+      "sidecar_byte_gain": 2.342,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 14,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              310,
+              624,
+              566,
+              880
+            ],
+            [
+              1010,
+              773,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 479
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 63,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              830,
+              100,
+              1024,
+              356
+            ]
+          ],
+          "restart_row": 20
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 64,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              100,
+              62,
+              356
+            ],
+            [
+              473,
+              0,
+              729,
+              53
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 55,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              605,
+              638,
+              861,
+              894
+            ]
+          ],
+          "restart_row": 495
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 70,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              675,
+              267,
+              931,
+              523
+            ]
+          ],
+          "restart_row": 196
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 96,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              783,
+              798,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 778
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 97,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              798,
+              15,
+              1024
+            ]
+          ],
+          "restart_row": 781
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 107,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              783,
+              0,
+              1024,
+              30
+            ],
+            [
+              363,
+              743,
+              619,
+              999
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 108,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              15,
+              30
+            ],
+            [
+              82,
+              749,
+              338,
+              1005
+            ],
+            [
+              369,
+              409,
+              625,
+              665
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 103,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              208,
+              175,
+              464,
+              431
+            ],
+            [
+              888,
+              521,
+              1024,
+              777
+            ]
+          ],
+          "restart_row": 31
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 56,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              370,
+              223,
+              626,
+              479
+            ]
+          ],
+          "restart_row": 211
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 62,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              721,
+              700,
+              977,
+              956
+            ]
+          ],
+          "restart_row": 621
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 9,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              428,
+              791,
+              684,
+              1024
+            ]
+          ],
+          "restart_row": 783
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 20,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              428,
+              0,
+              684,
+              23
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 31,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              625,
+              630,
+              881,
+              886
+            ]
+          ],
+          "restart_row": 491
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 102,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              625,
+              81,
+              881,
+              337
+            ]
+          ],
+          "restart_row": 28
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 7,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              158,
+              268,
+              414,
+              524
+            ]
+          ],
+          "restart_row": 175
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 53,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              473,
+              821,
+              729,
+              1024
+            ]
+          ],
+          "restart_row": 804
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 49,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              614,
+              884,
+              870,
+              1024
+            ],
+            [
+              92,
+              693,
+              348,
+              949
+            ]
+          ],
+          "restart_row": 669
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 60,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              614,
+              0,
+              870,
+              116
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 75,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              74,
+              614,
+              330,
+              870
+            ]
+          ],
+          "restart_row": 612
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 16,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              773,
+              129,
+              1024,
+              385
+            ],
+            [
+              0,
+              683,
+              72,
+              939
+            ]
+          ],
+          "restart_row": 24
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 17,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              129,
+              5,
+              385
+            ],
+            [
+              512,
+              883,
+              768,
+              1024
+            ]
+          ],
+          "restart_row": 19
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 45,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              752,
+              664,
+              1008,
+              920
+            ],
+            [
+              309,
+              503,
+              565,
+              759
+            ]
+          ],
+          "restart_row": 378
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 37,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              544,
+              604,
+              800,
+              860
+            ],
+            [
+              882,
+              546,
+              1024,
+              802
+            ]
+          ],
+          "restart_row": 481
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 27,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              968,
+              121,
+              1024,
+              377
+            ],
+            [
+              0,
+              165,
+              138,
+              421
+            ]
+          ],
+          "restart_row": 17
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 28,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              121,
+              200,
+              377
+            ],
+            [
+              512,
+              0,
+              768,
+              115
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 79,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              991,
+              929,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 799
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 80,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              929,
+              223,
+              1024
+            ],
+            [
+              569,
+              876,
+              825,
+              1024
+            ]
+          ],
+          "restart_row": 746
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 90,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              991,
+              0,
+              1024,
+              161
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 91,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              223,
+              161
+            ],
+            [
+              569,
+              0,
+              825,
+              108
+            ],
+            [
+              427,
+              650,
+              683,
+              906
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 72,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              904,
+              781,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 767
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 73,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              781,
+              136,
+              1024
+            ]
+          ],
+          "restart_row": 633
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 83,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              904,
+              0,
+              1024,
+              13
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 84,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              136,
+              13
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 15,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              773,
+              242,
+              1024
+            ],
+            [
+              840,
+              683,
+              1024,
+              939
+            ]
+          ],
+          "restart_row": 613
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 25,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              1010,
+              0,
+              1024,
+              5
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 26,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              242,
+              5
+            ],
+            [
+              906,
+              165,
+              1024,
+              421
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 86,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              212,
+              538,
+              468,
+              794
+            ]
+          ],
+          "restart_row": 418
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 57,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              29,
+              261,
+              285,
+              517
+            ]
+          ],
+          "restart_row": 204
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 66,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              902,
+              470,
+              1024,
+              726
+            ]
+          ],
+          "restart_row": 326
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 67,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              470,
+              134,
+              726
+            ]
+          ],
+          "restart_row": 391
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 38,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              546,
+              114,
+              802
+            ]
+          ],
+          "restart_row": 476
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 104,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              521,
+              120,
+              777
+            ]
+          ],
+          "restart_row": 485
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 19,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              646,
+              254,
+              902,
+              510
+            ]
+          ],
+          "restart_row": 180
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 1,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              984,
+              346,
+              1024,
+              602
+            ]
+          ],
+          "restart_row": 327
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 2,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              346,
+              216,
+              602
+            ]
+          ],
+          "restart_row": 322
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 35,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              189,
+              750,
+              445,
+              1006
+            ]
+          ],
+          "restart_row": 744
+        }
+      ]
+    },
+    {
+      "shape": "whole 1024x1024 block",
+      "gdal_bytes": 1736704,
+      "gr_bytes": 1731140,
+      "gr_sidecar_bytes": 1731140,
+      "gr_sidecar_requests": 2,
+      "blocks_from_checkpoint": 0,
+      "byte_gain": 1.003,
+      "sidecar_byte_gain": 1.003,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 48,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              0,
+              0,
+              1024,
+              1024
+            ]
+          ],
+          "restart_row": 0
+        }
+      ]
+    },
+    {
+      "shape": "5 points x 12 dates",
+      "gdal_bytes": 86343680,
+      "gr_bytes": 42465967,
+      "gr_sidecar_bytes": 9095924,
+      "gr_sidecar_requests": 68,
+      "blocks_from_checkpoint": 51,
+      "byte_gain": 2.033,
+      "sidecar_byte_gain": 9.493,
+      "sidecar_identical_to_plain": true,
+      "tiles": [
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 93,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              609,
+              868,
+              610,
+              869
+            ]
+          ],
+          "restart_row": 775
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 40,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              365,
+              890,
+              366,
+              891
+            ]
+          ],
+          "restart_row": 812
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 57,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              538,
+              653,
+              539,
+              654
+            ]
+          ],
+          "restart_row": 564
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 12,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              441,
+              696,
+              442,
+              697
+            ]
+          ],
+          "restart_row": 550
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-01/B04.tif",
+          "block": 91,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              601,
+              44,
+              602,
+              45
+            ]
+          ],
+          "restart_row": 30
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-11/B04.tif",
+          "block": 53,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              215,
+              31,
+              216,
+              32
+            ]
+          ],
+          "restart_row": 28
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-11/B04.tif",
+          "block": 25,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              428,
+              382,
+              429,
+              383
+            ]
+          ],
+          "restart_row": 324
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-11/B04.tif",
+          "block": 107,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              310,
+              344,
+              311,
+              345
+            ]
+          ],
+          "restart_row": 286
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-11/B04.tif",
+          "block": 15,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              276,
+              921,
+              277,
+              922
+            ]
+          ],
+          "restart_row": 807
+        },
+        {
+          "key": "s2ts/11SLA/2024-01-11/B04.tif",
+          "block": 47,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              677,
+              740,
+              678,
+              741
+            ]
+          ],
+          "restart_row": 691
+        },
+        {
+          "key": "s2ts/11SLA/2024-02-25/B04.tif",
+          "block": 94,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              467,
+              765,
+              468,
+              766
+            ]
+          ],
+          "restart_row": 634
+        },
+        {
+          "key": "s2ts/11SLA/2024-02-25/B04.tif",
+          "block": 27,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              327,
+              300,
+              328,
+              301
+            ]
+          ],
+          "restart_row": 278
+        },
+        {
+          "key": "s2ts/11SLA/2024-02-25/B04.tif",
+          "block": 45,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              906,
+              440,
+              907,
+              441
+            ]
+          ],
+          "restart_row": 377
+        },
+        {
+          "key": "s2ts/11SLA/2024-02-25/B04.tif",
+          "block": 53,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              201,
+              508,
+              202,
+              509
+            ]
+          ],
+          "restart_row": 377
+        },
+        {
+          "key": "s2ts/11SLA/2024-02-25/B04.tif",
+          "block": 41,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              371,
+              702,
+              372,
+              703
+            ]
+          ],
+          "restart_row": 644
+        },
+        {
+          "key": "s2ts/11SLA/2024-03-21/B04.tif",
+          "block": 45,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              113,
+              416,
+              114,
+              417
+            ]
+          ],
+          "restart_row": 362
+        },
+        {
+          "key": "s2ts/11SLA/2024-03-21/B04.tif",
+          "block": 95,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              953,
+              830,
+              954,
+              831
+            ],
+            [
+              349,
+              532,
+              350,
+              533
+            ]
+          ],
+          "restart_row": 466
+        },
+        {
+          "key": "s2ts/11SLA/2024-03-21/B04.tif",
+          "block": 23,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              1011,
+              171,
+              1012,
+              172
+            ]
+          ],
+          "restart_row": 32
+        },
+        {
+          "key": "s2ts/11SLA/2024-03-21/B04.tif",
+          "block": 90,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              624,
+              891,
+              625,
+              892
+            ]
+          ],
+          "restart_row": 740
+        },
+        {
+          "key": "s2ts/11SLA/2024-04-22/B04.tif",
+          "block": 80,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              584,
+              785,
+              585,
+              786
+            ]
+          ],
+          "restart_row": 754
+        },
+        {
+          "key": "s2ts/11SLA/2024-04-22/B04.tif",
+          "block": 36,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              59,
+              168,
+              60,
+              169
+            ]
+          ],
+          "restart_row": 60
+        },
+        {
+          "key": "s2ts/11SLA/2024-04-22/B04.tif",
+          "block": 75,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              405,
+              365,
+              406,
+              366
+            ]
+          ],
+          "restart_row": 321
+        },
+        {
+          "key": "s2ts/11SLA/2024-04-22/B04.tif",
+          "block": 34,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              760,
+              958,
+              761,
+              959
+            ],
+            [
+              405,
+              94,
+              406,
+              95
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-07/B04.tif",
+          "block": 81,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              529,
+              22,
+              530,
+              23
+            ]
+          ],
+          "restart_row": 17
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-07/B04.tif",
+          "block": 49,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              381,
+              4,
+              382,
+              5
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-07/B04.tif",
+          "block": 57,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              370,
+              562,
+              371,
+              563
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-07/B04.tif",
+          "block": 100,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              697,
+              289,
+              698,
+              290
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-07/B04.tif",
+          "block": 86,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              494,
+              62,
+              495,
+              63
+            ]
+          ],
+          "restart_row": 21
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-17/B04.tif",
+          "block": 50,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              45,
+              225,
+              46,
+              226
+            ]
+          ],
+          "restart_row": 176
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-17/B04.tif",
+          "block": 56,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              843,
+              810,
+              844,
+              811
+            ],
+            [
+              496,
+              323,
+              497,
+              324
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-17/B04.tif",
+          "block": 94,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              565,
+              243,
+              566,
+              244
+            ]
+          ],
+          "restart_row": 170
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-17/B04.tif",
+          "block": 39,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              541,
+              946,
+              542,
+              947
+            ]
+          ],
+          "restart_row": 929
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-27/B04.tif",
+          "block": 71,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              722,
+              324,
+              723,
+              325
+            ]
+          ],
+          "restart_row": 171
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-27/B04.tif",
+          "block": 17,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              472,
+              461,
+              473,
+              462
+            ]
+          ],
+          "restart_row": 327
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-27/B04.tif",
+          "block": 18,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              271,
+              627,
+              272,
+              628
+            ]
+          ],
+          "restart_row": 626
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-27/B04.tif",
+          "block": 38,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              923,
+              745,
+              924,
+              746
+            ]
+          ],
+          "restart_row": 630
+        },
+        {
+          "key": "s2ts/11SLA/2024-05-27/B04.tif",
+          "block": 28,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              52,
+              1010,
+              53,
+              1011
+            ]
+          ],
+          "restart_row": 920
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-04/B04.tif",
+          "block": 64,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              117,
+              164,
+              118,
+              165
+            ]
+          ],
+          "restart_row": 29
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-04/B04.tif",
+          "block": 23,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              701,
+              219,
+              702,
+              220
+            ]
+          ],
+          "restart_row": 205
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-04/B04.tif",
+          "block": 27,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              1003,
+              29,
+              1004,
+              30
+            ]
+          ],
+          "restart_row": 20
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-04/B04.tif",
+          "block": 81,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              338,
+              722,
+              339,
+              723
+            ]
+          ],
+          "restart_row": 628
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-04/B04.tif",
+          "block": 74,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              431,
+              764,
+              432,
+              765
+            ]
+          ],
+          "restart_row": 630
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-11/B04.tif",
+          "block": 73,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              572,
+              153,
+              573,
+              154
+            ]
+          ],
+          "restart_row": 25
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-11/B04.tif",
+          "block": 16,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              220,
+              111,
+              221,
+              112
+            ]
+          ],
+          "restart_row": 23
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-11/B04.tif",
+          "block": 104,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              640,
+              17,
+              641,
+              18
+            ]
+          ],
+          "restart_row": 0
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-11/B04.tif",
+          "block": 60,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              332,
+              834,
+              333,
+              835
+            ]
+          ],
+          "restart_row": 785
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-11/B04.tif",
+          "block": 72,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              38,
+              79,
+              39,
+              80
+            ]
+          ],
+          "restart_row": 24
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-19/B04.tif",
+          "block": 73,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              603,
+              992,
+              604,
+              993
+            ]
+          ],
+          "restart_row": 939
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-19/B04.tif",
+          "block": 23,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              889,
+              715,
+              890,
+              716
+            ]
+          ],
+          "restart_row": 568
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-19/B04.tif",
+          "block": 39,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              427,
+              834,
+              428,
+              835
+            ]
+          ],
+          "restart_row": 783
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-19/B04.tif",
+          "block": 68,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              326,
+              323,
+              327,
+              324
+            ]
+          ],
+          "restart_row": 178
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-19/B04.tif",
+          "block": 82,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              530,
+              502,
+              531,
+              503
+            ]
+          ],
+          "restart_row": 482
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-29/B04.tif",
+          "block": 78,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              227,
+              365,
+              228,
+              366
+            ]
+          ],
+          "restart_row": 320
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-29/B04.tif",
+          "block": 82,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              422,
+              594,
+              423,
+              595
+            ]
+          ],
+          "restart_row": 482
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-29/B04.tif",
+          "block": 28,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              506,
+              643,
+              507,
+              644
+            ]
+          ],
+          "restart_row": 617
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-29/B04.tif",
+          "block": 92,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              307,
+              192,
+              308,
+              193
+            ]
+          ],
+          "restart_row": 182
+        },
+        {
+          "key": "s2ts/11SLA/2024-06-29/B04.tif",
+          "block": 34,
+          "nbx": 11,
+          "block_size": [
+            1024,
+            1024
+          ],
+          "requested": [
+            [
+              502,
+              505,
+              503,
+              506
+            ]
+          ],
+          "restart_row": 475
+        }
+      ]
+    }
+  ]
+}
