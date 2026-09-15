@@ -1,9 +1,50 @@
-# GeoRange IO Phase 0 -- baseline instrumentation and headroom analysis.
+# GeoRange IO benchmark harness.
+#
+# This is the measurement study behind the figures in the README. None of it
+# ships in the Python package, which contains only georange_io/.
 #
 #   make baseline    the whole thing: infra up, stage, index, specs, sweep,
 #                    oracle, analysis, MANIFEST.md and the results tables
+#   make test        unit tests; no infrastructure or network needed
+#   make verify      every value must match GDAL, on three workloads
+#   make bench-aws   the live AWS comparison quoted in the README
 #
-# Individual targets are safe to re-run; staging and indexing are idempotent.
+#   make up                 infrastructure only
+#   make stage index specs  corpus and workloads, no measurement
+#   make sweep RTTS="50"    one latency instead of the full sweep
+#   make sweep-bwcap        the bandwidth-capped comparison on its own
+#   make analyze            regenerate tables and plots from existing runs
+#
+# The corpus is about 9.5 GB from public AWS buckets, so the first `make stage`
+# is the slow step. Staging and indexing are resumable and idempotent, and every
+# target is safe to re-run.
+#
+# How bytes are counted. Every byte and request in the local sweep is counted
+# at a logging proxy (infra/proxy/app.py) between GDAL and MinIO, which records
+# the exact Range header, response size and duration of each request. GDAL's
+# own CPL_DEBUG output cross-checks that accounting (baseline/crosscheck.py);
+# it is not the source of truth. The denominator is computed with no reader in
+# the loop: baseline/cog_index.py parses each COG's TileOffsets and
+# TileByteCounts, and baseline/theoretical.py maps each query onto the exact
+# blocks it requires and sums their compressed sizes.
+#
+#   amplification = bytes_actually_fetched / bytes_theoretically_required
+#
+# baseline/check_invariance.py confirms that what GDAL fetches does not depend
+# on injected latency. Workload seeds are persisted in each spec; GDAL, PROJ,
+# libcurl and rasterio versions are recorded in every result row; raw proxy
+# logs are committed gzipped under results/raw/; and the corpus is pinned by
+# URL, byte count and SHA-256 in data/sources.yaml and data/staged.json.
+#
+# Layout
+#   georange_io/   the installable library
+#   tests/         unit tests, no infrastructure required
+#   examples/      runnable usage against the public archive
+#   experiments/   verification, benchmarks, sidecar building
+#   baseline/      block index, theoretical minimum, workloads, analysis
+#   infra/         MinIO, the logging proxy, the pinned GDAL bench container
+#   data/          pinned source list, staging, manifest generation
+#   results/       specs, raw proxy logs, per-run JSON, summary CSV, plots
 
 COMPOSE := docker compose -f infra/docker-compose.yml
 BENCH   := $(COMPOSE) exec -T bench

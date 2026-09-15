@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2
+
+- The package description now documents only the library. The benchmark
+  harness, its corpus and the repository layout are described in the
+  Makefile, which is where they are used.
+- Remove the `build` extra. It installed boto3 for a sidecar builder that is
+  not part of the package.
+
 ## 0.2.1
 
 - Export `CorruptObject` from the package root. 0.2.0 listed it in `__all__`

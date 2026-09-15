@@ -71,7 +71,9 @@ depends on the link, and the spread above overlaps between configurations.
 Request counts tie on first access because both readers must fetch 12 COG
 headers before they can fetch anything else.
 
-Raw per-run measurements are committed under `results/`, not just summaries.
+The benchmark that produced these figures, including the raw per-run
+measurements, is in the
+[source repository](https://github.com/thomaslin312/georange-io).
 
 ## What it supports
 
@@ -168,18 +170,10 @@ are independent of the Python package version.
 
 ## Correctness
 
-Correctness is the gate, not a nicety: the claim is identical values for fewer
-bytes, so `experiments/verify.py` compares every single value against GDAL and
-fails on one mismatch.
-
-```bash
-make test      # windows, overview levels, and every refusal path
-make verify    # every value must match GDAL, on three workloads
-```
-
-`verify` currently passes on 14,933 reads spanning all three predictors, both
-block sizes and both dtypes in the corpus, plus window reads at every overview
-level.
+The claim is identical values for fewer bytes, so correctness is checked value
+by value against GDAL rather than sampled. It is verified on 14,933 reads
+covering all three predictors, both tile sizes and both data types, plus window
+reads at every overview level. A single mismatch fails the check.
 
 One limit is worth stating plainly. A zlib stream is self-verifying only at its
 Adler-32 trailer, and prefix decoding exists precisely so that the trailer is
@@ -188,63 +182,6 @@ will therefore not be detected, and can produce wrong values; GDAL, which always
 decodes the whole tile, would catch it. Corruption of the header is refused.
 If you are reading from a store without end-to-end integrity checking and wrong
 values are worse than slow ones, use `read_any` or GDAL directly.
-
-## Reproducing the measurements
-
-```bash
-make baseline
-```
-
-That brings up the infrastructure, stages the corpus, indexes every COG's block
-layout, generates the workload specs, runs the sweep, computes the W5 oracle
-and regenerates `results/` and `data/MANIFEST.md` from scratch. The corpus is
-about 9.5 GB from public AWS buckets, so the first `make stage` is the slow
-step; it is resumable and idempotent.
-
-```bash
-make up                 # infrastructure only
-make stage index specs  # corpus and workloads, no measurement
-make sweep RTTS="50"    # one latency instead of the full sweep
-make sweep-bwcap        # the bandwidth-capped comparison on its own
-make analyze            # regenerate tables and plots from existing runs
-make bench-aws          # the live AWS comparison in the table above
-```
-
-Every byte and request in the local sweep is counted at a logging proxy
-(`infra/proxy/app.py`) sitting between GDAL and MinIO, which records the exact
-`Range` header, response byte count and duration of each request. GDAL's own
-`CPL_DEBUG` output is used to cross-check that accounting, not as the source of
-truth. The denominator is computed with no reader in the loop:
-`baseline/cog_index.py` parses each COG's `TileOffsets` and `TileByteCounts`,
-and `baseline/theoretical.py` maps each query geometry onto the exact set of
-blocks it requires and sums their compressed sizes.
-
-```
-amplification = bytes_actually_fetched / bytes_theoretically_required
-```
-
-Two assumptions the design rests on are checked rather than asserted:
-`baseline/check_invariance.py` confirms that what GDAL fetches does not depend
-on injected latency, and `baseline/crosscheck.py` reconciles the proxy's
-accounting against GDAL's own record of the ranges it pulled.
-
-Workload seeds are fixed and persisted in each spec; GDAL, PROJ, libcurl and
-rasterio versions are recorded in every result row; raw proxy logs are
-committed gzipped under `results/raw/`; and the corpus is pinned by URL, byte
-count and SHA-256 in `data/sources.yaml` and `data/staged.json`.
-
-## Layout
-
-| Path | What it is |
-|---|---|
-| `georange_io/` | the installable library |
-| `tests/` | unit tests, no infrastructure required |
-| `examples/` | runnable usage against the public archive |
-| `experiments/` | verification, benchmarks, sidecar building |
-| `baseline/` | block index, theoretical minimum, workloads, analysis |
-| `infra/` | MinIO, the logging proxy, the pinned GDAL bench container |
-| `data/` | pinned source list, staging, manifest generation |
-| `results/` | specs, raw proxy logs, per-run JSON, summary CSV, plots |
 
 ## License
 

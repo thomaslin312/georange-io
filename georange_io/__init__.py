@@ -24,4 +24,4 @@ __all__ = ["SparseReader", "Stats", "Unsupported",
            "TransportError", "CorruptObject", "ObjectChanged",
            "CogIndex", "RangeResult", "describe",
            "Sbx", "StaleSidecar", "open_for"]
-__version__ = "0.2.1"
+__version__ = "0.2.2"
